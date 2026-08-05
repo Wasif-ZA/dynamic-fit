@@ -1,0 +1,24 @@
+{
+  "requestId": "ord-10434",
+  "mode": "standard",
+  "boxes": [
+    {
+      "id": "B-SMALL",
+      "name": "Small carton",
+      "interior": { "width": 300, "height": 200, "depth": 150 },
+      "maxWeight": 15000,
+      "tareWeight": 250,
+      "available": null
+    }
+  ],
+  "items": [
+    {
+      "id": "I-PALLET",
+      "reference": "SKU-BULK-99",
+      "name": "Pallet of floor tiles",
+      "size": { "width": 1200, "height": 800, "depth": 1000 },
+      "weight": 450000,
+      "quantity": 1
+    }
+  ]
+}

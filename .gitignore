@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+
+# Node, in case tooling needs it
+node_modules/
+npm-debug.log*
+pnpm-debug.log*
+
+# Java, in case we land there
+target/
+*.class
+.gradle/
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Secrets. Commit .env.example instead, naming the variables with no values.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local scratch. Keep experiments out of the shared history.
+scratch/
+tmp/
+*.local.*

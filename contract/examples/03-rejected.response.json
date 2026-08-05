@@ -1,0 +1,21 @@
+{
+  "requestId": "ord-10434",
+  "status": "rejected",
+  "mode": "standard",
+  "containers": [],
+  "unpacked": [
+    {
+      "itemId": "I-PALLET",
+      "unit": 1,
+      "reference": "SKU-BULK-99",
+      "reason": "NO_BOX_FITS",
+      "detail": "Item is 1200x800x1000 mm. The largest box interior available is 300x200x150 mm (Small carton), in any orientation."
+    }
+  ],
+  "metrics": {
+    "solveTimeMs": 1,
+    "containerCount": 0,
+    "volumeUtilisation": 0,
+    "algorithm": "first-fit-decreasing"
+  }
+}

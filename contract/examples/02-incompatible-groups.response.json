@@ -1,0 +1,67 @@
+{
+  "requestId": "ord-10433",
+  "status": "solved",
+  "mode": "standard",
+  "containers": [
+    {
+      "instanceId": "B-SMALL#1",
+      "boxId": "B-SMALL",
+      "name": "Small carton",
+      "interior": { "width": 300, "height": 200, "depth": 150 },
+      "placements": [
+        {
+          "step": 1,
+          "itemId": "I-BLEACH",
+          "unit": 1,
+          "reference": "SKU-CLEAN-08",
+          "name": "Bleach concentrate 1L",
+          "position": { "x": 0, "y": 0, "z": 0 },
+          "size": { "width": 100, "height": 200, "depth": 100 },
+          "rotation": "WDH"
+        }
+      ],
+      "utilisation": {
+        "volumeUsed": 2000000,
+        "volumeTotal": 9000000,
+        "volumeRatio": 0.222,
+        "weightUsed": 1450,
+        "weightLimit": 15000
+      }
+    },
+    {
+      "instanceId": "B-SMALL#2",
+      "boxId": "B-SMALL",
+      "name": "Small carton",
+      "interior": { "width": 300, "height": 200, "depth": 150 },
+      "placements": [
+        {
+          "step": 2,
+          "itemId": "I-PEROXIDE",
+          "unit": 1,
+          "reference": "SKU-CLEAN-05",
+          "name": "Peroxide solution 1L",
+          "position": { "x": 0, "y": 0, "z": 0 },
+          "size": { "width": 100, "height": 200, "depth": 100 },
+          "rotation": "WDH"
+        }
+      ],
+      "utilisation": {
+        "volumeUsed": 2000000,
+        "volumeTotal": 9000000,
+        "volumeRatio": 0.222,
+        "weightUsed": 1350,
+        "weightLimit": 15000
+      }
+    }
+  ],
+  "unpacked": [],
+  "metrics": {
+    "solveTimeMs": 8,
+    "containerCount": 2,
+    "volumeUtilisation": 0.222,
+    "algorithm": "first-fit-decreasing"
+  },
+  "warnings": [
+    "Two containers used for two items. Groups DG-5 and DG-8 are incompatible, so they cannot share a box."
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "requestId": "ord-10432",
+  "status": "solved",
+  "mode": "standard",
+  "containers": [
+    {
+      "instanceId": "B-SMALL#1",
+      "boxId": "B-SMALL",
+      "name": "Small carton",
+      "interior": { "width": 300, "height": 200, "depth": 150 },
+      "placements": [
+        {
+          "step": 1,
+          "itemId": "I-BOOK",
+          "unit": 1,
+          "reference": "SKU-BOOK-01",
+          "name": "Paperback",
+          "position": { "x": 0, "y": 0, "z": 0 },
+          "size": { "width": 150, "height": 100, "depth": 50 },
+          "rotation": "WHD"
+        },
+        {
+          "step": 2,
+          "itemId": "I-BOOK",
+          "unit": 2,
+          "reference": "SKU-BOOK-01",
+          "name": "Paperback",
+          "position": { "x": 150, "y": 0, "z": 0 },
+          "size": { "width": 150, "height": 100, "depth": 50 },
+          "rotation": "WHD"
+        },
+        {
+          "step": 3,
+          "itemId": "I-MUG",
+          "unit": 1,
+          "reference": "SKU-MUG-01",
+          "name": "Ceramic mug, boxed",
+          "position": { "x": 0, "y": 100, "z": 0 },
+          "size": { "width": 100, "height": 100, "depth": 120 },
+          "rotation": "WHD"
+        }
+      ],
+      "utilisation": {
+        "volumeUsed": 2700000,
+        "volumeTotal": 9000000,
+        "volumeRatio": 0.3,
+        "weightUsed": 1400,
+        "weightLimit": 15000
+      }
+    }
+  ],
+  "unpacked": [],
+  "metrics": {
+    "solveTimeMs": 12,
+    "containerCount": 1,
+    "volumeUtilisation": 0.3,
+    "algorithm": "first-fit-decreasing"
+  }
+}
