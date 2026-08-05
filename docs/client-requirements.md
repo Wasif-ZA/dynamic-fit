@@ -139,7 +139,7 @@ Two views, both wanted:
 
 So our response carries a global `step` ordering on every placement, and dimensions **as placed**
 with rotation already resolved, so the visualiser never does geometry maths. See
-[`contract/README.md`](../contract/README.md).
+[`contract.md`](contract.md).
 
 The visualiser gets its own dedicated page rather than being embedded in the portal. His words: "for
 your purposes, separate page."
