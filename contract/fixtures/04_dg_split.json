@@ -1,0 +1,129 @@
+{
+  "schema_version": "1.0.0",
+  "solution_id": "sol_04_dg_split",
+  "order_id": "FIX-04",
+  "solver": {
+    "version": "0.1.0",
+    "seed": 3221665207329948283,
+    "mode": "rigid",
+    "time_budget_ms": 1200,
+    "elapsed_ms": 0,
+    "tier": 1
+  },
+  "coordinate_system": {
+    "up": "z",
+    "handedness": "right",
+    "origin": "min_corner"
+  },
+  "units": {
+    "length": "mm",
+    "mass": "g"
+  },
+  "metrics": {
+    "carton_count": 2,
+    "fill_rate": 0.3395,
+    "total_mass": 1990
+  },
+  "cartons": [
+    {
+      "carton_id": "c1",
+      "sku": "BOX-S",
+      "inner_dims": [
+        220,
+        160,
+        120
+      ],
+      "tare_mass": 120,
+      "contents_mass": 1050,
+      "fill_rate": 0.4105,
+      "centre_of_mass": [
+        67,
+        71,
+        39
+      ],
+      "placements": [
+        {
+          "placement_id": "p1_0",
+          "item_ref": "ACID-1",
+          "label": "Cleaning acid",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            90,
+            140,
+            90
+          ],
+          "orientation": 1,
+          "mass": 800,
+          "sequence": 0,
+          "tags": [
+            "dg_class_8"
+          ]
+        },
+        {
+          "placement_id": "p1_1",
+          "item_ref": "PLAIN-1",
+          "label": "T-shirt pack",
+          "position": [
+            90,
+            0,
+            0
+          ],
+          "dims": [
+            100,
+            150,
+            40
+          ],
+          "orientation": 2,
+          "mass": 250,
+          "sequence": 1,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c2",
+      "sku": "BOX-S",
+      "inner_dims": [
+        220,
+        160,
+        120
+      ],
+      "tare_mass": 120,
+      "contents_mass": 700,
+      "fill_rate": 0.2685,
+      "centre_of_mass": [
+        45,
+        70,
+        45
+      ],
+      "placements": [
+        {
+          "placement_id": "p2_0",
+          "item_ref": "FUEL-1",
+          "label": "Fuel canister",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            90,
+            140,
+            90
+          ],
+          "orientation": 1,
+          "mass": 700,
+          "sequence": 0,
+          "tags": [
+            "dg_class_3"
+          ]
+        }
+      ]
+    }
+  ],
+  "rejects": []
+}

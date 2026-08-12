@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://perfectfit.example/contract/request/1.0.0",
+  "title": "PerfectFit Solve Request",
+  "type": "object",
+  "required": ["order_id", "items", "cartons"],
+  "properties": {
+    "order_id": { "type": "string" },
+    "time_budget_ms": { "type": "integer", "minimum": 1, "default": 1200 },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["item_ref", "dims", "mass"],
+        "properties": {
+          "item_ref": { "type": "string" },
+          "label": { "type": "string" },
+          "dims": { "type": "array", "items": { "type": "integer" }, "minItems": 3, "maxItems": 3,
+                    "description": "w,d,h in mm, integers" },
+          "mass": { "type": "integer", "description": "grams" },
+          "quantity": { "type": "integer", "minimum": 1, "default": 1 },
+          "allowed_rotations": { "enum": ["any", "upright", "fixed"], "default": "any" },
+          "dg_class": { "type": ["string", "null"], "default": null },
+          "incompatible_with": { "type": "array", "items": { "type": "string" }, "default": [],
+                                 "description": "item_refs this item cannot share a carton with" },
+          "tags": { "type": "array", "items": { "type": "string" }, "default": [] }
+        }
+      }
+    },
+    "cartons": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["sku", "inner_dims", "tare_mass"],
+        "properties": {
+          "sku": { "type": "string" },
+          "inner_dims": { "type": "array", "items": { "type": "integer" }, "minItems": 3, "maxItems": 3 },
+          "tare_mass": { "type": "integer" },
+          "max_contents_mass": { "type": ["integer", "null"], "default": null }
+        }
+      }
+    }
+  }
+}

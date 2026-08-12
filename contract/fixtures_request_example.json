@@ -1,0 +1,14 @@
+{
+  "order_id": "ORD-88412",
+  "time_budget_ms": 1200,
+  "items": [
+    {"item_ref": "SKU-1183", "label": "Wireless Headphones", "dims": [180, 120, 90], "mass": 640, "tags": ["fragile"]},
+    {"item_ref": "SKU-2201", "label": "Phone Case 3-pack", "dims": [160, 90, 45], "mass": 210},
+    {"item_ref": "WINE-1", "label": "Boxed wine bottle", "dims": [95, 95, 330], "mass": 1400, "allowed_rotations": "upright", "tags": ["this_way_up"]}
+  ],
+  "cartons": [
+    {"sku": "BOX-S", "inner_dims": [220, 160, 120], "tare_mass": 120, "max_contents_mass": 5000},
+    {"sku": "BOX-M", "inner_dims": [320, 240, 180], "tare_mass": 210, "max_contents_mass": 12000},
+    {"sku": "BOX-L", "inner_dims": [450, 350, 340], "tare_mass": 380, "max_contents_mass": 20000}
+  ]
+}

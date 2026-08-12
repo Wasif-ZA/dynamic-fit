@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "solution_id": "sol_06_partial_rejects",
+  "order_id": "FIX-06",
+  "solver": {
+    "version": "0.1.0",
+    "seed": 10252180076872946458,
+    "mode": "rigid",
+    "time_budget_ms": 1200,
+    "elapsed_ms": 0,
+    "tier": 1
+  },
+  "coordinate_system": {
+    "up": "z",
+    "handedness": "right",
+    "origin": "min_corner"
+  },
+  "units": {
+    "length": "mm",
+    "mass": "g"
+  },
+  "metrics": {
+    "carton_count": 1,
+    "fill_rate": 0.2604,
+    "total_mass": 470
+  },
+  "cartons": [
+    {
+      "carton_id": "c1",
+      "sku": "BOX-S",
+      "inner_dims": [
+        220,
+        160,
+        120
+      ],
+      "tare_mass": 120,
+      "contents_mass": 350,
+      "fill_rate": 0.2604,
+      "centre_of_mass": [
+        50,
+        50,
+        55
+      ],
+      "placements": [
+        {
+          "placement_id": "p1_0",
+          "item_ref": "OK-1",
+          "label": "Mug",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            100,
+            100,
+            110
+          ],
+          "orientation": 0,
+          "mass": 350,
+          "sequence": 0,
+          "tags": []
+        }
+      ]
+    }
+  ],
+  "rejects": [
+    {
+      "item_ref": "BAD-1",
+      "reason_code": "INVALID_DIMENSIONS",
+      "message": "dims must be three positive integers (mm)"
+    },
+    {
+      "item_ref": "HUGE-1",
+      "reason_code": "NO_FITTING_CARTON",
+      "message": "Exceeds every carton in all permitted orientations"
+    }
+  ]
+}
