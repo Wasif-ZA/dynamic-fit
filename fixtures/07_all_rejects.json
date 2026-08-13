@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "solution_id": "sol_07_all_rejects",
+  "order_id": "FIX-07",
+  "solver": {
+    "version": "0.1.0",
+    "seed": 196729471658505061,
+    "mode": "rigid",
+    "time_budget_ms": 1200,
+    "elapsed_ms": 0,
+    "tier": 1
+  },
+  "coordinate_system": {
+    "up": "z",
+    "handedness": "right",
+    "origin": "min_corner"
+  },
+  "units": {
+    "length": "mm",
+    "mass": "g"
+  },
+  "metrics": {
+    "carton_count": 0,
+    "fill_rate": 0.0,
+    "total_mass": 0
+  },
+  "cartons": [],
+  "rejects": [
+    {
+      "item_ref": "HUGE-2",
+      "reason_code": "NO_FITTING_CARTON",
+      "message": "Exceeds every carton in all permitted orientations"
+    }
+  ]
+}
