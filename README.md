@@ -29,6 +29,7 @@ of the project. Treat a breaking change to it as a breaking change to someone el
 | Doc | What it covers |
 |---|---|
 | [`docs/client-requirements.md`](docs/client-requirements.md) | What the client asked for, from the Q&A session |
+| [`docs/client-qa-2026-08-05.md`](docs/client-qa-2026-08-05.md) | The session record behind it. What he said, in his order, garbled passages marked |
 | [`docs/contract.md`](docs/contract.md) | The input/output interface other teams consume, with worked examples |
 | [`docs/architecture.md`](docs/architecture.md) | How the solver is structured and why |
 | [`docs/decisions/`](docs/decisions/) | Decision log. Read before re-opening a settled question |

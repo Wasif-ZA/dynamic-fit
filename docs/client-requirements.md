@@ -172,5 +172,8 @@ He is back in two weeks. Questions 1 and 2 block implementation, so ask those fi
 
 ---
 
-Full notes and the archived transcript live in Wasif's vault at
-`uni/comp4050/requirements/`. This file is the team-facing version.
+The session record this was written from is [`client-qa-2026-08-05.md`](client-qa-2026-08-05.md):
+what the client said, in the order he said it, with the garbled passages marked. Go there to check
+whether something here is his words or our reading. This file is what to build against.
+
+The raw machine transcript is not in this repo. Ask Wasif if you need it.
