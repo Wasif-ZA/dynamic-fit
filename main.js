@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-//import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 /* Scene */
 const scene = new THREE.Scene();
@@ -13,7 +12,10 @@ camera.position.set( 4, 3, 5 );
 camera.lookAt( 0, 0, 0 );
 
 /* Renderer */
-const canvas = document.querySelector( 'canvas' );
+const canvas = document.getElementById( 'visualiser-canvas' );
+if ( !canvas ) {
+  throw new Error( 'Canvas element #visualiser-canvas not found' );
+}
 const renderer = new THREE.WebGLRenderer( { canvas } );
 renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.setAnimationLoop( animate );
@@ -25,8 +27,6 @@ controls.touches = {
   ONE: THREE.TOUCH.ROTATE, // 1 finger rotate
   TWO: THREE.TOUCH.DOLLY_PAN // 2 finger to zoom + pan
 };
-
-//const loader = new GLTFLoader();
 
 /* Lighting */
 const ambientLight = new THREE.AmbientLight( 0xffffff, 0.6 );
@@ -43,14 +43,32 @@ const platform = new THREE.Mesh( platformGeometry, platformMaterial );
 platform.rotation.x = -Math.PI / 2;
 scene.add( platform );
 
-// Example Cube
-const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshStandardMaterial( { color: 0x00ff00 } );
-const cube = new THREE.Mesh( geometry, material );
-cube.position.y = 0.5;
-scene.add( cube );
+controls.target.set( 0, 0.5, 0 ); // Set the target for the camera to look at (example cube's position)
 
-controls.target.set( 0, 0.5, 0 ); // Set the target for the camera to look at (cube's position)
+async function loadSceneData( jsonPath ) {
+  const response = await fetch( jsonPath );
+  if ( !response.ok ) {
+    throw new Error( `Failed to load ${ jsonPath }: ${ response.status }` );
+  }
+  return response.json();
+}
+
+function buildSceneFromData( data ) {
+  // TODO: create cartons and placements from JSON values
+  console.log( 'Loaded scene data:', data );
+
+  // Example Cube
+  const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+  const material = new THREE.MeshStandardMaterial( { color: 0x00ff00 } );
+  const cube = new THREE.Mesh( geometry, material );
+  cube.position.y = 0.5;
+  scene.add( cube );
+}
+
+const jsonFileName = canvas.dataset.json;
+loadSceneData( jsonFileName )
+  .then( buildSceneFromData )
+  .catch( ( error ) => console.error( error ) );
 
 function animate( time ) {
 
