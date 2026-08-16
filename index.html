@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Discovery Visualiser</title>
     <link rel="stylesheet" href="/style.css">
     <style>
@@ -11,9 +12,13 @@
   <body>
     <h1>Discovery Visualiser</h1>
 
+    <!-- Carton info -->
+    <aside id="carton-info" aria-label="Carton dimensions"></aside>
+
+    <!-- Visualiser canvas -->
     <canvas
       id="visualiser-canvas"
-      data-json="/fixtures/02_full_carton.json"
+      data-json="/fixtures/03_multi_carton.json"
     ></canvas>
     
     <script type="module" src="/main.js"></script>

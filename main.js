@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DObject, CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
 
 /* Scene */
 const scene = new THREE.Scene();
@@ -18,6 +19,15 @@ if ( !canvas ) {
 }
 const renderer = new THREE.WebGLRenderer( { canvas } );
 renderer.setSize( window.innerWidth, window.innerHeight );
+
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize( window.innerWidth, window.innerHeight );
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = '0';
+labelRenderer.domElement.style.left = '0';
+labelRenderer.domElement.style.pointerEvents = 'none';
+document.body.appendChild( labelRenderer.domElement );
+
 renderer.setAnimationLoop( animate );
 
 /* Touch Controls */
@@ -40,6 +50,8 @@ scene.add( directionalLight );
 const platformMaterial = new THREE.MeshStandardMaterial( { color: 0xb8c2cc } );
 let platform = null;
 const PLATFORM_OFFSET = 0.05; // cm below lowest geometry to avoid z-fighting
+const CARTON_GAP = 5; // cm between cartons when laying out 2+
+const CARTON_DIM_PADDING = 0.05; // cm added to each carton axis to avoid z-clipping with placements
 
 function updatePlatformFromBounds( box ) {
   const padding = 10; // cm margin around cartons
@@ -101,27 +113,75 @@ function jsonMinCornerToThreeCenter( minCorner, dims ) {
   );
 }
 
+function computeCartonLayouts( cartons ) {
+  let offsetX = 0;
+
+  return cartons.map( ( carton ) => {
+    const [ width ] = jsonDimsToThree( carton.inner_dims );
+    const minCorner = new THREE.Vector3( offsetX, 0, 0 );
+    offsetX += width + CARTON_GAP;
+    return minCorner;
+  } );
+}
+
 let placementColorSeed = 0;
 
-function nextPlacementColor() {
-  // Golden-ratio hue stepping keeps successive items visually distinct.
-  const hue = ( placementColorSeed * 0.61803398875 ) % 1;
-  placementColorSeed++;
+function placementColorAt( index ) {
+  const hue = ( index * 0.61803398875 ) % 1;
   return new THREE.Color().setHSL( hue, 0.85, 0.55 );
 }
 
+function nextPlacementColor() {
+  return placementColorAt( placementColorSeed++ );
+}
+
+function colorToHex( color ) {
+  return `#${ color.getHexString() }`;
+}
+
+/* Dimension Labels */
+function createDimensionLabel( text ) {
+  const element = document.createElement( 'div' );
+  element.className = 'dimension-label';
+  element.textContent = text;
+  return new CSS2DObject( element );
+}
+
+function addCartonDimensionLabels( cartonMesh, innerDims, width, height, depth ) {
+  const [ xMm, yMm, zMm ] = innerDims;
+  const offset = 1.5;
+
+  const widthLabel = createDimensionLabel( `${ xMm } mm` );
+  widthLabel.position.set( 0, -height / 2 - offset, 0 );
+  cartonMesh.add( widthLabel );
+
+  const heightLabel = createDimensionLabel( `${ zMm } mm` );
+  heightLabel.position.set( -width / 2 - offset, 0, 0 );
+  cartonMesh.add( heightLabel );
+
+  const depthLabel = createDimensionLabel( `${ yMm } mm` );
+  depthLabel.position.set( 0, 0, -depth / 2 - offset );
+  cartonMesh.add( depthLabel );
+}
+
+/* Carton Mesh */
 function createCartonMesh( carton ) {
   const [ width, height, depth ] = jsonDimsToThree( carton.inner_dims );
-  const cartonGeometry = new THREE.BoxGeometry( width, height, depth );
+  const cartonGeometry = new THREE.BoxGeometry(
+    width + CARTON_DIM_PADDING,
+    height + CARTON_DIM_PADDING,
+    depth + CARTON_DIM_PADDING,
+  );
   const cartonMaterial = new THREE.MeshStandardMaterial( {
     color: 0x404040,
     transparent: true,
-    opacity: 0.35,
+    opacity: 0.20,
     side: THREE.DoubleSide,
     depthWrite: false,
   } );
   const cartonMesh = new THREE.Mesh( cartonGeometry, cartonMaterial );
-  cartonMesh.position.copy( jsonPositionToThree( carton.centre_of_mass ) );
+  cartonMesh.position.set( width / 2, height / 2, depth / 2 );
+  cartonMesh.renderOrder = 2;
 
   const edges = new THREE.EdgesGeometry( cartonGeometry );
   const edgeLines = new THREE.LineSegments(
@@ -130,30 +190,103 @@ function createCartonMesh( carton ) {
   );
   cartonMesh.add( edgeLines );
 
+  addCartonDimensionLabels( cartonMesh, carton.inner_dims, width, height, depth );
+
   return cartonMesh;
 }
 
+/* Placement Mesh */
 function createPlacementMesh( placement ) {
   const [ width, height, depth ] = jsonDimsToThree( placement.dims );
   const geometry = new THREE.BoxGeometry( width, height, depth );
-  const material = new THREE.MeshStandardMaterial( {color: nextPlacementColor()} );
+  const material = new THREE.MeshStandardMaterial( { color: nextPlacementColor() } );
   const mesh = new THREE.Mesh( geometry, material );
   mesh.position.copy( jsonMinCornerToThreeCenter( placement.position, placement.dims ) );
+  mesh.renderOrder = 1;
   return mesh;
 }
 
-function frameCameraOnObject( object ) {
+/* Carton Group: Create a group for a single carton, including its carton mesh and placements. */
+function createCartonGroup( carton, minCorner ) {
+  const group = new THREE.Group();
+  group.position.copy( minCorner );
+  group.add( createCartonMesh( carton ) );
+
+  for ( const placement of carton.placements ?? [] ) {
+    group.add( createPlacementMesh( placement ) );
+  }
+
+  return group;
+}
+
+function updateCartonInfoUI( cartons ) {
+  const panel = document.getElementById( 'carton-info' );
+  if ( !panel ) {
+    return;
+  }
+
+  if ( cartons.length === 0 ) {
+    panel.innerHTML = '<p class="carton-info-empty">No cartons in this solution.</p>';
+    return;
+  }
+
+  let placementColorIndex = 0;
+
+  panel.innerHTML = cartons.map( ( carton ) => {
+    const [ x, y, z ] = carton.inner_dims;
+    const placements = carton.placements ?? [];
+    const placementItems = placements.map( ( placement ) => {
+      const colorHex = colorToHex( placementColorAt( placementColorIndex++ ) );
+      return `
+        <li class="placement-info-item">
+          <span class="placement-swatch" style="background-color: ${ colorHex }" aria-hidden="true"></span>
+          <span class="placement-info-text">
+            <span class="placement-info-ref">${ placement.item_ref }</span>
+            <span class="placement-info-label">${ placement.label }</span>
+          </span>
+        </li>
+      `;
+    } ).join( '' );
+
+    return `
+      <details class="carton-info-entry">
+        <summary class="carton-info-summary">
+          <span class="carton-info-main">
+            <span class="carton-info-heading">
+              <strong>${ carton.sku }</strong>
+              <span class="carton-info-id">${ carton.carton_id }</span>
+            </span>
+            <span class="carton-info-dims">${ x } × ${ y } × ${ z } mm</span>
+          </span>
+          <span class="carton-expand-btn" aria-hidden="true">
+            <span class="carton-expand-label">Expand</span>
+            <span class="carton-collapse-label">Collapse</span>
+          </span>
+        </summary>
+        ${ placements.length > 0 
+          ? `<ul class="placement-info-list">${ placementItems }</ul>`
+          : '<p class="placement-info-empty">No placements</p>' }
+      </details>
+    `;
+  } ).join( '' );
+}
+
+function frameCameraOnObject( object, cartons ) {
   const box = new THREE.Box3().setFromObject( object );
   if ( box.isEmpty() ) {
     return;
   }
 
   const centre = box.getCenter( new THREE.Vector3() );
-  const size = box.getSize( new THREE.Vector3() );
-  const maxDim = Math.max( size.x, size.y, size.z );
-  const distance = Math.max( maxDim * 2.5, 1 );
 
-  camera.position.copy( centre ).add( new THREE.Vector3( distance, distance * 0.75, distance ) );
+  let maxCartonDim = 0;
+  for ( const carton of cartons ) {
+    const [ width, height, depth ] = jsonDimsToThree( carton.inner_dims );
+    maxCartonDim = Math.max( maxCartonDim, width, height, depth );
+  }
+
+  const distance = Math.max( maxCartonDim * 1.6, 1 );
+  camera.position.copy( centre ).add( new THREE.Vector3( distance * 0.85, distance * 0.65, distance * 0.85 ) );
   controls.target.copy( centre );
   controls.update();
 }
@@ -161,20 +294,20 @@ function frameCameraOnObject( object ) {
 function buildSceneFromData( data ) {
   placementColorSeed = 0;
 
+  const cartons = data.cartons ?? [];
+  const layouts = computeCartonLayouts( cartons );
   const cartonsGroup = new THREE.Group();
   scene.add( cartonsGroup );
 
-  for ( const carton of data.cartons ?? [] ) {
-    cartonsGroup.add( createCartonMesh( carton ) );
+  cartons.forEach( ( carton, index ) => {
+    cartonsGroup.add( createCartonGroup( carton, layouts[ index ] ) );
+  } );
 
-    for ( const placement of carton.placements ?? [] ) {
-      cartonsGroup.add( createPlacementMesh( placement ) );
-    }
-  }
+  updateCartonInfoUI( cartons );
 
   const cartonsBox = new THREE.Box3().setFromObject( cartonsGroup );
   updatePlatformFromBounds( cartonsBox );
-  frameCameraOnObject( cartonsGroup );
+  frameCameraOnObject( cartonsGroup, cartons );
 }
 
 const jsonFileName = canvas.dataset.json;
@@ -182,7 +315,15 @@ loadSceneData( jsonFileName )
   .then( buildSceneFromData )
   .catch( ( error ) => console.error( error ) );
 
+window.addEventListener( 'resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  labelRenderer.setSize( window.innerWidth, window.innerHeight );
+} );
+
 function animate( time ) {
   controls.update();
   renderer.render( scene, camera );
+  labelRenderer.render( scene, camera );
 }
