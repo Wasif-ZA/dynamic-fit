@@ -7,7 +7,7 @@ Given a list of items and the box types a warehouse stocks, work out **which box
 
 Written in C++20. See [ADR-0004](docs/decisions/0004-cpp-implementation.md).
 
-> **This repo is documentation only right now.** No source, no build, nothing to run. Sprint 0 is
+> **This repo is documentation only right now.** No source, no build, nothing to run. Sprint 1 is
 > for agreeing what we are building and what we hand the other teams. Code comes next.
 
 ## Scope: we build the solver, nothing else
