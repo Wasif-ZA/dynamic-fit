@@ -104,7 +104,7 @@ canvas {
 
 .carton-info-id {
   color: #57606a;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
 }
 
 .carton-info-dims {
@@ -161,7 +161,8 @@ canvas {
   font-size: 0.9rem;
 }
 
-.dimension-label {
+.label {
+  z-index: 0;
   padding: 0.3rem 0.55rem;
   border-radius: 0.3rem;
   background: rgba(255, 255, 255, 0.94);
@@ -172,6 +173,7 @@ canvas {
   white-space: nowrap;
 }
 
+/* Mobile View */
 @media (max-width: 768px) {
   html {
     font-size: 18px;

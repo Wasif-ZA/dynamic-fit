@@ -139,27 +139,33 @@ function colorToHex( color ) {
   return `#${ color.getHexString() }`;
 }
 
-/* Dimension Labels */
-function createDimensionLabel( text ) {
+/* Labels */
+function createLabel( text ) {
   const element = document.createElement( 'div' );
-  element.className = 'dimension-label';
+  element.className = 'label';
   element.textContent = text;
   return new CSS2DObject( element );
+}
+
+function addCartonIDLabel(cartonMesh, carton_id, height) {
+  const idLabel = createLabel(`${carton_id}`);
+  idLabel.position.set(0, height, 0);
+  cartonMesh.add( idLabel );
 }
 
 function addCartonDimensionLabels( cartonMesh, innerDims, width, height, depth ) {
   const [ xMm, yMm, zMm ] = innerDims;
   const offset = 1.5;
 
-  const widthLabel = createDimensionLabel( `${ xMm } mm` );
+  const widthLabel = createLabel( `${ xMm } mm` );
   widthLabel.position.set( 0, -height / 2 - offset, 0 );
   cartonMesh.add( widthLabel );
 
-  const heightLabel = createDimensionLabel( `${ zMm } mm` );
+  const heightLabel = createLabel( `${ zMm } mm` );
   heightLabel.position.set( -width / 2 - offset, 0, 0 );
   cartonMesh.add( heightLabel );
 
-  const depthLabel = createDimensionLabel( `${ yMm } mm` );
+  const depthLabel = createLabel( `${ yMm } mm` );
   depthLabel.position.set( 0, 0, -depth / 2 - offset );
   cartonMesh.add( depthLabel );
 }
@@ -190,7 +196,9 @@ function createCartonMesh( carton ) {
   );
   cartonMesh.add( edgeLines );
 
-  addCartonDimensionLabels( cartonMesh, carton.inner_dims, width, height, depth );
+  addCartonIDLabel( cartonMesh, carton.carton_id, height );
+
+  //addCartonDimensionLabels( cartonMesh, carton.inner_dims, width, height, depth );
 
   return cartonMesh;
 }
@@ -242,7 +250,7 @@ function updateCartonInfoUI( cartons ) {
           <span class="placement-swatch" style="background-color: ${ colorHex }" aria-hidden="true"></span>
           <span class="placement-info-text">
             <span class="placement-info-ref">${ placement.item_ref }</span>
-            <span class="placement-info-label">${ placement.label }</span>
+            <span class="placement-info-label">${ placement.label }</br>Weight: ${ (placement.mass / 1000).toFixed(3) } kg</span>
           </span>
         </li>
       `;
@@ -253,10 +261,14 @@ function updateCartonInfoUI( cartons ) {
         <summary class="carton-info-summary">
           <span class="carton-info-main">
             <span class="carton-info-heading">
-              <strong>${ carton.sku }</strong>
-              <span class="carton-info-id">${ carton.carton_id }</span>
+              <span class="carton-info-id"><strong>${ carton.carton_id }</strong></span>
+              ${ carton.sku }
             </span>
-            <span class="carton-info-dims">${ x } × ${ y } × ${ z } mm</span>
+            <span class="carton-info-dims">
+              ${ x } × ${ y } × ${ z } mm
+              </br>
+              Total Weight: ${ (carton.contents_mass / 1000).toFixed(3) } kg
+            </span>
           </span>
           <span class="carton-expand-btn" aria-hidden="true">
             <span class="carton-expand-label">Expand</span>
