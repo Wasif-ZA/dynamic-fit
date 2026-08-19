@@ -250,7 +250,18 @@ function updateCartonInfoUI( cartons ) {
           <span class="placement-swatch" style="background-color: ${ colorHex }" aria-hidden="true"></span>
           <span class="placement-info-text">
             <span class="placement-info-ref">${ placement.item_ref }</span>
-            <span class="placement-info-label">${ placement.label }</br>Weight: ${ (placement.mass / 1000).toFixed(3) } kg</span>
+            <span class="placement-info-label">
+              ${ placement.label }
+              </br>Weight: ${ (placement.mass / 1000).toFixed(3) } kg
+              </br> ${ placement.tags.length > 0
+                ? `<ul class="placement-info-tags">${ placement.tags.map( ( tag ) => {
+                  return `
+                    <li>${ tag }</li>
+                  `
+                }) }</ul>`
+                :  ''
+              }
+            </span>
           </span>
         </li>
       `;
