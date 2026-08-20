@@ -7,7 +7,8 @@ request always produces the same document (determinism).
 """
 from __future__ import annotations
 
-from hypothesis import given, settings, strategies as st
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 from fitsolver.domain import Carton, Item
 from fitsolver.engine import solve

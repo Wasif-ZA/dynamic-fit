@@ -26,8 +26,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from fitsolver import pack as P  # noqa: E402
 from compare import to_domain  # noqa: E402
+from fitsolver import pack as P  # noqa: E402
 from run import load_cases  # noqa: E402
 
 
@@ -49,8 +49,6 @@ def main() -> None:
 
     def first_fit_smallest(ordering, cartons):
         remaining, out = list(ordering), []
-        for carton in sorted(cartons, key=lambda c: c.volume):
-            pass
         by_vol = sorted(cartons, key=lambda c: c.volume)
         while remaining:
             for carton in by_vol:
