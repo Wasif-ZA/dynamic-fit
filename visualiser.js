@@ -227,20 +227,43 @@ function createCartonGroup( carton, minCorner ) {
   return group;
 }
 
-function updateCartonInfoUI( cartons ) {
+function updateCartonInfoUI( cartons, rejects ) {
   const panel = document.getElementById( 'carton-info' );
   if ( !panel ) {
     return;
   }
 
+  const rejectItems = rejects.map( ( reject ) => {
+    return `
+      <li class="placement-info-item">
+        <span class="placement-info-text">
+          <span class="placement-info-ref">${ reject.item_ref }</span>
+          <span class="placement-info-label">
+            ${ reject.reason_code }
+            </br>
+            ${ reject.message }
+          </span>
+        </span>
+      </li>
+    `
+  } ).join( '' );
+
   if ( cartons.length === 0 ) {
-    panel.innerHTML = '<p class="carton-info-empty">No cartons in this solution.</p>';
+    panel.innerHTML = `
+      <p class="carton-info-empty">No cartons in this solution.</p>
+      </br>
+      <span class="carton-info-heading"><strong>Rejected Items</strong></span>
+      ${ rejects.length > 0 
+        ? `<ul class="placement-info-list">${ rejectItems }</ul>`
+        : '<p class="placement-info-empty">No Rejected Items</p>'
+      }
+    `;
     return;
   }
 
   let placementColorIndex = 0;
 
-  panel.innerHTML = cartons.map( ( carton ) => {
+  let content = cartons.map( ( carton ) => {
     const [ x, y, z ] = carton.inner_dims;
     const placements = carton.placements ?? [];
     const placementItems = placements.map( ( placement ) => {
@@ -292,6 +315,17 @@ function updateCartonInfoUI( cartons ) {
       </details>
     `;
   } ).join( '' );
+
+  content += `
+    </br>
+    <span class="carton-info-heading"><strong>Rejected Items</strong></span>
+    ${ rejects.length > 0 
+      ? `<ul class="placement-info-list">${ rejectItems }</ul>`
+      : '<p class="placement-info-empty">No Rejected Items</p>'
+    }
+  `;
+
+  panel.innerHTML = content;
 }
 
 function frameCameraOnObject( object, cartons ) {
@@ -318,6 +352,7 @@ function buildSceneFromData( data ) {
   placementColorSeed = 0;
 
   const cartons = data.cartons ?? [];
+  const rejects = data.rejects ?? [];
   const layouts = computeCartonLayouts( cartons );
   const cartonsGroup = new THREE.Group();
   scene.add( cartonsGroup );
@@ -326,7 +361,7 @@ function buildSceneFromData( data ) {
     cartonsGroup.add( createCartonGroup( carton, layouts[ index ] ) );
   } );
 
-  updateCartonInfoUI( cartons );
+  updateCartonInfoUI( cartons, rejects );
 
   const cartonsBox = new THREE.Box3().setFromObject( cartonsGroup );
   updatePlatformFromBounds( cartonsBox );
