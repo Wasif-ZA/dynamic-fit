@@ -83,6 +83,7 @@ function updatePlatformFromBounds( box ) {
   platform.position.set( centreX, floorY, centreZ );
 }
 
+/* Load Scene Data */
 async function loadSceneData( jsonPath ) {
   const response = await fetch( jsonPath );
   if ( !response.ok ) {
@@ -91,6 +92,7 @@ async function loadSceneData( jsonPath ) {
   return response.json();
 }
 
+/* Dimensions and Layouts */
 const MM_TO_CM = 0.1; // JSON lengths are in millimetres; scene units are centimetres
 
 function jsonPositionToThree( [ x, y, z ] ) {
@@ -124,6 +126,7 @@ function computeCartonLayouts( cartons ) {
   } );
 }
 
+/* Placement Colors */
 let placementColorSeed = 0;
 
 function placementColorAt( index ) {
@@ -137,6 +140,24 @@ function nextPlacementColor() {
 
 function colorToHex( color ) {
   return `#${ color.getHexString() }`;
+}
+
+function getPlacementHighlightColor( baseColor ) {
+  const hsl = { h: 0, s: 0, l: 0 };
+  baseColor.getHSL( hsl );
+  return new THREE.Color().setHSL( hsl.h, Math.min( 1, hsl.s * 1.05 ), 0.86 );
+}
+
+const HIGHLIGHT_RENDER_ORDER = 20;
+const placementMeshes = [];
+
+function setPlacementHighlighted( placementIndex, highlighted ) {
+  const mesh = placementMeshes[ placementIndex ];
+  const outline = mesh?.userData.outline;
+  if ( !outline ) {
+    return;
+  }
+  outline.visible = highlighted;
 }
 
 /* Labels */
@@ -207,10 +228,28 @@ function createCartonMesh( carton ) {
 function createPlacementMesh( placement ) {
   const [ width, height, depth ] = jsonDimsToThree( placement.dims );
   const geometry = new THREE.BoxGeometry( width, height, depth );
-  const material = new THREE.MeshStandardMaterial( { color: nextPlacementColor() } );
+  const color = nextPlacementColor();
+  const material = new THREE.MeshStandardMaterial( { color } );
   const mesh = new THREE.Mesh( geometry, material );
   mesh.position.copy( jsonMinCornerToThreeCenter( placement.position, placement.dims ) );
   mesh.renderOrder = 1;
+
+  const outline = new THREE.LineSegments(
+    new THREE.EdgesGeometry( geometry ),
+    new THREE.LineBasicMaterial( {
+      color: getPlacementHighlightColor( color ),
+      depthTest: false,
+      depthWrite: false,
+      transparent: true,
+      toneMapped: false,
+    } ),
+  );
+  outline.renderOrder = HIGHLIGHT_RENDER_ORDER;
+  outline.visible = false;
+  mesh.add( outline );
+  mesh.userData.outline = outline;
+  placementMeshes.push( mesh );
+
   return mesh;
 }
 
@@ -267,9 +306,16 @@ function updateCartonInfoUI( cartons, rejects ) {
     const [ x, y, z ] = carton.inner_dims;
     const placements = carton.placements ?? [];
     const placementItems = placements.map( ( placement ) => {
-      const colorHex = colorToHex( placementColorAt( placementColorIndex++ ) );
+      const placementIndex = placementColorIndex++;
+      const colorHex = colorToHex( placementColorAt( placementIndex ) );
       return `
         <li class="placement-info-item">
+          <input
+            type="checkbox"
+            class="placement-highlight-toggle"
+            data-placement-index="${ placementIndex }"
+            aria-label="Highlight ${ placement.item_ref }"
+          >
           <span class="placement-swatch" style="background-color: ${ colorHex }" aria-hidden="true"></span>
           <span class="placement-info-text">
             <span class="placement-info-ref">${ placement.item_ref }</span>
@@ -326,6 +372,22 @@ function updateCartonInfoUI( cartons, rejects ) {
   `;
 
   panel.innerHTML = content;
+  bindCartonInfoHighlightEvents( panel );
+}
+
+/* Highlight Placement Item Event */
+function bindCartonInfoHighlightEvents( panel ) {
+  if ( panel.dataset.highlightBound === 'true' ) {
+    return;
+  }
+  panel.dataset.highlightBound = 'true';
+  panel.addEventListener( 'change', ( event ) => {
+    const toggle = event.target;
+    if ( !( toggle instanceof HTMLInputElement ) || !toggle.classList.contains( 'placement-highlight-toggle' ) ) {
+      return;
+    }
+    setPlacementHighlighted( Number( toggle.dataset.placementIndex ), toggle.checked );
+  } );
 }
 
 function frameCameraOnObject( object, cartons ) {
@@ -350,6 +412,7 @@ function frameCameraOnObject( object, cartons ) {
 
 function buildSceneFromData( data ) {
   placementColorSeed = 0;
+  placementMeshes.length = 0;
 
   const cartons = data.cartons ?? [];
   const rejects = data.rejects ?? [];

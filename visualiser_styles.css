@@ -140,6 +140,19 @@ canvas {
   padding: 0;
 }
 
+.placement-highlight-toggle {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  margin: 0.2rem 0 0;
+  accent-color: #1f2328;
+  cursor: pointer;
+}
+
+.placement-info-item:has(.placement-highlight-toggle:checked) .placement-swatch {
+  box-shadow: 0 0 0 2px #1f2328;
+}
+
 .placement-swatch {
   flex-shrink: 0;
   width: 1rem;
@@ -220,6 +233,7 @@ canvas {
     font-size: 0.95rem;
   }
 
+  .placement-highlight-toggle,
   .placement-swatch {
     width: 1.15rem;
     height: 1.15rem;
