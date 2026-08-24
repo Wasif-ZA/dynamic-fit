@@ -16,7 +16,7 @@ import random
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
@@ -72,7 +72,7 @@ def main() -> None:
         elapsed.append(doc["solver"]["elapsed_ms"])
 
     record = {
-        "ts": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "ts": datetime.now(UTC).isoformat(timespec="seconds"),
         "rev": git_rev(),
         "budget_ms": args.budget_ms,
         "cases": len(cases),

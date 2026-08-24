@@ -13,6 +13,7 @@ main            always works. Never commit straight to it.
 feat/<thing>    new work
 fix/<thing>     bug fixes
 docs/<thing>    docs and decision records
+ci/<thing>      CI and repository automation
 ```
 
 1. Branch off `main`.
@@ -20,6 +21,11 @@ docs/<thing>    docs and decision records
    no review.
 3. **One teammate reviews before merge.** Not optional, and not the same person every time.
 4. Squash merge. Keeps `main` readable.
+5. Delete the merged branch locally and on GitHub, then prune remote-tracking refs. Reuse the same
+   branch while its PR is open; do not create retry or revision branches.
+
+`CI gate` is the one status check required by branch protection. That name is part of the repository
+settings: do not rename it or reuse it for another job without updating protection at the same time.
 
 Write commit messages that say why, not what. The diff already says what.
 
@@ -103,11 +109,17 @@ pick a default and record it.
 
 ## Local setup
 
-Nothing to set up yet. Two things worth knowing when there is:
+Install the solver and its development tools from `fitsolver/`:
 
-- **If your clone lives in a synced folder** (OneDrive, Dropbox, Google Drive), keep build
-  directories out of it. Sync clients choke on thousands of small object files, and some build tools
-  fail outright on hardlinks in synced folders.
+```bash
+python -m pip install -e ".[dev,api]"
+python -m pytest -c pyproject.toml
+python -m ruff check .
+```
+
+The explicit `-c pyproject.toml` keeps a `pytest.ini` in a parent directory from hijacking test
+collection. This matters when the clone sits inside a larger Python workspace.
+
+- **If your clone lives in a synced folder** (OneDrive, Dropbox, Google Drive), keep virtualenvs,
+  caches and build directories out of it. Sync clients choke on thousands of small files.
 - **Never commit a `.env`.** Commit `.env.example` naming the variables with no values.
-- There is no `.gitignore` yet, because there is nothing to ignore. Add one in the same PR that adds
-  the build system, before the first build artefact gets committed by accident.

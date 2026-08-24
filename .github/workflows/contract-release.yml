@@ -1,0 +1,83 @@
+name: Contract release
+
+on:
+  push:
+    tags:
+      - "contract-v*"
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: contract-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Contract release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out tagged commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.14"
+      - name: Verify tag version and main ancestry
+        run: |
+          git fetch --no-tags origin main
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+
+          version="$(python -c 'import json; print(json.load(open("contract/solution.schema.json"))["properties"]["schema_version"]["const"])')"
+          if [ "$GITHUB_REF_NAME" != "contract-v${version}" ]; then
+            printf 'tag %s does not match schema version %s\n' \
+              "$GITHUB_REF_NAME" "$version"
+            exit 1
+          fi
+          echo "CONTRACT_VERSION=$version" >> "$GITHUB_ENV"
+      - name: Download artifact from successful main CI
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          run_id="$(gh run list \
+            --repo "$GITHUB_REPOSITORY" \
+            --workflow ci.yml \
+            --commit "$GITHUB_SHA" \
+            --event push \
+            --status success \
+            --limit 1 \
+            --json databaseId \
+            --jq '.[0].databaseId')"
+
+          if [ -z "$run_id" ] || [ "$run_id" = null ]; then
+            echo "No successful push CI run exists for $GITHUB_SHA"
+            exit 1
+          fi
+
+          gh run download "$run_id" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name "contract-${GITHUB_SHA}" \
+            --dir release-assets
+      - name: Publish immutable versioned assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          bundle="$(find release-assets -type f -name "contract-${CONTRACT_VERSION}.zip" -print -quit)"
+          checksum="$(find release-assets -type f -name "contract-${CONTRACT_VERSION}.zip.sha256" -print -quit)"
+          manifest="$(find release-assets -type f -name "contract-manifest.json" -print -quit)"
+
+          test -n "$bundle"
+          test -n "$checksum"
+          test -n "$manifest"
+
+          gh release create "$GITHUB_REF_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag \
+            --generate-notes \
+            --title "Contract ${CONTRACT_VERSION}" \
+            "$bundle" "$checksum" "$manifest"

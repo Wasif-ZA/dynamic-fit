@@ -22,12 +22,13 @@ What lives in `contract/`:
 |---|---|
 | `request.schema.json` | Portal → Solver. Includes `time_budget_ms` from day one. |
 | `solution.schema.json` | Solver → Portal → Visualizer, passed through **verbatim**. |
-| `fixtures/*.json` (10 files) | Golden documents. Visualizer builds its whole renderer against these with no solver running. |
+| `fixtures/*.json` | Golden documents. Visualizer builds its whole renderer against all committed fixtures with no solver running. |
 
 CI gates, both directions:
 - Solver: every emitted document validates against `solution.schema.json`
   (already implemented: `tests/test_contract.py`).
-- Visualizer: renders all 10 fixtures without error, on every commit.
+- Visualizer: renders every fixture listed in the generated contract manifest without error,
+  on every commit.
 - Portal: round-trips fixture documents through storage byte-identical.
 
 Schema changes require sign-off from all three teams and a version bump.
@@ -43,9 +44,9 @@ Nothing else requires coordination.
 - [x] Solution schema: integer mm/g, Z-up right-handed min-corner, orientation
       index 0–5, `sequence` for step-through, semantic `tags` (no colours),
       `rejects` always present
-- [x] 10 golden fixtures covering: single item, full carton, multi-carton,
+- [x] Golden fixtures covering: single item, full carton, multi-carton,
       DG split, incompatibility, partial rejects, all-rejects,
-      orientation-locked reject, 60-item order, weight-limited
+      orientation-locked reject, 60-item order, weight-limited and 250-item stress
 - [ ] Walk FitPortal + FitVisualizer through it Wednesday; get sign-off in the
       sprint planning minutes (this is an assessable artefact — log it)
 
