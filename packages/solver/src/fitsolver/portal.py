@@ -94,8 +94,52 @@ def _list(payload: dict, key: str) -> list:
     return value
 
 
+# Portal's Pydantic models serialise PascalCase on the wire ("ItemCode"), while
+# this module was written against snake_case ("item_code"). Both are accepted:
+# the names below are normalised first, so neither side had to rename anything.
+# Two fields are not a pure case change and need naming explicitly.
+_ALIASES = {
+    "reference": "box_reference",   # BoxType.Reference is the box's id
+    "box_weight": "tare_weight",    # BoxType.BoxWeight is the empty-box mass
+}
+
+
+def _snake(name: str) -> str:
+    out = []
+    for index, char in enumerate(name):
+        if char.isupper() and index and not name[index - 1].isupper():
+            out.append("_")
+        out.append(char.lower())
+    return "".join(out)
+
+
+def _normalise(value):
+    """Rewrite PascalCase keys to the snake_case this module already reads.
+
+    Applied to the whole document, so nested items and boxes are covered. A key
+    already in snake_case passes through unchanged, which is what keeps the
+    existing callers and their tests working.
+    """
+    if isinstance(value, list):
+        return [_normalise(entry) for entry in value]
+    if not isinstance(value, dict):
+        return value
+
+    out = {}
+    for key, entry in value.items():
+        name = _snake(key) if isinstance(key, str) else key
+        name = _ALIASES.get(name, name)
+        # A caller that sent both spellings keeps the snake_case one.
+        if name in out and key != name:
+            continue
+        out[name] = _normalise(entry)
+    return out
+
+
 def to_contract(payload: object) -> dict:
     """Portal request -> solver request.
+
+    Accepts Portal's PascalCase wire format or the snake_case equivalent.
 
     Raises PortalRequestError, naming the offending field, on anything we
     cannot translate. Per-item problems the solver can express as a reject
@@ -103,6 +147,7 @@ def to_contract(payload: object) -> dict:
     """
     if not isinstance(payload, dict):
         raise PortalRequestError("request body must be a JSON object")
+    payload = _normalise(payload)
 
     items = []
     for n, i in enumerate(_list(payload, "items")):

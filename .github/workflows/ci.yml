@@ -1,0 +1,103 @@
+name: CI
+
+# The end-to-end job is the point of this workflow. Each subsystem's own tests
+# passed for months while the Portal sent field names the solver could not parse,
+# because no CI run ever put them in the same process.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Solver, portal, end to end
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      # Node is installed before the Python suites on purpose: the renderer
+      # contract test shells out to it and skips itself when node is missing. A
+      # skipped test reads as a pass, so it must not be able to skip here.
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Python dependencies
+        run: uv sync --group dev
+
+      - name: Solver
+        run: uv run pytest packages/solver/tests -v
+
+      - name: Portal backend
+        run: uv run pytest apps/portal/backend/tests -v
+
+      - name: End to end
+        run: uv run pytest tests/integration -v
+
+      - name: Confirm the renderer contract tests actually ran
+        run: |
+          uv run pytest tests/integration/test_renderer_contract.py -q -rs > result.txt 2>&1
+          cat result.txt
+          if grep -qi 'skipped' result.txt; then
+            echo "::error::renderer contract tests were skipped; they must run in CI"
+            exit 1
+          fi
+
+  contract:
+    name: Published contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install Python dependencies
+        run: uv sync --group dev
+
+      # Every committed fixture must still satisfy the published schema. A fixture
+      # that contradicts the schema is worse than no fixture, because the other two
+      # subteams are building against it right now.
+      - name: Fixtures match the published schema
+        run: uv run python contract/validate_fixtures.py
+
+  frontends:
+    name: Front ends build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Visualiser builds
+        working-directory: apps/visualiser
+        run: |
+          npm install
+          npx vite build
+
+      - name: Portal front end builds
+        working-directory: apps/portal/frontend
+        run: |
+          npm install
+          npx vite build

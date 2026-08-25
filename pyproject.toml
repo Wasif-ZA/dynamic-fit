@@ -1,0 +1,35 @@
+[project]
+name = "dynamic-fit"
+version = "0.1.0"
+description = "Dynamic Fit: portal, solver and visualiser for warehouse carton packing."
+requires-python = ">=3.11"
+dependencies = [
+    "fitsolver",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "pydantic>=2.9",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "httpx>=0.27",
+    "jsonschema>=4.20",
+    "hypothesis>=6.100",
+]
+
+[tool.uv.workspace]
+members = ["packages/solver"]
+
+[tool.uv.sources]
+fitsolver = { workspace = true }
+
+# One run covers all three subsystems. Each subteam's own suite passed for months
+# while the three spoke different schemas, because nothing ran them together.
+[tool.pytest.ini_options]
+testpaths = [
+    "packages/solver/tests",
+    "apps/portal/backend/tests",
+    "tests/integration",
+]
+pythonpath = ["apps/portal/backend"]

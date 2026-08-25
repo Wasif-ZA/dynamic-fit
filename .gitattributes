@@ -1,0 +1,12 @@
+# Normalise to LF, which is what all three source repositories already store.
+#
+# Measured at the merge: of the Portal's 43 files, 42 were stored LF and one
+# (README.md) CRLF; the visualiser and the solver were LF throughout. So this
+# rewrites exactly one file, once.
+#
+# Without it, a Windows checkout with core.autocrlf=true stages CRLF for
+# everything and produces a whitespace-only diff across every file in the
+# repository, authored by whoever ran the merge. That would bury the per-author
+# contribution record the subtree import exists to preserve (ADR-0007).
+* text=auto eol=lf
+*.zip binary

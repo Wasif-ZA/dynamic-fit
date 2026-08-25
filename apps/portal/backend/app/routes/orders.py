@@ -54,6 +54,15 @@ def create_order(order: Order) -> StoredOrder:
     return stored
 
 
+def find_order(order_id: str) -> StoredOrder | None:
+    """Look up an order without going through the HTTP layer.
+
+    The solve routes need the stored order, and reaching into a private dict from
+    another module would break the moment #30 swaps it for Supabase.
+    """
+    return _orders.get(order_id)
+
+
 @router.get(
     "/{order_id}",
     response_model=StoredOrder,

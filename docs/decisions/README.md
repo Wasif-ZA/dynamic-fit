@@ -1,0 +1,30 @@
+# Decision log
+
+One file per decision that was hard to make or would otherwise be re-argued every fortnight.
+
+**Why bother.** Two reasons. Practically, it stops "why is everything in millimetres?" coming back
+every sprint. For the unit, the Individual Reflective Report has to explicitly refer to artefacts,
+and a dated record of a decision you argued for is far better evidence than a memory in November.
+
+## Writing one
+
+Copy the shape of an existing file. Number it next in sequence, keep it short, and put the reasoning
+in, not just the conclusion. A decision with no "why" is worthless six weeks later.
+
+Statuses: **proposed**, **accepted**, **superseded by ADR-NNNN**.
+
+Never edit an accepted decision to change its meaning. Write a new one that supersedes it and mark
+the old one. The trail of what we changed our minds about is the useful part.
+
+## Index
+
+| ADR | Decision | Status |
+|---|---|---|
+| [0001](0001-record-decisions.md) | Keep a decision log | accepted |
+| [0002](0002-units-and-coordinates.md) | Integer millimetres and grams, origin at the inside corner | accepted |
+| [0003](0003-solver-only-scope.md) | We build the solver only, and publish a contract | accepted |
+| [0004](0004-cpp-implementation.md) | Write the solver in C++20 | superseded by 0005 |
+| [0005](0005-python-solver.md) | The solver is written in Python | accepted |
+| [0006](0006-the-implemented-schema-is-canonical.md) | The implemented schema is canonical, contract.md superseded | accepted |
+| [0007](0007-monorepo-with-preserved-history.md) | One repository, with history preserved | accepted |
+| [0008](0008-portal-solver-integration.md) | How the Portal reaches the solver | accepted |

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.routes import orders
+from app.routes import orders, solve
 
 app = FastAPI(
     title="FitPortal API",
@@ -9,6 +9,7 @@ app = FastAPI(
 )
 
 app.include_router(orders.router)
+app.include_router(solve.router)
 
 
 @app.get("/health", tags=["status"])

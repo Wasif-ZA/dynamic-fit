@@ -13,9 +13,20 @@ import pytest
 
 from fitsolver.engine import solve
 
-SCHEMA = json.loads(
-    (Path(__file__).resolve().parents[2] / "contract" /
-     "solution.schema.json").read_text())
+def _schema_path(name: str) -> Path:
+    """Walk up for contract/, rather than counting directories.
+
+    The solver moved from a repo root into packages/solver/ when the subsystems
+    were merged, which shifted the depth. Searching upward survives the next move.
+    """
+    for parent in Path(__file__).resolve().parents:
+        candidate = parent / "contract" / name
+        if candidate.exists():
+            return candidate
+    raise FileNotFoundError(f"contract/{name} not found above {__file__}")
+
+
+SCHEMA = json.loads(_schema_path("solution.schema.json").read_text())
 
 REQUESTS = {
     "single_item": {

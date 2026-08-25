@@ -1,0 +1,37 @@
+# Who has to approve a change to what.
+#
+# Merging the repositories did not transfer ownership of the code in them. Each
+# subtree still belongs to the person who built it, so a change to the Portal still
+# needs Aaron and a change to the visualiser still needs Persephone.
+#
+# CODEOWNERS on its own only REQUESTS reviewers; it blocks nothing. For these lines
+# to have force, `main` needs branch protection with "Require a pull request before
+# merging" and "Require review from Code Owners" both enabled. See
+# docs/MERGE-RUNBOOK.md.
+
+# Anything not claimed below.
+*                           @Wasif-ZA
+
+# FitPortal: FastAPI backend and the React front end.
+/apps/portal/               @AaronMinhas
+
+# FitVisualizer: the Three.js renderer and its styles.
+/apps/visualiser/           @sweetpea004
+
+# FitSolver: the packing engine, its tests and its benchmarks.
+/packages/solver/           @Wasif-ZA
+
+# The published interface. Everything crosses it, so everyone reviews it. This is
+# docs/contract.md's own "breaking changes need a heads-up" rule, made enforceable.
+/contract/                  @Wasif-ZA @AaronMinhas @sweetpea004
+
+# The end-to-end suite is the only place all three meet, so breaking it is
+# everyone's problem.
+/tests/integration/         @Wasif-ZA @AaronMinhas @sweetpea004
+
+# Decisions are the team's record, not one person's.
+/docs/decisions/            @Wasif-ZA @AaronMinhas @sweetpea004
+
+# CI, ownership rules, and the assembly script.
+/.github/                   @Wasif-ZA
+/scripts/                   @Wasif-ZA
