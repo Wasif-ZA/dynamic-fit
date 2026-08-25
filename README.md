@@ -8,9 +8,9 @@ Three subsystems, one repository:
 
 | Subsystem | Lives in | Owner | What it does |
 |---|---|---|---|
-| **FitPortal** | `apps/portal/` | @AaronMinhas | Takes the order, shows the result |
-| **FitSolver** | `packages/solver/` | @Wasif-ZA | Does the packing |
-| **FitVisualizer** | `apps/visualiser/` | @sweetpea004 | Draws it in 3D |
+| **FitPortal** | `apps/portal/`  Takes the order, shows the result |
+| **FitSolver** | `packages/solver/` | Does the packing |
+| **FitVisualizer** | `apps/visualiser/` | Draws it in 3D |
 
     FitPortal  ->  FitSolver  ->  FitPortal  ->  FitVisualizer
 
