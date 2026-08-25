@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://perfectfit.example/contract/solution/1.0.0",
+  "title": "PerfectFit Solution Document",
+  "description": "Self-contained packing solution. A visualiser must be able to render a complete scene from this document with zero further network calls.",
+  "type": "object",
+  "required": ["schema_version", "solution_id", "solver", "coordinate_system", "units", "metrics", "cartons", "rejects"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "solution_id": { "type": "string" },
+    "order_id": { "type": "string" },
+    "solver": {
+      "type": "object",
+      "required": ["version", "seed", "time_budget_ms", "elapsed_ms", "tier"],
+      "properties": {
+        "version": { "type": "string" },
+        "seed": { "type": "integer" },
+        "mode": { "enum": ["rigid", "fluid", "mixed"] },
+        "time_budget_ms": { "type": "integer", "minimum": 0 },
+        "elapsed_ms": { "type": "integer", "minimum": 0 },
+        "tier": { "type": "integer", "minimum": 0, "maximum": 2,
+                  "description": "0=cache, 1=greedy, 2=search" }
+      }
+    },
+    "coordinate_system": {
+      "type": "object",
+      "required": ["up", "handedness", "origin"],
+      "properties": {
+        "up": { "const": "z" },
+        "handedness": { "const": "right" },
+        "origin": { "const": "min_corner" }
+      }
+    },
+    "units": {
+      "type": "object",
+      "required": ["length", "mass"],
+      "properties": {
+        "length": { "const": "mm" },
+        "mass": { "const": "g" }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["carton_count", "fill_rate", "total_mass"],
+      "properties": {
+        "carton_count": { "type": "integer", "minimum": 0 },
+        "fill_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "total_mass": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "cartons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["carton_id", "sku", "inner_dims", "tare_mass", "contents_mass", "fill_rate", "placements"],
+        "properties": {
+          "carton_id": { "type": "string" },
+          "sku": { "type": "string" },
+          "inner_dims": { "$ref": "#/$defs/ivec3" },
+          "tare_mass": { "type": "integer", "minimum": 0 },
+          "contents_mass": { "type": "integer", "minimum": 0 },
+          "fill_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+          "centre_of_mass": { "$ref": "#/$defs/ivec3" },
+          "placements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["placement_id", "item_ref", "label", "position", "dims", "orientation", "mass", "sequence", "tags"],
+              "properties": {
+                "placement_id": { "type": "string" },
+                "item_ref": { "type": "string" },
+                "label": { "type": "string" },
+                "position": { "$ref": "#/$defs/ivec3",
+                              "description": "Minimum corner of the item, relative to carton min corner." },
+                "dims": { "$ref": "#/$defs/ivec3",
+                          "description": "Post-rotation dimensions. A renderer needs only position+dims to draw a correct box." },
+                "orientation": { "type": "integer", "minimum": 0, "maximum": 5,
+                                 "description": "Index into the 6 axis-aligned permutations of the item's base dims (w,d,h)." },
+                "mass": { "type": "integer", "minimum": 0 },
+                "sequence": { "type": "integer", "minimum": 0,
+                              "description": "Physical packing order within the carton, 0-based. Enables step-through / playback." },
+                "tags": { "type": "array", "items": { "type": "string" },
+                          "description": "Semantic tags (fragile, dg_class_3, heavy, fluid). Visualiser owns the palette." }
+              }
+            }
+          }
+        }
+      }
+    },
+    "rejects": {
+      "type": "array",
+      "description": "Always present, even when empty. Partial success is the normal case, not an error path.",
+      "items": {
+        "type": "object",
+        "required": ["item_ref", "reason_code", "message"],
+        "properties": {
+          "item_ref": { "type": "string" },
+          "reason_code": { "enum": ["NO_FITTING_CARTON", "INVALID_DIMENSIONS", "MISSING_MASS", "UNKNOWN_DG_CLASS", "UNPLACEABLE"] },
+          "message": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "ivec3": {
+      "type": "array",
+      "items": { "type": "integer", "minimum": 0 },
+      "minItems": 3,
+      "maxItems": 3
+    }
+  }
+}

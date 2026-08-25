@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fitsolver"
+version = "0.1.0"
+description = "3D bin-packing solver for COMP4050 Project Perfect Fit"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = []
+
+[project.optional-dependencies]
+api = [
+    "fastapi==0.141.1",
+    "uvicorn==0.52.3",
+]
+dev = [
+    "httpx==0.28.1",
+    "pytest==9.1.1",
+    "hypothesis==6.165.10",
+    "jsonschema==4.26.0",
+    "ruff==0.16.3",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests", "bench"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.format]
+line-ending = "lf"

@@ -1,0 +1,2 @@
+{"ts": "2026-08-08T04:55:27+00:00", "rev": "nogit", "budget_ms": 500, "cases": 20, "mean_fill_rate": 0.5452, "total_cartons": 54, "rejected": 0, "mean_elapsed_ms": 211.9, "wall_s": 4.3}
+{"ts": "2026-08-08T05:21:35+00:00", "rev": "nogit", "budget_ms": 200, "cases": 20, "mean_fill_rate": 0.4815, "total_cartons": 28, "rejected": 0, "mean_elapsed_ms": 165.8, "wall_s": 3.3}

@@ -1,0 +1,1284 @@
+{
+  "schema_version": "1.0.0",
+  "solution_id": "sol_09_large_order",
+  "order_id": "FIX-09",
+  "solver": {
+    "version": "0.1.0",
+    "seed": 14324191727411215718,
+    "mode": "rigid",
+    "time_budget_ms": 1200,
+    "elapsed_ms": 46,
+    "tier": 1
+  },
+  "coordinate_system": {
+    "up": "z",
+    "handedness": "right",
+    "origin": "min_corner"
+  },
+  "units": {
+    "length": "mm",
+    "mass": "g"
+  },
+  "metrics": {
+    "carton_count": 6,
+    "fill_rate": 0.688,
+    "total_mass": 82690
+  },
+  "cartons": [
+    {
+      "carton_id": "c1",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 8085,
+      "fill_rate": 0.8694,
+      "centre_of_mass": [
+        258,
+        206,
+        163
+      ],
+      "placements": [
+        {
+          "placement_id": "p1_0",
+          "item_ref": "MIX-55",
+          "label": "Mixed item 55",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            255,
+            225,
+            185
+          ],
+          "orientation": 0,
+          "mass": 1005,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_1",
+          "item_ref": "MIX-27",
+          "label": "Mixed item 27",
+          "position": [
+            255,
+            0,
+            0
+          ],
+          "dims": [
+            173,
+            259,
+            211
+          ],
+          "orientation": 4,
+          "mass": 2017,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_2",
+          "item_ref": "MIX-49",
+          "label": "Mixed item 49",
+          "position": [
+            0,
+            225,
+            0
+          ],
+          "dims": [
+            171,
+            117,
+            293
+          ],
+          "orientation": 5,
+          "mass": 579,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_3",
+          "item_ref": "MIX-47",
+          "label": "Mixed item 47",
+          "position": [
+            0,
+            0,
+            185
+          ],
+          "dims": [
+            219,
+            221,
+            113
+          ],
+          "orientation": 0,
+          "mass": 437,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_4",
+          "item_ref": "MIX-46",
+          "label": "Mixed item 46",
+          "position": [
+            255,
+            259,
+            0
+          ],
+          "dims": [
+            182,
+            84,
+            168
+          ],
+          "orientation": 1,
+          "mass": 366,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_5",
+          "item_ref": "MIX-43",
+          "label": "Mixed item 43",
+          "position": [
+            255,
+            0,
+            211
+          ],
+          "dims": [
+            157,
+            219,
+            71
+          ],
+          "orientation": 5,
+          "mass": 153,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_6",
+          "item_ref": "MIX-51",
+          "label": "Mixed item 51",
+          "position": [
+            171,
+            225,
+            0
+          ],
+          "dims": [
+            69,
+            107,
+            223
+          ],
+          "orientation": 4,
+          "mass": 721,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_7",
+          "item_ref": "MIX-2",
+          "label": "Mixed item 2",
+          "position": [
+            255,
+            259,
+            168
+          ],
+          "dims": [
+            146,
+            88,
+            114
+          ],
+          "orientation": 3,
+          "mass": 242,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_8",
+          "item_ref": "MIX-57",
+          "label": "Mixed item 57",
+          "position": [
+            171,
+            225,
+            223
+          ],
+          "dims": [
+            83,
+            121,
+            69
+          ],
+          "orientation": 5,
+          "mass": 1147,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_9",
+          "item_ref": "MIX-50",
+          "label": "Mixed item 50",
+          "position": [
+            255,
+            219,
+            211
+          ],
+          "dims": [
+            170,
+            40,
+            70
+          ],
+          "orientation": 3,
+          "mass": 650,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_10",
+          "item_ref": "MIX-8",
+          "label": "Mixed item 8",
+          "position": [
+            401,
+            259,
+            168
+          ],
+          "dims": [
+            44,
+            76,
+            102
+          ],
+          "orientation": 2,
+          "mass": 668,
+          "sequence": 10,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_11",
+          "item_ref": "MIX-0",
+          "label": "Mixed item 0",
+          "position": [
+            219,
+            0,
+            185
+          ],
+          "dims": [
+            30,
+            40,
+            40
+          ],
+          "orientation": 4,
+          "mass": 100,
+          "sequence": 11,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c2",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 13282,
+      "fill_rate": 0.7695,
+      "centre_of_mass": [
+        232,
+        172,
+        147
+      ],
+      "placements": [
+        {
+          "placement_id": "p2_0",
+          "item_ref": "MIX-11",
+          "label": "Mixed item 11",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            187,
+            203,
+            189
+          ],
+          "orientation": 0,
+          "mass": 881,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_1",
+          "item_ref": "MIX-42",
+          "label": "Mixed item 42",
+          "position": [
+            187,
+            0,
+            0
+          ],
+          "dims": [
+            166,
+            294,
+            128
+          ],
+          "orientation": 2,
+          "mass": 3082,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_2",
+          "item_ref": "MIX-54",
+          "label": "Mixed item 54",
+          "position": [
+            187,
+            0,
+            128
+          ],
+          "dims": [
+            218,
+            172,
+            156
+          ],
+          "orientation": 0,
+          "mass": 934,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_3",
+          "item_ref": "MIX-14",
+          "label": "Mixed item 14",
+          "position": [
+            0,
+            203,
+            0
+          ],
+          "dims": [
+            152,
+            116,
+            298
+          ],
+          "orientation": 3,
+          "mass": 1094,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_4",
+          "item_ref": "MIX-38",
+          "label": "Mixed item 38",
+          "position": [
+            187,
+            172,
+            128
+          ],
+          "dims": [
+            146,
+            164,
+            172
+          ],
+          "orientation": 0,
+          "mass": 2798,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_5",
+          "item_ref": "MIX-13",
+          "label": "Mixed item 13",
+          "position": [
+            353,
+            0,
+            0
+          ],
+          "dims": [
+            87,
+            261,
+            99
+          ],
+          "orientation": 4,
+          "mass": 1023,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_6",
+          "item_ref": "MIX-25",
+          "label": "Mixed item 25",
+          "position": [
+            0,
+            0,
+            189
+          ],
+          "dims": [
+            185,
+            115,
+            105
+          ],
+          "orientation": 1,
+          "mass": 1875,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_7",
+          "item_ref": "MIX-44",
+          "label": "Mixed item 44",
+          "position": [
+            0,
+            115,
+            189
+          ],
+          "dims": [
+            186,
+            62,
+            108
+          ],
+          "orientation": 5,
+          "mass": 224,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_8",
+          "item_ref": "MIX-56",
+          "label": "Mixed item 56",
+          "position": [
+            353,
+            261,
+            0
+          ],
+          "dims": [
+            68,
+            54,
+            292
+          ],
+          "orientation": 3,
+          "mass": 1076,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_9",
+          "item_ref": "MIX-45",
+          "label": "Mixed item 45",
+          "position": [
+            187,
+            294,
+            0
+          ],
+          "dims": [
+            145,
+            55,
+            115
+          ],
+          "orientation": 1,
+          "mass": 295,
+          "sequence": 9,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c3",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 19726,
+      "fill_rate": 0.7696,
+      "centre_of_mass": [
+        234,
+        176,
+        125
+      ],
+      "placements": [
+        {
+          "placement_id": "p3_0",
+          "item_ref": "MIX-35",
+          "label": "Mixed item 35",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            295,
+            215,
+            85
+          ],
+          "orientation": 0,
+          "mass": 2585,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_1",
+          "item_ref": "MIX-26",
+          "label": "Mixed item 26",
+          "position": [
+            295,
+            0,
+            0
+          ],
+          "dims": [
+            144,
+            222,
+            158
+          ],
+          "orientation": 4,
+          "mass": 1946,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_2",
+          "item_ref": "MIX-21",
+          "label": "Mixed item 21",
+          "position": [
+            0,
+            215,
+            0
+          ],
+          "dims": [
+            159,
+            103,
+            297
+          ],
+          "orientation": 5,
+          "mass": 1591,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_3",
+          "item_ref": "MIX-19",
+          "label": "Mixed item 19",
+          "position": [
+            0,
+            0,
+            85
+          ],
+          "dims": [
+            223,
+            207,
+            101
+          ],
+          "orientation": 0,
+          "mass": 1449,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_4",
+          "item_ref": "MIX-59",
+          "label": "Mixed item 59",
+          "position": [
+            295,
+            0,
+            158
+          ],
+          "dims": [
+            143,
+            227,
+            141
+          ],
+          "orientation": 0,
+          "mass": 1289,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_5",
+          "item_ref": "MIX-33",
+          "label": "Mixed item 33",
+          "position": [
+            0,
+            0,
+            186
+          ],
+          "dims": [
+            221,
+            187,
+            109
+          ],
+          "orientation": 1,
+          "mass": 2443,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_6",
+          "item_ref": "MIX-41",
+          "label": "Mixed item 41",
+          "position": [
+            159,
+            215,
+            0
+          ],
+          "dims": [
+            113,
+            99,
+            257
+          ],
+          "orientation": 3,
+          "mass": 3011,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_7",
+          "item_ref": "MIX-18",
+          "label": "Mixed item 18",
+          "position": [
+            223,
+            0,
+            85
+          ],
+          "dims": [
+            72,
+            186,
+            154
+          ],
+          "orientation": 4,
+          "mass": 1378,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_8",
+          "item_ref": "MIX-37",
+          "label": "Mixed item 37",
+          "position": [
+            295,
+            222,
+            0
+          ],
+          "dims": [
+            109,
+            111,
+            143
+          ],
+          "orientation": 0,
+          "mass": 2727,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_9",
+          "item_ref": "MIX-17",
+          "label": "Mixed item 17",
+          "position": [
+            404,
+            222,
+            0
+          ],
+          "dims": [
+            43,
+            101,
+            149
+          ],
+          "orientation": 5,
+          "mass": 1307,
+          "sequence": 9,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c4",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 15273,
+      "fill_rate": 0.7836,
+      "centre_of_mass": [
+        232,
+        138,
+        169
+      ],
+      "placements": [
+        {
+          "placement_id": "p4_0",
+          "item_ref": "MIX-7",
+          "label": "Mixed item 7",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            299,
+            201,
+            73
+          ],
+          "orientation": 0,
+          "mass": 597,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_1",
+          "item_ref": "MIX-31",
+          "label": "Mixed item 31",
+          "position": [
+            299,
+            0,
+            0
+          ],
+          "dims": [
+            147,
+            213,
+            129
+          ],
+          "orientation": 0,
+          "mass": 2301,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_2",
+          "item_ref": "MIX-5",
+          "label": "Mixed item 5",
+          "position": [
+            0,
+            201,
+            0
+          ],
+          "dims": [
+            225,
+            95,
+            175
+          ],
+          "orientation": 0,
+          "mass": 455,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_3",
+          "item_ref": "MIX-10",
+          "label": "Mixed item 10",
+          "position": [
+            0,
+            0,
+            73
+          ],
+          "dims": [
+            150,
+            150,
+            160
+          ],
+          "orientation": 0,
+          "mass": 810,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_4",
+          "item_ref": "MIX-3",
+          "label": "Mixed item 3",
+          "position": [
+            299,
+            213,
+            0
+          ],
+          "dims": [
+            151,
+            117,
+            199
+          ],
+          "orientation": 1,
+          "mass": 313,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_5",
+          "item_ref": "MIX-53",
+          "label": "Mixed item 53",
+          "position": [
+            150,
+            0,
+            73
+          ],
+          "dims": [
+            119,
+            181,
+            127
+          ],
+          "orientation": 2,
+          "mass": 863,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_6",
+          "item_ref": "MIX-48",
+          "label": "Mixed item 48",
+          "position": [
+            225,
+            201,
+            0
+          ],
+          "dims": [
+            64,
+            142,
+            256
+          ],
+          "orientation": 3,
+          "mass": 508,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_7",
+          "item_ref": "MIX-15",
+          "label": "Mixed item 15",
+          "position": [
+            299,
+            0,
+            129
+          ],
+          "dims": [
+            75,
+            205,
+            145
+          ],
+          "orientation": 0,
+          "mass": 1165,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_8",
+          "item_ref": "MIX-22",
+          "label": "Mixed item 22",
+          "position": [
+            374,
+            0,
+            129
+          ],
+          "dims": [
+            74,
+            188,
+            156
+          ],
+          "orientation": 1,
+          "mass": 1662,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_9",
+          "item_ref": "MIX-58",
+          "label": "Mixed item 58",
+          "position": [
+            0,
+            201,
+            175
+          ],
+          "dims": [
+            174,
+            106,
+            112
+          ],
+          "orientation": 2,
+          "mass": 1218,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_10",
+          "item_ref": "MIX-30",
+          "label": "Mixed item 30",
+          "position": [
+            150,
+            0,
+            200
+          ],
+          "dims": [
+            110,
+            160,
+            100
+          ],
+          "orientation": 0,
+          "mass": 2230,
+          "sequence": 10,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_11",
+          "item_ref": "MIX-9",
+          "label": "Mixed item 9",
+          "position": [
+            299,
+            213,
+            199
+          ],
+          "dims": [
+            113,
+            131,
+            97
+          ],
+          "orientation": 1,
+          "mass": 739,
+          "sequence": 11,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_12",
+          "item_ref": "MIX-4",
+          "label": "Mixed item 4",
+          "position": [
+            0,
+            296,
+            0
+          ],
+          "dims": [
+            188,
+            42,
+            146
+          ],
+          "orientation": 0,
+          "mass": 384,
+          "sequence": 12,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_13",
+          "item_ref": "MIX-16",
+          "label": "Mixed item 16",
+          "position": [
+            0,
+            150,
+            73
+          ],
+          "dims": [
+            112,
+            48,
+            174
+          ],
+          "orientation": 0,
+          "mass": 1236,
+          "sequence": 13,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_14",
+          "item_ref": "MIX-52",
+          "label": "Mixed item 52",
+          "position": [
+            0,
+            0,
+            233
+          ],
+          "dims": [
+            144,
+            98,
+            66
+          ],
+          "orientation": 1,
+          "mass": 792,
+          "sequence": 14,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c5",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 19489,
+      "fill_rate": 0.2877,
+      "centre_of_mass": [
+        227,
+        195,
+        91
+      ],
+      "placements": [
+        {
+          "placement_id": "p5_0",
+          "item_ref": "MIX-34",
+          "label": "Mixed item 34",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            258,
+            162,
+            56
+          ],
+          "orientation": 0,
+          "mass": 2514,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_1",
+          "item_ref": "MIX-6",
+          "label": "Mixed item 6",
+          "position": [
+            258,
+            0,
+            0
+          ],
+          "dims": [
+            148,
+            262,
+            44
+          ],
+          "orientation": 2,
+          "mass": 526,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_2",
+          "item_ref": "MIX-20",
+          "label": "Mixed item 20",
+          "position": [
+            0,
+            162,
+            0
+          ],
+          "dims": [
+            50,
+            130,
+            260
+          ],
+          "orientation": 3,
+          "mass": 1520,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_3",
+          "item_ref": "MIX-39",
+          "label": "Mixed item 39",
+          "position": [
+            406,
+            0,
+            0
+          ],
+          "dims": [
+            41,
+            183,
+            217
+          ],
+          "orientation": 4,
+          "mass": 2869,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_4",
+          "item_ref": "MIX-32",
+          "label": "Mixed item 32",
+          "position": [
+            50,
+            162,
+            0
+          ],
+          "dims": [
+            184,
+            56,
+            158
+          ],
+          "orientation": 0,
+          "mass": 2372,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_5",
+          "item_ref": "MIX-23",
+          "label": "Mixed item 23",
+          "position": [
+            50,
+            218,
+            0
+          ],
+          "dims": [
+            111,
+            57,
+            209
+          ],
+          "orientation": 1,
+          "mass": 1733,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_6",
+          "item_ref": "MIX-40",
+          "label": "Mixed item 40",
+          "position": [
+            161,
+            218,
+            0
+          ],
+          "dims": [
+            60,
+            70,
+            220
+          ],
+          "orientation": 3,
+          "mass": 2940,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_7",
+          "item_ref": "MIX-28",
+          "label": "Mixed item 28",
+          "position": [
+            406,
+            183,
+            0
+          ],
+          "dims": [
+            42,
+            54,
+            296
+          ],
+          "orientation": 5,
+          "mass": 2088,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_8",
+          "item_ref": "MIX-24",
+          "label": "Mixed item 24",
+          "position": [
+            258,
+            262,
+            0
+          ],
+          "dims": [
+            148,
+            52,
+            86
+          ],
+          "orientation": 0,
+          "mass": 1804,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_9",
+          "item_ref": "MIX-12",
+          "label": "Mixed item 12",
+          "position": [
+            50,
+            275,
+            0
+          ],
+          "dims": [
+            46,
+            58,
+            224
+          ],
+          "orientation": 3,
+          "mass": 952,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_10",
+          "item_ref": "MIX-1",
+          "label": "Mixed item 1",
+          "position": [
+            161,
+            288,
+            0
+          ],
+          "dims": [
+            77,
+            59,
+            93
+          ],
+          "orientation": 1,
+          "mass": 171,
+          "sequence": 10,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c6",
+      "sku": "BOX-S",
+      "inner_dims": [
+        220,
+        160,
+        120
+      ],
+      "tare_mass": 120,
+      "contents_mass": 4815,
+      "fill_rate": 0.244,
+      "centre_of_mass": [
+        76,
+        39,
+        47
+      ],
+      "placements": [
+        {
+          "placement_id": "p6_0",
+          "item_ref": "MIX-29",
+          "label": "Mixed item 29",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            73,
+            107,
+            71
+          ],
+          "orientation": 0,
+          "mass": 2159,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p6_1",
+          "item_ref": "MIX-36",
+          "label": "Mixed item 36",
+          "position": [
+            73,
+            0,
+            0
+          ],
+          "dims": [
+            72,
+            58,
+            114
+          ],
+          "orientation": 0,
+          "mass": 2656,
+          "sequence": 1,
+          "tags": []
+        }
+      ]
+    }
+  ],
+  "rejects": []
+}

@@ -1,0 +1,277 @@
+{
+  "schema_version": "1.0.0",
+  "solution_id": "sol_02_full_carton",
+  "order_id": "FIX-02",
+  "solver": {
+    "version": "0.1.0",
+    "seed": 9063383185103573482,
+    "mode": "rigid",
+    "time_budget_ms": 1200,
+    "elapsed_ms": 4,
+    "tier": 1
+  },
+  "coordinate_system": {
+    "up": "z",
+    "handedness": "right",
+    "origin": "min_corner"
+  },
+  "units": {
+    "length": "mm",
+    "mass": "g"
+  },
+  "metrics": {
+    "carton_count": 1,
+    "fill_rate": 0.4163,
+    "total_mass": 3810
+  },
+  "cartons": [
+    {
+      "carton_id": "c1",
+      "sku": "BOX-M",
+      "inner_dims": [
+        320,
+        240,
+        180
+      ],
+      "tare_mass": 210,
+      "contents_mass": 3600,
+      "fill_rate": 0.4163,
+      "centre_of_mass": [
+        159,
+        97,
+        43
+      ],
+      "placements": [
+        {
+          "placement_id": "p1_0",
+          "item_ref": "CUBE-0",
+          "label": "Cube 0",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            106,
+            78,
+            58
+          ],
+          "orientation": 0,
+          "mass": 300,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_1",
+          "item_ref": "CUBE-1",
+          "label": "Cube 1",
+          "position": [
+            106,
+            0,
+            0
+          ],
+          "dims": [
+            106,
+            78,
+            58
+          ],
+          "orientation": 0,
+          "mass": 300,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_2",
+          "item_ref": "CUBE-2",
+          "label": "Cube 2",
+          "position": [
+            212,
+            0,
+            0
+          ],
+          "dims": [
+            106,
+            78,
+            58
+          ],
+          "orientation": 0,
+          "mass": 300,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_3",
+          "item_ref": "CUBE-3",
+          "label": "Cube 3",
+          "position": [
+            0,
+            78,
+            0
+          ],
+          "dims": [
+            106,
+            78,
+            58
+          ],
+          "orientation": 0,
+          "mass": 300,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_4",
+          "item_ref": "CUBE-4",
+          "label": "Cube 4",
+          "position": [
+            106,
+            78,
+            0
+          ],
+          "dims": [
+            106,
+            78,
+            58
+          ],
+          "orientation": 0,
+          "mass": 300,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_5",
+          "item_ref": "CUBE-5",
+          "label": "Cube 5",
+          "position": [
+            212,
+            78,
+            0
+          ],
+          "dims": [
+            106,
+            78,
+            58
+          ],
+          "orientation": 0,
+          "mass": 300,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_6",
+          "item_ref": "CUBE-6",
+          "label": "Cube 6",
+          "position": [
+            0,
+            156,
+            0
+          ],
+          "dims": [
+            106,
+            78,
+            58
+          ],
+          "orientation": 0,
+          "mass": 300,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_7",
+          "item_ref": "CUBE-7",
+          "label": "Cube 7",
+          "position": [
+            106,
+            156,
+            0
+          ],
+          "dims": [
+            106,
+            78,
+            58
+          ],
+          "orientation": 0,
+          "mass": 300,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_8",
+          "item_ref": "CUBE-8",
+          "label": "Cube 8",
+          "position": [
+            212,
+            156,
+            0
+          ],
+          "dims": [
+            106,
+            78,
+            58
+          ],
+          "orientation": 0,
+          "mass": 300,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_9",
+          "item_ref": "CUBE-9",
+          "label": "Cube 9",
+          "position": [
+            0,
+            0,
+            58
+          ],
+          "dims": [
+            106,
+            78,
+            58
+          ],
+          "orientation": 0,
+          "mass": 300,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_10",
+          "item_ref": "CUBE-10",
+          "label": "Cube 10",
+          "position": [
+            106,
+            0,
+            58
+          ],
+          "dims": [
+            106,
+            78,
+            58
+          ],
+          "orientation": 0,
+          "mass": 300,
+          "sequence": 10,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_11",
+          "item_ref": "CUBE-11",
+          "label": "Cube 11",
+          "position": [
+            212,
+            0,
+            58
+          ],
+          "dims": [
+            106,
+            78,
+            58
+          ],
+          "orientation": 0,
+          "mass": 300,
+          "sequence": 11,
+          "tags": []
+        }
+      ]
+    }
+  ],
+  "rejects": []
+}

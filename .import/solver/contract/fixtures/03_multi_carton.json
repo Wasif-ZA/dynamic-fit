@@ -1,0 +1,334 @@
+{
+  "schema_version": "1.0.0",
+  "solution_id": "sol_03_multi_carton",
+  "order_id": "FIX-03",
+  "solver": {
+    "version": "0.1.0",
+    "seed": 2766892571207062029,
+    "mode": "rigid",
+    "time_budget_ms": 1200,
+    "elapsed_ms": 3,
+    "tier": 1
+  },
+  "coordinate_system": {
+    "up": "z",
+    "handedness": "right",
+    "origin": "min_corner"
+  },
+  "units": {
+    "length": "mm",
+    "mass": "g"
+  },
+  "metrics": {
+    "carton_count": 2,
+    "fill_rate": 0.6877,
+    "total_mass": 13190
+  },
+  "cartons": [
+    {
+      "carton_id": "c1",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 10800,
+      "fill_rate": 0.7619,
+      "centre_of_mass": [
+        200,
+        150,
+        150
+      ],
+      "placements": [
+        {
+          "placement_id": "p1_0",
+          "item_ref": "BULK-0",
+          "label": "Bulk item 0",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            200,
+            150,
+            100
+          ],
+          "orientation": 0,
+          "mass": 900,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_1",
+          "item_ref": "BULK-1",
+          "label": "Bulk item 1",
+          "position": [
+            200,
+            0,
+            0
+          ],
+          "dims": [
+            200,
+            150,
+            100
+          ],
+          "orientation": 0,
+          "mass": 900,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_2",
+          "item_ref": "BULK-2",
+          "label": "Bulk item 2",
+          "position": [
+            0,
+            150,
+            0
+          ],
+          "dims": [
+            200,
+            150,
+            100
+          ],
+          "orientation": 0,
+          "mass": 900,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_3",
+          "item_ref": "BULK-3",
+          "label": "Bulk item 3",
+          "position": [
+            200,
+            150,
+            0
+          ],
+          "dims": [
+            200,
+            150,
+            100
+          ],
+          "orientation": 0,
+          "mass": 900,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_4",
+          "item_ref": "BULK-4",
+          "label": "Bulk item 4",
+          "position": [
+            0,
+            0,
+            100
+          ],
+          "dims": [
+            200,
+            150,
+            100
+          ],
+          "orientation": 0,
+          "mass": 900,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_5",
+          "item_ref": "BULK-5",
+          "label": "Bulk item 5",
+          "position": [
+            200,
+            0,
+            100
+          ],
+          "dims": [
+            200,
+            150,
+            100
+          ],
+          "orientation": 0,
+          "mass": 900,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_6",
+          "item_ref": "BULK-6",
+          "label": "Bulk item 6",
+          "position": [
+            0,
+            150,
+            100
+          ],
+          "dims": [
+            200,
+            150,
+            100
+          ],
+          "orientation": 0,
+          "mass": 900,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_7",
+          "item_ref": "BULK-7",
+          "label": "Bulk item 7",
+          "position": [
+            200,
+            150,
+            100
+          ],
+          "dims": [
+            200,
+            150,
+            100
+          ],
+          "orientation": 0,
+          "mass": 900,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_8",
+          "item_ref": "BULK-8",
+          "label": "Bulk item 8",
+          "position": [
+            0,
+            0,
+            200
+          ],
+          "dims": [
+            200,
+            150,
+            100
+          ],
+          "orientation": 0,
+          "mass": 900,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_9",
+          "item_ref": "BULK-9",
+          "label": "Bulk item 9",
+          "position": [
+            200,
+            0,
+            200
+          ],
+          "dims": [
+            200,
+            150,
+            100
+          ],
+          "orientation": 0,
+          "mass": 900,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_10",
+          "item_ref": "BULK-10",
+          "label": "Bulk item 10",
+          "position": [
+            0,
+            150,
+            200
+          ],
+          "dims": [
+            200,
+            150,
+            100
+          ],
+          "orientation": 0,
+          "mass": 900,
+          "sequence": 10,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_11",
+          "item_ref": "BULK-11",
+          "label": "Bulk item 11",
+          "position": [
+            200,
+            150,
+            200
+          ],
+          "dims": [
+            200,
+            150,
+            100
+          ],
+          "orientation": 0,
+          "mass": 900,
+          "sequence": 11,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c2",
+      "sku": "BOX-M",
+      "inner_dims": [
+        320,
+        240,
+        180
+      ],
+      "tare_mass": 210,
+      "contents_mass": 1800,
+      "fill_rate": 0.434,
+      "centre_of_mass": [
+        175,
+        87,
+        62
+      ],
+      "placements": [
+        {
+          "placement_id": "p2_0",
+          "item_ref": "BULK-12",
+          "label": "Bulk item 12",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            200,
+            150,
+            100
+          ],
+          "orientation": 0,
+          "mass": 900,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_1",
+          "item_ref": "BULK-13",
+          "label": "Bulk item 13",
+          "position": [
+            200,
+            0,
+            0
+          ],
+          "dims": [
+            100,
+            200,
+            150
+          ],
+          "orientation": 4,
+          "mass": 900,
+          "sequence": 1,
+          "tags": []
+        }
+      ]
+    }
+  ],
+  "rejects": []
+}
