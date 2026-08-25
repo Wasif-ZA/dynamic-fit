@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0.0",
+  "solution_id": "sol_01_single_item",
+  "order_id": "FIX-01",
+  "solver": {
+    "version": "0.1.0",
+    "seed": 3886667787524884963,
+    "mode": "rigid",
+    "time_budget_ms": 1200,
+    "elapsed_ms": 0,
+    "tier": 1
+  },
+  "coordinate_system": {
+    "up": "z",
+    "handedness": "right",
+    "origin": "min_corner"
+  },
+  "units": {
+    "length": "mm",
+    "mass": "g"
+  },
+  "metrics": {
+    "carton_count": 1,
+    "fill_rate": 0.4602,
+    "total_mass": 760
+  },
+  "cartons": [
+    {
+      "carton_id": "c1",
+      "sku": "BOX-S",
+      "inner_dims": [
+        220,
+        160,
+        120
+      ],
+      "tare_mass": 120,
+      "contents_mass": 640,
+      "fill_rate": 0.4602,
+      "centre_of_mass": [
+        90,
+        60,
+        45
+      ],
+      "placements": [
+        {
+          "placement_id": "p1_0",
+          "item_ref": "SKU-1183",
+          "label": "Wireless Headphones",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            180,
+            120,
+            90
+          ],
+          "orientation": 0,
+          "mass": 640,
+          "sequence": 0,
+          "tags": [
+            "fragile"
+          ]
+        }
+      ]
+    }
+  ],
+  "rejects": []
+}

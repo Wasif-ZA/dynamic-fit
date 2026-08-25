@@ -1,0 +1,5160 @@
+{
+  "schema_version": "1.0.0",
+  "solution_id": "sol_11_bulk_250",
+  "order_id": "FIX-11",
+  "solver": {
+    "version": "0.1.0",
+    "seed": 14430185048319671995,
+    "mode": "rigid",
+    "time_budget_ms": 1200,
+    "elapsed_ms": 398,
+    "tier": 1
+  },
+  "coordinate_system": {
+    "up": "z",
+    "handedness": "right",
+    "origin": "min_corner"
+  },
+  "units": {
+    "length": "mm",
+    "mass": "g"
+  },
+  "metrics": {
+    "carton_count": 20,
+    "fill_rate": 0.5091,
+    "total_mass": 367125
+  },
+  "cartons": [
+    {
+      "carton_id": "c1",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 8997,
+      "fill_rate": 0.8848,
+      "centre_of_mass": [
+        267,
+        197,
+        155
+      ],
+      "placements": [
+        {
+          "placement_id": "p1_0",
+          "item_ref": "W-246",
+          "label": "Warehouse item 246",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            263,
+            221,
+            151
+          ],
+          "orientation": 0,
+          "mass": 1542,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_1",
+          "item_ref": "W-208",
+          "label": "Warehouse item 208",
+          "position": [
+            263,
+            0,
+            0
+          ],
+          "dims": [
+            183,
+            239,
+            173
+          ],
+          "orientation": 2,
+          "mass": 656,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_2",
+          "item_ref": "W-149",
+          "label": "Warehouse item 149",
+          "position": [
+            0,
+            0,
+            151
+          ],
+          "dims": [
+            232,
+            194,
+            144
+          ],
+          "orientation": 0,
+          "mass": 533,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_3",
+          "item_ref": "W-37",
+          "label": "Warehouse item 37",
+          "position": [
+            0,
+            221,
+            0
+          ],
+          "dims": [
+            246,
+            122,
+            202
+          ],
+          "orientation": 1,
+          "mass": 869,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_4",
+          "item_ref": "W-192",
+          "label": "Warehouse item 192",
+          "position": [
+            263,
+            0,
+            173
+          ],
+          "dims": [
+            157,
+            241,
+            127
+          ],
+          "orientation": 2,
+          "mass": 1904,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_5",
+          "item_ref": "W-46",
+          "label": "Warehouse item 46",
+          "position": [
+            263,
+            239,
+            0
+          ],
+          "dims": [
+            181,
+            101,
+            173
+          ],
+          "orientation": 3,
+          "mass": 1742,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_6",
+          "item_ref": "W-32",
+          "label": "Warehouse item 32",
+          "position": [
+            0,
+            221,
+            202
+          ],
+          "dims": [
+            261,
+            117,
+            87
+          ],
+          "orientation": 1,
+          "mass": 384,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_7",
+          "item_ref": "W-71",
+          "label": "Warehouse item 71",
+          "position": [
+            263,
+            241,
+            173
+          ],
+          "dims": [
+            186,
+            98,
+            126
+          ],
+          "orientation": 2,
+          "mass": 1367,
+          "sequence": 7,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c2",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 10874,
+      "fill_rate": 0.8336,
+      "centre_of_mass": [
+        240,
+        194,
+        160
+      ],
+      "placements": [
+        {
+          "placement_id": "p2_0",
+          "item_ref": "W-96",
+          "label": "Warehouse item 96",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            253,
+            191,
+            151
+          ],
+          "orientation": 0,
+          "mass": 992,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_1",
+          "item_ref": "W-58",
+          "label": "Warehouse item 58",
+          "position": [
+            253,
+            0,
+            0
+          ],
+          "dims": [
+            153,
+            229,
+            173
+          ],
+          "orientation": 2,
+          "mass": 106,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_2",
+          "item_ref": "W-9",
+          "label": "Warehouse item 9",
+          "position": [
+            0,
+            191,
+            0
+          ],
+          "dims": [
+            192,
+            154,
+            204
+          ],
+          "orientation": 1,
+          "mass": 953,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_3",
+          "item_ref": "W-62",
+          "label": "Warehouse item 62",
+          "position": [
+            0,
+            0,
+            151
+          ],
+          "dims": [
+            207,
+            171,
+            147
+          ],
+          "orientation": 2,
+          "mass": 494,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_4",
+          "item_ref": "W-48",
+          "label": "Warehouse item 48",
+          "position": [
+            253,
+            229,
+            0
+          ],
+          "dims": [
+            163,
+            113,
+            259
+          ],
+          "orientation": 5,
+          "mass": 1936,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_5",
+          "item_ref": "W-245",
+          "label": "Warehouse item 245",
+          "position": [
+            253,
+            0,
+            173
+          ],
+          "dims": [
+            160,
+            220,
+            120
+          ],
+          "orientation": 2,
+          "mass": 1445,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_6",
+          "item_ref": "W-28",
+          "label": "Warehouse item 28",
+          "position": [
+            0,
+            191,
+            204
+          ],
+          "dims": [
+            223,
+            143,
+            89
+          ],
+          "orientation": 3,
+          "mass": 2796,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_7",
+          "item_ref": "W-30",
+          "label": "Warehouse item 30",
+          "position": [
+            192,
+            191,
+            0
+          ],
+          "dims": [
+            55,
+            155,
+            175
+          ],
+          "orientation": 5,
+          "mass": 190,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p2_8",
+          "item_ref": "W-106",
+          "label": "Warehouse item 106",
+          "position": [
+            406,
+            0,
+            0
+          ],
+          "dims": [
+            41,
+            223,
+            161
+          ],
+          "orientation": 2,
+          "mass": 1962,
+          "sequence": 8,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c3",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 13510,
+      "fill_rate": 0.8536,
+      "centre_of_mass": [
+        215,
+        166,
+        139
+      ],
+      "placements": [
+        {
+          "placement_id": "p3_0",
+          "item_ref": "W-202",
+          "label": "Warehouse item 202",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            211,
+            197,
+            137
+          ],
+          "orientation": 0,
+          "mass": 2874,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_1",
+          "item_ref": "W-139",
+          "label": "Warehouse item 139",
+          "position": [
+            211,
+            0,
+            0
+          ],
+          "dims": [
+            154,
+            262,
+            134
+          ],
+          "orientation": 2,
+          "mass": 2363,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_2",
+          "item_ref": "W-111",
+          "label": "Warehouse item 111",
+          "position": [
+            211,
+            0,
+            134
+          ],
+          "dims": [
+            208,
+            156,
+            166
+          ],
+          "orientation": 0,
+          "mass": 2447,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_3",
+          "item_ref": "W-90",
+          "label": "Warehouse item 90",
+          "position": [
+            0,
+            197,
+            0
+          ],
+          "dims": [
+            205,
+            115,
+            225
+          ],
+          "orientation": 3,
+          "mass": 410,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_4",
+          "item_ref": "W-174",
+          "label": "Warehouse item 174",
+          "position": [
+            0,
+            0,
+            137
+          ],
+          "dims": [
+            199,
+            169,
+            157
+          ],
+          "orientation": 3,
+          "mass": 158,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_5",
+          "item_ref": "W-31",
+          "label": "Warehouse item 31",
+          "position": [
+            211,
+            262,
+            0
+          ],
+          "dims": [
+            218,
+            86,
+            216
+          ],
+          "orientation": 1,
+          "mass": 287,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_6",
+          "item_ref": "W-249",
+          "label": "Warehouse item 249",
+          "position": [
+            211,
+            156,
+            134
+          ],
+          "dims": [
+            214,
+            94,
+            162
+          ],
+          "orientation": 3,
+          "mass": 1833,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_7",
+          "item_ref": "W-176",
+          "label": "Warehouse item 176",
+          "position": [
+            365,
+            0,
+            0
+          ],
+          "dims": [
+            81,
+            243,
+            131
+          ],
+          "orientation": 4,
+          "mass": 352,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_8",
+          "item_ref": "W-40",
+          "label": "Warehouse item 40",
+          "position": [
+            0,
+            197,
+            225
+          ],
+          "dims": [
+            195,
+            145,
+            65
+          ],
+          "orientation": 2,
+          "mass": 1160,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p3_9",
+          "item_ref": "W-218",
+          "label": "Warehouse item 218",
+          "position": [
+            0,
+            312,
+            0
+          ],
+          "dims": [
+            209,
+            33,
+            223
+          ],
+          "orientation": 1,
+          "mass": 1626,
+          "sequence": 9,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c4",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 19556,
+      "fill_rate": 0.7724,
+      "centre_of_mass": [
+        217,
+        163,
+        145
+      ],
+      "placements": [
+        {
+          "placement_id": "p4_0",
+          "item_ref": "W-164",
+          "label": "Warehouse item 164",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            187,
+            159,
+            159
+          ],
+          "orientation": 0,
+          "mass": 1988,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_1",
+          "item_ref": "W-52",
+          "label": "Warehouse item 52",
+          "position": [
+            187,
+            0,
+            0
+          ],
+          "dims": [
+            201,
+            167,
+            137
+          ],
+          "orientation": 0,
+          "mass": 2324,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_2",
+          "item_ref": "W-143",
+          "label": "Warehouse item 143",
+          "position": [
+            187,
+            167,
+            0
+          ],
+          "dims": [
+            204,
+            108,
+            208
+          ],
+          "orientation": 1,
+          "mass": 2751,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_3",
+          "item_ref": "W-227",
+          "label": "Warehouse item 227",
+          "position": [
+            0,
+            159,
+            0
+          ],
+          "dims": [
+            136,
+            162,
+            202
+          ],
+          "orientation": 1,
+          "mass": 2499,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_4",
+          "item_ref": "W-80",
+          "label": "Warehouse item 80",
+          "position": [
+            187,
+            0,
+            137
+          ],
+          "dims": [
+            255,
+            165,
+            105
+          ],
+          "orientation": 0,
+          "mass": 2240,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_5",
+          "item_ref": "W-14",
+          "label": "Warehouse item 14",
+          "position": [
+            0,
+            0,
+            159
+          ],
+          "dims": [
+            177,
+            159,
+            129
+          ],
+          "orientation": 1,
+          "mass": 1438,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_6",
+          "item_ref": "W-224",
+          "label": "Warehouse item 224",
+          "position": [
+            187,
+            275,
+            0
+          ],
+          "dims": [
+            237,
+            69,
+            209
+          ],
+          "orientation": 1,
+          "mass": 2208,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_7",
+          "item_ref": "W-99",
+          "label": "Warehouse item 99",
+          "position": [
+            0,
+            159,
+            202
+          ],
+          "dims": [
+            152,
+            184,
+            94
+          ],
+          "orientation": 0,
+          "mass": 1283,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_8",
+          "item_ref": "W-112",
+          "label": "Warehouse item 112",
+          "position": [
+            187,
+            0,
+            242
+          ],
+          "dims": [
+            251,
+            217,
+            47
+          ],
+          "orientation": 0,
+          "mass": 2544,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p4_9",
+          "item_ref": "W-233",
+          "label": "Warehouse item 233",
+          "position": [
+            136,
+            159,
+            0
+          ],
+          "dims": [
+            48,
+            164,
+            188
+          ],
+          "orientation": 4,
+          "mass": 281,
+          "sequence": 9,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c5",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 19635,
+      "fill_rate": 0.8346,
+      "centre_of_mass": [
+        226,
+        165,
+        154
+      ],
+      "placements": [
+        {
+          "placement_id": "p5_0",
+          "item_ref": "W-115",
+          "label": "Warehouse item 115",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            150,
+            210,
+            140
+          ],
+          "orientation": 0,
+          "mass": 2835,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_1",
+          "item_ref": "W-101",
+          "label": "Warehouse item 101",
+          "position": [
+            150,
+            0,
+            0
+          ],
+          "dims": [
+            238,
+            116,
+            156
+          ],
+          "orientation": 0,
+          "mass": 1477,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_2",
+          "item_ref": "W-3",
+          "label": "Warehouse item 3",
+          "position": [
+            150,
+            116,
+            0
+          ],
+          "dims": [
+            164,
+            218,
+            118
+          ],
+          "orientation": 0,
+          "mass": 371,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_3",
+          "item_ref": "W-24",
+          "label": "Warehouse item 24",
+          "position": [
+            150,
+            116,
+            118
+          ],
+          "dims": [
+            147,
+            169,
+            169
+          ],
+          "orientation": 0,
+          "mass": 2408,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_4",
+          "item_ref": "W-171",
+          "label": "Warehouse item 171",
+          "position": [
+            314,
+            116,
+            0
+          ],
+          "dims": [
+            76,
+            206,
+            258
+          ],
+          "orientation": 5,
+          "mass": 2667,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_5",
+          "item_ref": "W-154",
+          "label": "Warehouse item 154",
+          "position": [
+            0,
+            210,
+            0
+          ],
+          "dims": [
+            149,
+            119,
+            217
+          ],
+          "orientation": 5,
+          "mass": 1018,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_6",
+          "item_ref": "W-56",
+          "label": "Warehouse item 56",
+          "position": [
+            150,
+            0,
+            156
+          ],
+          "dims": [
+            221,
+            111,
+            143
+          ],
+          "orientation": 3,
+          "mass": 2712,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_7",
+          "item_ref": "W-207",
+          "label": "Warehouse item 207",
+          "position": [
+            0,
+            0,
+            140
+          ],
+          "dims": [
+            122,
+            196,
+            142
+          ],
+          "orientation": 2,
+          "mass": 559,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_8",
+          "item_ref": "W-64",
+          "label": "Warehouse item 64",
+          "position": [
+            390,
+            116,
+            0
+          ],
+          "dims": [
+            59,
+            139,
+            257
+          ],
+          "orientation": 5,
+          "mass": 688,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_9",
+          "item_ref": "W-236",
+          "label": "Warehouse item 236",
+          "position": [
+            150,
+            285,
+            118
+          ],
+          "dims": [
+            141,
+            63,
+            181
+          ],
+          "orientation": 4,
+          "mass": 572,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_10",
+          "item_ref": "W-195",
+          "label": "Warehouse item 195",
+          "position": [
+            0,
+            210,
+            217
+          ],
+          "dims": [
+            150,
+            140,
+            70
+          ],
+          "orientation": 2,
+          "mass": 2195,
+          "sequence": 10,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_11",
+          "item_ref": "W-128",
+          "label": "Warehouse item 128",
+          "position": [
+            388,
+            0,
+            0
+          ],
+          "dims": [
+            53,
+            93,
+            249
+          ],
+          "orientation": 3,
+          "mass": 1296,
+          "sequence": 11,
+          "tags": []
+        },
+        {
+          "placement_id": "p5_12",
+          "item_ref": "W-181",
+          "label": "Warehouse item 181",
+          "position": [
+            390,
+            255,
+            0
+          ],
+          "dims": [
+            56,
+            86,
+            228
+          ],
+          "orientation": 3,
+          "mass": 837,
+          "sequence": 12,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c6",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 16997,
+      "fill_rate": 0.762,
+      "centre_of_mass": [
+        217,
+        163,
+        143
+      ],
+      "placements": [
+        {
+          "placement_id": "p6_0",
+          "item_ref": "W-217",
+          "label": "Warehouse item 217",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            166,
+            162,
+            152
+          ],
+          "orientation": 0,
+          "mass": 1529,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p6_1",
+          "item_ref": "W-105",
+          "label": "Warehouse item 105",
+          "position": [
+            166,
+            0,
+            0
+          ],
+          "dims": [
+            180,
+            170,
+            130
+          ],
+          "orientation": 0,
+          "mass": 1865,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p6_2",
+          "item_ref": "W-196",
+          "label": "Warehouse item 196",
+          "position": [
+            346,
+            0,
+            0
+          ],
+          "dims": [
+            101,
+            183,
+            211
+          ],
+          "orientation": 4,
+          "mass": 2292,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p6_3",
+          "item_ref": "W-133",
+          "label": "Warehouse item 133",
+          "position": [
+            0,
+            162,
+            0
+          ],
+          "dims": [
+            98,
+            168,
+            234
+          ],
+          "orientation": 5,
+          "mass": 1781,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p6_4",
+          "item_ref": "W-42",
+          "label": "Warehouse item 42",
+          "position": [
+            166,
+            170,
+            0
+          ],
+          "dims": [
+            127,
+            127,
+            231
+          ],
+          "orientation": 3,
+          "mass": 1354,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p6_5",
+          "item_ref": "W-168",
+          "label": "Warehouse item 168",
+          "position": [
+            0,
+            0,
+            152
+          ],
+          "dims": [
+            213,
+            129,
+            133
+          ],
+          "orientation": 2,
+          "mass": 2376,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p6_6",
+          "item_ref": "W-123",
+          "label": "Warehouse item 123",
+          "position": [
+            346,
+            183,
+            0
+          ],
+          "dims": [
+            88,
+            128,
+            264
+          ],
+          "orientation": 5,
+          "mass": 811,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p6_7",
+          "item_ref": "W-203",
+          "label": "Warehouse item 203",
+          "position": [
+            98,
+            162,
+            0
+          ],
+          "dims": [
+            68,
+            168,
+            254
+          ],
+          "orientation": 3,
+          "mass": 171,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p6_8",
+          "item_ref": "W-117",
+          "label": "Warehouse item 117",
+          "position": [
+            293,
+            170,
+            0
+          ],
+          "dims": [
+            52,
+            142,
+            236
+          ],
+          "orientation": 5,
+          "mass": 229,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p6_9",
+          "item_ref": "W-244",
+          "label": "Warehouse item 244",
+          "position": [
+            346,
+            0,
+            211
+          ],
+          "dims": [
+            99,
+            177,
+            89
+          ],
+          "orientation": 2,
+          "mass": 1348,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p6_10",
+          "item_ref": "W-187",
+          "label": "Warehouse item 187",
+          "position": [
+            166,
+            297,
+            0
+          ],
+          "dims": [
+            122,
+            42,
+            256
+          ],
+          "orientation": 5,
+          "mass": 1419,
+          "sequence": 10,
+          "tags": []
+        },
+        {
+          "placement_id": "p6_11",
+          "item_ref": "W-41",
+          "label": "Warehouse item 41",
+          "position": [
+            0,
+            162,
+            234
+          ],
+          "dims": [
+            96,
+            188,
+            66
+          ],
+          "orientation": 4,
+          "mass": 1257,
+          "sequence": 11,
+          "tags": []
+        },
+        {
+          "placement_id": "p6_12",
+          "item_ref": "W-5",
+          "label": "Warehouse item 5",
+          "position": [
+            293,
+            312,
+            0
+          ],
+          "dims": [
+            150,
+            30,
+            250
+          ],
+          "orientation": 3,
+          "mass": 565,
+          "sequence": 12,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c7",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 18176,
+      "fill_rate": 0.799,
+      "centre_of_mass": [
+        240,
+        193,
+        118
+      ],
+      "placements": [
+        {
+          "placement_id": "p7_0",
+          "item_ref": "W-77",
+          "label": "Warehouse item 77",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            126,
+            172,
+            162
+          ],
+          "orientation": 0,
+          "mass": 1949,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p7_1",
+          "item_ref": "W-87",
+          "label": "Warehouse item 87",
+          "position": [
+            126,
+            0,
+            0
+          ],
+          "dims": [
+            96,
+            212,
+            172
+          ],
+          "orientation": 0,
+          "mass": 119,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p7_2",
+          "item_ref": "W-84",
+          "label": "Warehouse item 84",
+          "position": [
+            222,
+            0,
+            0
+          ],
+          "dims": [
+            197,
+            219,
+            79
+          ],
+          "orientation": 0,
+          "mass": 2628,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p7_3",
+          "item_ref": "W-158",
+          "label": "Warehouse item 158",
+          "position": [
+            0,
+            172,
+            0
+          ],
+          "dims": [
+            123,
+            159,
+            173
+          ],
+          "orientation": 4,
+          "mass": 1406,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p7_4",
+          "item_ref": "W-21",
+          "label": "Warehouse item 21",
+          "position": [
+            222,
+            219,
+            0
+          ],
+          "dims": [
+            176,
+            76,
+            248
+          ],
+          "orientation": 3,
+          "mass": 2117,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p7_5",
+          "item_ref": "W-186",
+          "label": "Warehouse item 186",
+          "position": [
+            222,
+            0,
+            79
+          ],
+          "dims": [
+            213,
+            171,
+            91
+          ],
+          "orientation": 0,
+          "mass": 1322,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p7_6",
+          "item_ref": "W-95",
+          "label": "Warehouse item 95",
+          "position": [
+            222,
+            0,
+            170
+          ],
+          "dims": [
+            210,
+            130,
+            120
+          ],
+          "orientation": 0,
+          "mass": 895,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p7_7",
+          "item_ref": "W-179",
+          "label": "Warehouse item 179",
+          "position": [
+            0,
+            172,
+            173
+          ],
+          "dims": [
+            142,
+            174,
+            124
+          ],
+          "orientation": 1,
+          "mass": 643,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p7_8",
+          "item_ref": "W-232",
+          "label": "Warehouse item 232",
+          "position": [
+            0,
+            0,
+            162
+          ],
+          "dims": [
+            121,
+            167,
+            127
+          ],
+          "orientation": 1,
+          "mass": 184,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p7_9",
+          "item_ref": "W-110",
+          "label": "Warehouse item 110",
+          "position": [
+            126,
+            212,
+            0
+          ],
+          "dims": [
+            95,
+            135,
+            165
+          ],
+          "orientation": 3,
+          "mass": 2350,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p7_10",
+          "item_ref": "W-165",
+          "label": "Warehouse item 165",
+          "position": [
+            222,
+            295,
+            0
+          ],
+          "dims": [
+            220,
+            40,
+            230
+          ],
+          "orientation": 3,
+          "mass": 2085,
+          "sequence": 10,
+          "tags": []
+        },
+        {
+          "placement_id": "p7_11",
+          "item_ref": "W-15",
+          "label": "Warehouse item 15",
+          "position": [
+            222,
+            171,
+            79
+          ],
+          "dims": [
+            220,
+            40,
+            190
+          ],
+          "orientation": 1,
+          "mass": 1535,
+          "sequence": 11,
+          "tags": []
+        },
+        {
+          "placement_id": "p7_12",
+          "item_ref": "W-2",
+          "label": "Warehouse item 2",
+          "position": [
+            126,
+            0,
+            172
+          ],
+          "dims": [
+            87,
+            157,
+            121
+          ],
+          "orientation": 5,
+          "mass": 274,
+          "sequence": 12,
+          "tags": []
+        },
+        {
+          "placement_id": "p7_13",
+          "item_ref": "W-237",
+          "label": "Warehouse item 237",
+          "position": [
+            222,
+            219,
+            248
+          ],
+          "dims": [
+            172,
+            106,
+            52
+          ],
+          "orientation": 4,
+          "mass": 669,
+          "sequence": 13,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c8",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 18435,
+      "fill_rate": 0.7608,
+      "centre_of_mass": [
+        205,
+        164,
+        156
+      ],
+      "placements": [
+        {
+          "placement_id": "p8_0",
+          "item_ref": "W-235",
+          "label": "Warehouse item 235",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            250,
+            120,
+            110
+          ],
+          "orientation": 0,
+          "mass": 475,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p8_1",
+          "item_ref": "W-67",
+          "label": "Warehouse item 67",
+          "position": [
+            250,
+            0,
+            0
+          ],
+          "dims": [
+            156,
+            132,
+            152
+          ],
+          "orientation": 0,
+          "mass": 979,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p8_2",
+          "item_ref": "W-221",
+          "label": "Warehouse item 221",
+          "position": [
+            0,
+            120,
+            0
+          ],
+          "dims": [
+            108,
+            216,
+            126
+          ],
+          "orientation": 0,
+          "mass": 1917,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p8_3",
+          "item_ref": "W-18",
+          "label": "Warehouse item 18",
+          "position": [
+            108,
+            120,
+            0
+          ],
+          "dims": [
+            119,
+            183,
+            133
+          ],
+          "orientation": 0,
+          "mass": 1826,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p8_4",
+          "item_ref": "W-130",
+          "label": "Warehouse item 130",
+          "position": [
+            250,
+            132,
+            0
+          ],
+          "dims": [
+            105,
+            175,
+            155
+          ],
+          "orientation": 0,
+          "mass": 1490,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p8_5",
+          "item_ref": "W-109",
+          "label": "Warehouse item 109",
+          "position": [
+            0,
+            0,
+            110
+          ],
+          "dims": [
+            224,
+            104,
+            122
+          ],
+          "orientation": 3,
+          "mass": 2253,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p8_6",
+          "item_ref": "W-148",
+          "label": "Warehouse item 148",
+          "position": [
+            108,
+            120,
+            133
+          ],
+          "dims": [
+            133,
+            189,
+            113
+          ],
+          "orientation": 2,
+          "mass": 436,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p8_7",
+          "item_ref": "W-211",
+          "label": "Warehouse item 211",
+          "position": [
+            250,
+            0,
+            152
+          ],
+          "dims": [
+            176,
+            116,
+            138
+          ],
+          "orientation": 3,
+          "mass": 947,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p8_8",
+          "item_ref": "W-137",
+          "label": "Warehouse item 137",
+          "position": [
+            355,
+            132,
+            0
+          ],
+          "dims": [
+            72,
+            176,
+            222
+          ],
+          "orientation": 4,
+          "mass": 2169,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p8_9",
+          "item_ref": "W-239",
+          "label": "Warehouse item 239",
+          "position": [
+            0,
+            120,
+            126
+          ],
+          "dims": [
+            84,
+            192,
+            174
+          ],
+          "orientation": 4,
+          "mass": 863,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p8_10",
+          "item_ref": "W-36",
+          "label": "Warehouse item 36",
+          "position": [
+            250,
+            132,
+            155
+          ],
+          "dims": [
+            91,
+            203,
+            141
+          ],
+          "orientation": 4,
+          "mass": 772,
+          "sequence": 10,
+          "tags": []
+        },
+        {
+          "placement_id": "p8_11",
+          "item_ref": "W-47",
+          "label": "Warehouse item 47",
+          "position": [
+            108,
+            120,
+            246
+          ],
+          "dims": [
+            132,
+            216,
+            52
+          ],
+          "orientation": 4,
+          "mass": 1839,
+          "sequence": 11,
+          "tags": []
+        },
+        {
+          "placement_id": "p8_12",
+          "item_ref": "W-132",
+          "label": "Warehouse item 132",
+          "position": [
+            0,
+            0,
+            232
+          ],
+          "dims": [
+            191,
+            107,
+            67
+          ],
+          "orientation": 0,
+          "mass": 1684,
+          "sequence": 12,
+          "tags": []
+        },
+        {
+          "placement_id": "p8_13",
+          "item_ref": "W-65",
+          "label": "Warehouse item 65",
+          "position": [
+            355,
+            132,
+            222
+          ],
+          "dims": [
+            90,
+            200,
+            70
+          ],
+          "orientation": 5,
+          "mass": 785,
+          "sequence": 13,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c9",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 19967,
+      "fill_rate": 0.6779,
+      "centre_of_mass": [
+        186,
+        169,
+        153
+      ],
+      "placements": [
+        {
+          "placement_id": "p9_0",
+          "item_ref": "W-74",
+          "label": "Warehouse item 74",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            227,
+            179,
+            69
+          ],
+          "orientation": 0,
+          "mass": 1658,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p9_1",
+          "item_ref": "W-4",
+          "label": "Warehouse item 4",
+          "position": [
+            227,
+            0,
+            0
+          ],
+          "dims": [
+            207,
+            89,
+            149
+          ],
+          "orientation": 0,
+          "mass": 468,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p9_2",
+          "item_ref": "W-144",
+          "label": "Warehouse item 144",
+          "position": [
+            227,
+            89,
+            0
+          ],
+          "dims": [
+            79,
+            247,
+            139
+          ],
+          "orientation": 2,
+          "mass": 2848,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p9_3",
+          "item_ref": "W-116",
+          "label": "Warehouse item 116",
+          "position": [
+            306,
+            89,
+            0
+          ],
+          "dims": [
+            81,
+            193,
+            171
+          ],
+          "orientation": 2,
+          "mass": 132,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p9_4",
+          "item_ref": "W-140",
+          "label": "Warehouse item 140",
+          "position": [
+            0,
+            179,
+            0
+          ],
+          "dims": [
+            75,
+            165,
+            215
+          ],
+          "orientation": 1,
+          "mass": 2460,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p9_5",
+          "item_ref": "W-120",
+          "label": "Warehouse item 120",
+          "position": [
+            75,
+            179,
+            0
+          ],
+          "dims": [
+            135,
+            135,
+            145
+          ],
+          "orientation": 0,
+          "mass": 520,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p9_6",
+          "item_ref": "W-8",
+          "label": "Warehouse item 8",
+          "position": [
+            0,
+            0,
+            69
+          ],
+          "dims": [
+            149,
+            143,
+            123
+          ],
+          "orientation": 0,
+          "mass": 856,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p9_7",
+          "item_ref": "W-57",
+          "label": "Warehouse item 57",
+          "position": [
+            75,
+            179,
+            145
+          ],
+          "dims": [
+            186,
+            92,
+            142
+          ],
+          "orientation": 0,
+          "mass": 2809,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p9_8",
+          "item_ref": "W-201",
+          "label": "Warehouse item 201",
+          "position": [
+            0,
+            0,
+            192
+          ],
+          "dims": [
+            168,
+            136,
+            106
+          ],
+          "orientation": 0,
+          "mass": 2777,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p9_9",
+          "item_ref": "W-85",
+          "label": "Warehouse item 85",
+          "position": [
+            306,
+            89,
+            171
+          ],
+          "dims": [
+            90,
+            240,
+            110
+          ],
+          "orientation": 2,
+          "mass": 2725,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p9_10",
+          "item_ref": "W-183",
+          "label": "Warehouse item 183",
+          "position": [
+            227,
+            0,
+            149
+          ],
+          "dims": [
+            178,
+            84,
+            148
+          ],
+          "orientation": 2,
+          "mass": 1031,
+          "sequence": 10,
+          "tags": []
+        },
+        {
+          "placement_id": "p9_11",
+          "item_ref": "W-145",
+          "label": "Warehouse item 145",
+          "position": [
+            387,
+            89,
+            0
+          ],
+          "dims": [
+            60,
+            140,
+            170
+          ],
+          "orientation": 0,
+          "mass": 145,
+          "sequence": 11,
+          "tags": []
+        },
+        {
+          "placement_id": "p9_12",
+          "item_ref": "W-68",
+          "label": "Warehouse item 68",
+          "position": [
+            0,
+            143,
+            69
+          ],
+          "dims": [
+            199,
+            33,
+            193
+          ],
+          "orientation": 1,
+          "mass": 1076,
+          "sequence": 12,
+          "tags": []
+        },
+        {
+          "placement_id": "p9_13",
+          "item_ref": "W-206",
+          "label": "Warehouse item 206",
+          "position": [
+            387,
+            229,
+            0
+          ],
+          "dims": [
+            61,
+            111,
+            153
+          ],
+          "orientation": 3,
+          "mass": 462,
+          "sequence": 13,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c10",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 19906,
+      "fill_rate": 0.6236,
+      "centre_of_mass": [
+        181,
+        158,
+        112
+      ],
+      "placements": [
+        {
+          "placement_id": "p10_0",
+          "item_ref": "W-197",
+          "label": "Warehouse item 197",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            226,
+            82,
+            132
+          ],
+          "orientation": 0,
+          "mass": 2389,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p10_1",
+          "item_ref": "W-169",
+          "label": "Warehouse item 169",
+          "position": [
+            226,
+            0,
+            0
+          ],
+          "dims": [
+            172,
+            84,
+            164
+          ],
+          "orientation": 0,
+          "mass": 2473,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p10_2",
+          "item_ref": "W-127",
+          "label": "Warehouse item 127",
+          "position": [
+            0,
+            82,
+            0
+          ],
+          "dims": [
+            206,
+            182,
+            62
+          ],
+          "orientation": 0,
+          "mass": 1199,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p10_3",
+          "item_ref": "W-89",
+          "label": "Warehouse item 89",
+          "position": [
+            226,
+            84,
+            0
+          ],
+          "dims": [
+            182,
+            144,
+            84
+          ],
+          "orientation": 0,
+          "mass": 313,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p10_4",
+          "item_ref": "W-229",
+          "label": "Warehouse item 229",
+          "position": [
+            226,
+            228,
+            0
+          ],
+          "dims": [
+            222,
+            74,
+            134
+          ],
+          "orientation": 1,
+          "mass": 2693,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p10_5",
+          "item_ref": "W-173",
+          "label": "Warehouse item 173",
+          "position": [
+            0,
+            82,
+            62
+          ],
+          "dims": [
+            114,
+            138,
+            138
+          ],
+          "orientation": 0,
+          "mass": 2861,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p10_6",
+          "item_ref": "W-61",
+          "label": "Warehouse item 61",
+          "position": [
+            226,
+            84,
+            84
+          ],
+          "dims": [
+            128,
+            116,
+            146
+          ],
+          "orientation": 1,
+          "mass": 397,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p10_7",
+          "item_ref": "W-29",
+          "label": "Warehouse item 29",
+          "position": [
+            114,
+            82,
+            62
+          ],
+          "dims": [
+            94,
+            132,
+            174
+          ],
+          "orientation": 2,
+          "mass": 93,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p10_8",
+          "item_ref": "W-152",
+          "label": "Warehouse item 152",
+          "position": [
+            226,
+            228,
+            134
+          ],
+          "dims": [
+            187,
+            87,
+            131
+          ],
+          "orientation": 3,
+          "mass": 824,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p10_9",
+          "item_ref": "W-26",
+          "label": "Warehouse item 26",
+          "position": [
+            0,
+            264,
+            0
+          ],
+          "dims": [
+            101,
+            81,
+            233
+          ],
+          "orientation": 3,
+          "mass": 2602,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p10_10",
+          "item_ref": "W-193",
+          "label": "Warehouse item 193",
+          "position": [
+            0,
+            0,
+            132
+          ],
+          "dims": [
+            218,
+            54,
+            158
+          ],
+          "orientation": 2,
+          "mass": 2001,
+          "sequence": 10,
+          "tags": []
+        },
+        {
+          "placement_id": "p10_11",
+          "item_ref": "W-124",
+          "label": "Warehouse item 124",
+          "position": [
+            101,
+            264,
+            0
+          ],
+          "dims": [
+            119,
+            77,
+            189
+          ],
+          "orientation": 4,
+          "mass": 908,
+          "sequence": 11,
+          "tags": []
+        },
+        {
+          "placement_id": "p10_12",
+          "item_ref": "W-205",
+          "label": "Warehouse item 205",
+          "position": [
+            226,
+            0,
+            164
+          ],
+          "dims": [
+            190,
+            80,
+            110
+          ],
+          "orientation": 3,
+          "mass": 365,
+          "sequence": 12,
+          "tags": []
+        },
+        {
+          "placement_id": "p10_13",
+          "item_ref": "W-93",
+          "label": "Warehouse item 93",
+          "position": [
+            354,
+            84,
+            84
+          ],
+          "dims": [
+            58,
+            124,
+            198
+          ],
+          "orientation": 4,
+          "mass": 701,
+          "sequence": 13,
+          "tags": []
+        },
+        {
+          "placement_id": "p10_14",
+          "item_ref": "W-231",
+          "label": "Warehouse item 231",
+          "position": [
+            0,
+            82,
+            200
+          ],
+          "dims": [
+            78,
+            136,
+            66
+          ],
+          "orientation": 1,
+          "mass": 87,
+          "sequence": 14,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c11",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 19921,
+      "fill_rate": 0.4144,
+      "centre_of_mass": [
+        152,
+        154,
+        102
+      ],
+      "placements": [
+        {
+          "placement_id": "p11_0",
+          "item_ref": "W-138",
+          "label": "Warehouse item 138",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            219,
+            93,
+            103
+          ],
+          "orientation": 0,
+          "mass": 2266,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p11_1",
+          "item_ref": "W-222",
+          "label": "Warehouse item 222",
+          "position": [
+            219,
+            0,
+            0
+          ],
+          "dims": [
+            151,
+            87,
+            157
+          ],
+          "orientation": 0,
+          "mass": 2014,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p11_2",
+          "item_ref": "W-180",
+          "label": "Warehouse item 180",
+          "position": [
+            370,
+            0,
+            0
+          ],
+          "dims": [
+            55,
+            185,
+            185
+          ],
+          "orientation": 4,
+          "mass": 740,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p11_3",
+          "item_ref": "W-191",
+          "label": "Warehouse item 191",
+          "position": [
+            219,
+            87,
+            0
+          ],
+          "dims": [
+            96,
+            198,
+            96
+          ],
+          "orientation": 2,
+          "mass": 1807,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p11_4",
+          "item_ref": "W-142",
+          "label": "Warehouse item 142",
+          "position": [
+            0,
+            93,
+            0
+          ],
+          "dims": [
+            161,
+            147,
+            77
+          ],
+          "orientation": 0,
+          "mass": 2654,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p11_5",
+          "item_ref": "W-163",
+          "label": "Warehouse item 163",
+          "position": [
+            0,
+            240,
+            0
+          ],
+          "dims": [
+            144,
+            98,
+            128
+          ],
+          "orientation": 0,
+          "mass": 1891,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p11_6",
+          "item_ref": "W-82",
+          "label": "Warehouse item 82",
+          "position": [
+            0,
+            93,
+            77
+          ],
+          "dims": [
+            111,
+            97,
+            167
+          ],
+          "orientation": 0,
+          "mass": 2434,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p11_7",
+          "item_ref": "W-51",
+          "label": "Warehouse item 51",
+          "position": [
+            219,
+            87,
+            96
+          ],
+          "dims": [
+            106,
+            158,
+            106
+          ],
+          "orientation": 2,
+          "mass": 2227,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p11_8",
+          "item_ref": "W-12",
+          "label": "Warehouse item 12",
+          "position": [
+            0,
+            0,
+            103
+          ],
+          "dims": [
+            197,
+            91,
+            97
+          ],
+          "orientation": 2,
+          "mass": 1244,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p11_9",
+          "item_ref": "W-226",
+          "label": "Warehouse item 226",
+          "position": [
+            0,
+            240,
+            128
+          ],
+          "dims": [
+            141,
+            93,
+            131
+          ],
+          "orientation": 2,
+          "mass": 2402,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p11_10",
+          "item_ref": "W-146",
+          "label": "Warehouse item 146",
+          "position": [
+            161,
+            93,
+            0
+          ],
+          "dims": [
+            51,
+            103,
+            201
+          ],
+          "orientation": 4,
+          "mass": 242,
+          "sequence": 10,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c12",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 19959,
+      "fill_rate": 0.3539,
+      "centre_of_mass": [
+        211,
+        153,
+        74
+      ],
+      "placements": [
+        {
+          "placement_id": "p12_0",
+          "item_ref": "W-114",
+          "label": "Warehouse item 114",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            107,
+            149,
+            109
+          ],
+          "orientation": 0,
+          "mass": 2738,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p12_1",
+          "item_ref": "W-79",
+          "label": "Warehouse item 79",
+          "position": [
+            107,
+            0,
+            0
+          ],
+          "dims": [
+            212,
+            104,
+            74
+          ],
+          "orientation": 0,
+          "mass": 2143,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p12_2",
+          "item_ref": "W-33",
+          "label": "Warehouse item 33",
+          "position": [
+            319,
+            0,
+            0
+          ],
+          "dims": [
+            74,
+            148,
+            148
+          ],
+          "orientation": 0,
+          "mass": 481,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p12_3",
+          "item_ref": "W-53",
+          "label": "Warehouse item 53",
+          "position": [
+            393,
+            0,
+            0
+          ],
+          "dims": [
+            38,
+            244,
+            168
+          ],
+          "orientation": 2,
+          "mass": 2421,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p12_4",
+          "item_ref": "W-23",
+          "label": "Warehouse item 23",
+          "position": [
+            107,
+            104,
+            0
+          ],
+          "dims": [
+            104,
+            108,
+            138
+          ],
+          "orientation": 0,
+          "mass": 2311,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p12_5",
+          "item_ref": "W-219",
+          "label": "Warehouse item 219",
+          "position": [
+            211,
+            104,
+            0
+          ],
+          "dims": [
+            94,
+            64,
+            252
+          ],
+          "orientation": 3,
+          "mass": 1723,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p12_6",
+          "item_ref": "W-216",
+          "label": "Warehouse item 216",
+          "position": [
+            0,
+            149,
+            0
+          ],
+          "dims": [
+            101,
+            123,
+            121
+          ],
+          "orientation": 2,
+          "mass": 1432,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p12_7",
+          "item_ref": "W-104",
+          "label": "Warehouse item 104",
+          "position": [
+            211,
+            168,
+            0
+          ],
+          "dims": [
+            137,
+            109,
+            99
+          ],
+          "orientation": 0,
+          "mass": 1768,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p12_8",
+          "item_ref": "W-135",
+          "label": "Warehouse item 135",
+          "position": [
+            107,
+            212,
+            0
+          ],
+          "dims": [
+            90,
+            100,
+            160
+          ],
+          "orientation": 0,
+          "mass": 1975,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p12_9",
+          "item_ref": "W-19",
+          "label": "Warehouse item 19",
+          "position": [
+            211,
+            277,
+            0
+          ],
+          "dims": [
+            162,
+            54,
+            164
+          ],
+          "orientation": 0,
+          "mass": 1923,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p12_10",
+          "item_ref": "W-212",
+          "label": "Warehouse item 212",
+          "position": [
+            107,
+            0,
+            74
+          ],
+          "dims": [
+            181,
+            47,
+            147
+          ],
+          "orientation": 0,
+          "mass": 1044,
+          "sequence": 10,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c13",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 19948,
+      "fill_rate": 0.3543,
+      "centre_of_mass": [
+        229,
+        177,
+        71
+      ],
+      "placements": [
+        {
+          "placement_id": "p13_0",
+          "item_ref": "W-155",
+          "label": "Warehouse item 155",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            260,
+            180,
+            30
+          ],
+          "orientation": 0,
+          "mass": 1115,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p13_1",
+          "item_ref": "W-170",
+          "label": "Warehouse item 170",
+          "position": [
+            260,
+            0,
+            0
+          ],
+          "dims": [
+            145,
+            215,
+            45
+          ],
+          "orientation": 2,
+          "mass": 2570,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p13_2",
+          "item_ref": "W-159",
+          "label": "Warehouse item 159",
+          "position": [
+            405,
+            0,
+            0
+          ],
+          "dims": [
+            44,
+            202,
+            154
+          ],
+          "orientation": 2,
+          "mass": 1503,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p13_3",
+          "item_ref": "W-100",
+          "label": "Warehouse item 100",
+          "position": [
+            0,
+            180,
+            0
+          ],
+          "dims": [
+            195,
+            55,
+            125
+          ],
+          "orientation": 0,
+          "mass": 1380,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p13_4",
+          "item_ref": "W-167",
+          "label": "Warehouse item 167",
+          "position": [
+            260,
+            215,
+            0
+          ],
+          "dims": [
+            86,
+            102,
+            152
+          ],
+          "orientation": 1,
+          "mass": 2279,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p13_5",
+          "item_ref": "W-43",
+          "label": "Warehouse item 43",
+          "position": [
+            195,
+            180,
+            0
+          ],
+          "dims": [
+            44,
+            158,
+            188
+          ],
+          "orientation": 1,
+          "mass": 1451,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p13_6",
+          "item_ref": "W-55",
+          "label": "Warehouse item 55",
+          "position": [
+            346,
+            215,
+            0
+          ],
+          "dims": [
+            100,
+            80,
+            160
+          ],
+          "orientation": 1,
+          "mass": 2615,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p13_7",
+          "item_ref": "W-72",
+          "label": "Warehouse item 72",
+          "position": [
+            0,
+            235,
+            0
+          ],
+          "dims": [
+            141,
+            57,
+            157
+          ],
+          "orientation": 0,
+          "mass": 1464,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p13_8",
+          "item_ref": "W-240",
+          "label": "Warehouse item 240",
+          "position": [
+            141,
+            235,
+            0
+          ],
+          "dims": [
+            45,
+            115,
+            235
+          ],
+          "orientation": 3,
+          "mass": 960,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p13_9",
+          "item_ref": "W-76",
+          "label": "Warehouse item 76",
+          "position": [
+            0,
+            0,
+            30
+          ],
+          "dims": [
+            83,
+            111,
+            131
+          ],
+          "orientation": 0,
+          "mass": 1852,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p13_10",
+          "item_ref": "W-177",
+          "label": "Warehouse item 177",
+          "position": [
+            0,
+            292,
+            0
+          ],
+          "dims": [
+            112,
+            56,
+            192
+          ],
+          "orientation": 4,
+          "mass": 449,
+          "sequence": 10,
+          "tags": []
+        },
+        {
+          "placement_id": "p13_11",
+          "item_ref": "W-157",
+          "label": "Warehouse item 157",
+          "position": [
+            83,
+            0,
+            30
+          ],
+          "dims": [
+            116,
+            112,
+            92
+          ],
+          "orientation": 0,
+          "mass": 1309,
+          "sequence": 11,
+          "tags": []
+        },
+        {
+          "placement_id": "p13_12",
+          "item_ref": "W-153",
+          "label": "Warehouse item 153",
+          "position": [
+            199,
+            0,
+            30
+          ],
+          "dims": [
+            58,
+            174,
+            118
+          ],
+          "orientation": 2,
+          "mass": 921,
+          "sequence": 12,
+          "tags": []
+        },
+        {
+          "placement_id": "p13_13",
+          "item_ref": "W-0",
+          "label": "Warehouse item 0",
+          "position": [
+            112,
+            292,
+            0
+          ],
+          "dims": [
+            25,
+            35,
+            35
+          ],
+          "orientation": 4,
+          "mass": 80,
+          "sequence": 13,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c14",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 19962,
+      "fill_rate": 0.2804,
+      "centre_of_mass": [
+        203,
+        138,
+        62
+      ],
+      "placements": [
+        {
+          "placement_id": "p14_0",
+          "item_ref": "W-83",
+          "label": "Warehouse item 83",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            154,
+            158,
+            48
+          ],
+          "orientation": 0,
+          "mass": 2531,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p14_1",
+          "item_ref": "W-13",
+          "label": "Warehouse item 13",
+          "position": [
+            154,
+            0,
+            0
+          ],
+          "dims": [
+            134,
+            68,
+            128
+          ],
+          "orientation": 0,
+          "mass": 1341,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p14_2",
+          "item_ref": "W-248",
+          "label": "Warehouse item 248",
+          "position": [
+            288,
+            0,
+            0
+          ],
+          "dims": [
+            119,
+            153,
+            63
+          ],
+          "orientation": 0,
+          "mass": 1736,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p14_3",
+          "item_ref": "W-16",
+          "label": "Warehouse item 16",
+          "position": [
+            154,
+            68,
+            0
+          ],
+          "dims": [
+            61,
+            263,
+            71
+          ],
+          "orientation": 2,
+          "mass": 1632,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p14_4",
+          "item_ref": "W-86",
+          "label": "Warehouse item 86",
+          "position": [
+            215,
+            68,
+            0
+          ],
+          "dims": [
+            53,
+            151,
+            141
+          ],
+          "orientation": 0,
+          "mass": 2822,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p14_5",
+          "item_ref": "W-185",
+          "label": "Warehouse item 185",
+          "position": [
+            288,
+            153,
+            0
+          ],
+          "dims": [
+            110,
+            170,
+            60
+          ],
+          "orientation": 2,
+          "mass": 1225,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p14_6",
+          "item_ref": "W-45",
+          "label": "Warehouse item 45",
+          "position": [
+            0,
+            158,
+            0
+          ],
+          "dims": [
+            130,
+            120,
+            70
+          ],
+          "orientation": 0,
+          "mass": 1645,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p14_7",
+          "item_ref": "W-223",
+          "label": "Warehouse item 223",
+          "position": [
+            407,
+            0,
+            0
+          ],
+          "dims": [
+            38,
+            194,
+            148
+          ],
+          "orientation": 4,
+          "mass": 2111,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p14_8",
+          "item_ref": "W-188",
+          "label": "Warehouse item 188",
+          "position": [
+            215,
+            219,
+            0
+          ],
+          "dims": [
+            69,
+            103,
+            153
+          ],
+          "orientation": 0,
+          "mass": 1516,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p14_9",
+          "item_ref": "W-125",
+          "label": "Warehouse item 125",
+          "position": [
+            0,
+            278,
+            0
+          ],
+          "dims": [
+            120,
+            60,
+            150
+          ],
+          "orientation": 0,
+          "mass": 1005,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p14_10",
+          "item_ref": "W-20",
+          "label": "Warehouse item 20",
+          "position": [
+            0,
+            0,
+            48
+          ],
+          "dims": [
+            115,
+            45,
+            205
+          ],
+          "orientation": 3,
+          "mass": 2020,
+          "sequence": 10,
+          "tags": []
+        },
+        {
+          "placement_id": "p14_11",
+          "item_ref": "W-234",
+          "label": "Warehouse item 234",
+          "position": [
+            0,
+            45,
+            48
+          ],
+          "dims": [
+            59,
+            79,
+            207
+          ],
+          "orientation": 3,
+          "mass": 378,
+          "sequence": 11,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c15",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 19941,
+      "fill_rate": 0.3115,
+      "centre_of_mass": [
+        209,
+        174,
+        66
+      ],
+      "placements": [
+        {
+          "placement_id": "p15_0",
+          "item_ref": "W-94",
+          "label": "Warehouse item 94",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            167,
+            69,
+            89
+          ],
+          "orientation": 0,
+          "mass": 798,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p15_1",
+          "item_ref": "W-69",
+          "label": "Warehouse item 69",
+          "position": [
+            167,
+            0,
+            0
+          ],
+          "dims": [
+            242,
+            64,
+            64
+          ],
+          "orientation": 0,
+          "mass": 1173,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p15_2",
+          "item_ref": "W-66",
+          "label": "Warehouse item 66",
+          "position": [
+            167,
+            64,
+            0
+          ],
+          "dims": [
+            113,
+            71,
+            121
+          ],
+          "orientation": 0,
+          "mass": 882,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p15_3",
+          "item_ref": "W-220",
+          "label": "Warehouse item 220",
+          "position": [
+            280,
+            64,
+            0
+          ],
+          "dims": [
+            65,
+            155,
+            95
+          ],
+          "orientation": 0,
+          "mass": 1820,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p15_4",
+          "item_ref": "W-17",
+          "label": "Warehouse item 17",
+          "position": [
+            345,
+            64,
+            0
+          ],
+          "dims": [
+            76,
+            122,
+            102
+          ],
+          "orientation": 0,
+          "mass": 1729,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p15_5",
+          "item_ref": "W-108",
+          "label": "Warehouse item 108",
+          "position": [
+            0,
+            69,
+            0
+          ],
+          "dims": [
+            79,
+            163,
+            73
+          ],
+          "orientation": 0,
+          "mass": 2156,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p15_6",
+          "item_ref": "W-210",
+          "label": "Warehouse item 210",
+          "position": [
+            79,
+            69,
+            0
+          ],
+          "dims": [
+            85,
+            95,
+            115
+          ],
+          "orientation": 4,
+          "mass": 850,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p15_7",
+          "item_ref": "W-198",
+          "label": "Warehouse item 198",
+          "position": [
+            167,
+            135,
+            0
+          ],
+          "dims": [
+            39,
+            143,
+            163
+          ],
+          "orientation": 0,
+          "mass": 2486,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p15_8",
+          "item_ref": "W-121",
+          "label": "Warehouse item 121",
+          "position": [
+            421,
+            64,
+            0
+          ],
+          "dims": [
+            26,
+            178,
+            196
+          ],
+          "orientation": 4,
+          "mass": 617,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p15_9",
+          "item_ref": "W-160",
+          "label": "Warehouse item 160",
+          "position": [
+            206,
+            135,
+            0
+          ],
+          "dims": [
+            35,
+            105,
+            245
+          ],
+          "orientation": 5,
+          "mass": 1600,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p15_10",
+          "item_ref": "W-238",
+          "label": "Warehouse item 238",
+          "position": [
+            79,
+            164,
+            0
+          ],
+          "dims": [
+            53,
+            149,
+            113
+          ],
+          "orientation": 4,
+          "mass": 766,
+          "sequence": 10,
+          "tags": []
+        },
+        {
+          "placement_id": "p15_11",
+          "item_ref": "W-178",
+          "label": "Warehouse item 178",
+          "position": [
+            345,
+            186,
+            0
+          ],
+          "dims": [
+            63,
+            99,
+            143
+          ],
+          "orientation": 2,
+          "mass": 546,
+          "sequence": 11,
+          "tags": []
+        },
+        {
+          "placement_id": "p15_12",
+          "item_ref": "W-136",
+          "label": "Warehouse item 136",
+          "position": [
+            206,
+            240,
+            0
+          ],
+          "dims": [
+            133,
+            41,
+            161
+          ],
+          "orientation": 1,
+          "mass": 2072,
+          "sequence": 12,
+          "tags": []
+        },
+        {
+          "placement_id": "p15_13",
+          "item_ref": "W-129",
+          "label": "Warehouse item 129",
+          "position": [
+            0,
+            232,
+            0
+          ],
+          "dims": [
+            62,
+            114,
+            124
+          ],
+          "orientation": 0,
+          "mass": 1393,
+          "sequence": 13,
+          "tags": []
+        },
+        {
+          "placement_id": "p15_14",
+          "item_ref": "W-147",
+          "label": "Warehouse item 147",
+          "position": [
+            0,
+            69,
+            73
+          ],
+          "dims": [
+            72,
+            146,
+            82
+          ],
+          "orientation": 2,
+          "mass": 339,
+          "sequence": 14,
+          "tags": []
+        },
+        {
+          "placement_id": "p15_15",
+          "item_ref": "W-122",
+          "label": "Warehouse item 122",
+          "position": [
+            206,
+            281,
+            0
+          ],
+          "dims": [
+            67,
+            57,
+            221
+          ],
+          "orientation": 3,
+          "mass": 714,
+          "sequence": 15,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c16",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 19891,
+      "fill_rate": 0.2687,
+      "centre_of_mass": [
+        228,
+        173,
+        66
+      ],
+      "placements": [
+        {
+          "placement_id": "p16_0",
+          "item_ref": "W-98",
+          "label": "Warehouse item 98",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            109,
+            123,
+            63
+          ],
+          "orientation": 0,
+          "mass": 1186,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p16_1",
+          "item_ref": "W-27",
+          "label": "Warehouse item 27",
+          "position": [
+            109,
+            0,
+            0
+          ],
+          "dims": [
+            46,
+            162,
+            112
+          ],
+          "orientation": 0,
+          "mass": 2699,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p16_2",
+          "item_ref": "W-118",
+          "label": "Warehouse item 118",
+          "position": [
+            155,
+            0,
+            0
+          ],
+          "dims": [
+            49,
+            203,
+            83
+          ],
+          "orientation": 0,
+          "mass": 326,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p16_3",
+          "item_ref": "W-73",
+          "label": "Warehouse item 73",
+          "position": [
+            204,
+            0,
+            0
+          ],
+          "dims": [
+            184,
+            118,
+            38
+          ],
+          "orientation": 0,
+          "mass": 1561,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p16_4",
+          "item_ref": "W-6",
+          "label": "Warehouse item 6",
+          "position": [
+            388,
+            0,
+            0
+          ],
+          "dims": [
+            61,
+            63,
+            211
+          ],
+          "orientation": 4,
+          "mass": 662,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p16_5",
+          "item_ref": "W-7",
+          "label": "Warehouse item 7",
+          "position": [
+            204,
+            118,
+            0
+          ],
+          "dims": [
+            106,
+            82,
+            92
+          ],
+          "orientation": 0,
+          "mass": 759,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p16_6",
+          "item_ref": "W-119",
+          "label": "Warehouse item 119",
+          "position": [
+            310,
+            118,
+            0
+          ],
+          "dims": [
+            92,
+            74,
+            114
+          ],
+          "orientation": 0,
+          "mass": 423,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p16_7",
+          "item_ref": "W-35",
+          "label": "Warehouse item 35",
+          "position": [
+            0,
+            123,
+            0
+          ],
+          "dims": [
+            80,
+            160,
+            60
+          ],
+          "orientation": 2,
+          "mass": 675,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p16_8",
+          "item_ref": "W-241",
+          "label": "Warehouse item 241",
+          "position": [
+            402,
+            118,
+            0
+          ],
+          "dims": [
+            48,
+            106,
+            146
+          ],
+          "orientation": 0,
+          "mass": 1057,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p16_9",
+          "item_ref": "W-199",
+          "label": "Warehouse item 199",
+          "position": [
+            109,
+            162,
+            0
+          ],
+          "dims": [
+            44,
+            82,
+            204
+          ],
+          "orientation": 4,
+          "mass": 2583,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p16_10",
+          "item_ref": "W-230",
+          "label": "Warehouse item 230",
+          "position": [
+            310,
+            192,
+            0
+          ],
+          "dims": [
+            35,
+            105,
+            195
+          ],
+          "orientation": 1,
+          "mass": 2790,
+          "sequence": 10,
+          "tags": []
+        },
+        {
+          "placement_id": "p16_11",
+          "item_ref": "W-34",
+          "label": "Warehouse item 34",
+          "position": [
+            80,
+            123,
+            0
+          ],
+          "dims": [
+            29,
+            117,
+            209
+          ],
+          "orientation": 4,
+          "mass": 578,
+          "sequence": 11,
+          "tags": []
+        },
+        {
+          "placement_id": "p16_12",
+          "item_ref": "W-200",
+          "label": "Warehouse item 200",
+          "position": [
+            204,
+            200,
+            0
+          ],
+          "dims": [
+            75,
+            125,
+            75
+          ],
+          "orientation": 2,
+          "mass": 2680,
+          "sequence": 12,
+          "tags": []
+        },
+        {
+          "placement_id": "p16_13",
+          "item_ref": "W-175",
+          "label": "Warehouse item 175",
+          "position": [
+            345,
+            192,
+            0
+          ],
+          "dims": [
+            50,
+            70,
+            200
+          ],
+          "orientation": 5,
+          "mass": 255,
+          "sequence": 13,
+          "tags": []
+        },
+        {
+          "placement_id": "p16_14",
+          "item_ref": "W-213",
+          "label": "Warehouse item 213",
+          "position": [
+            279,
+            200,
+            0
+          ],
+          "dims": [
+            28,
+            108,
+            224
+          ],
+          "orientation": 5,
+          "mass": 1141,
+          "sequence": 14,
+          "tags": []
+        },
+        {
+          "placement_id": "p16_15",
+          "item_ref": "W-60",
+          "label": "Warehouse item 60",
+          "position": [
+            109,
+            244,
+            0
+          ],
+          "dims": [
+            85,
+            85,
+            85
+          ],
+          "orientation": 0,
+          "mass": 300,
+          "sequence": 15,
+          "tags": []
+        },
+        {
+          "placement_id": "p16_16",
+          "item_ref": "W-88",
+          "label": "Warehouse item 88",
+          "position": [
+            345,
+            262,
+            0
+          ],
+          "dims": [
+            83,
+            53,
+            139
+          ],
+          "orientation": 3,
+          "mass": 216,
+          "sequence": 16,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c17",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 19933,
+      "fill_rate": 0.1894,
+      "centre_of_mass": [
+        199,
+        156,
+        47
+      ],
+      "placements": [
+        {
+          "placement_id": "p17_0",
+          "item_ref": "W-38",
+          "label": "Warehouse item 38",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            59,
+            73,
+            153
+          ],
+          "orientation": 0,
+          "mass": 966,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p17_1",
+          "item_ref": "W-70",
+          "label": "Warehouse item 70",
+          "position": [
+            59,
+            0,
+            0
+          ],
+          "dims": [
+            55,
+            125,
+            95
+          ],
+          "orientation": 0,
+          "mass": 1270,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p17_2",
+          "item_ref": "W-161",
+          "label": "Warehouse item 161",
+          "position": [
+            114,
+            0,
+            0
+          ],
+          "dims": [
+            58,
+            166,
+            66
+          ],
+          "orientation": 0,
+          "mass": 1697,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p17_3",
+          "item_ref": "W-189",
+          "label": "Warehouse item 189",
+          "position": [
+            172,
+            0,
+            0
+          ],
+          "dims": [
+            112,
+            164,
+            34
+          ],
+          "orientation": 0,
+          "mass": 1613,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p17_4",
+          "item_ref": "W-151",
+          "label": "Warehouse item 151",
+          "position": [
+            284,
+            0,
+            0
+          ],
+          "dims": [
+            88,
+            126,
+            56
+          ],
+          "orientation": 0,
+          "mass": 727,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p17_5",
+          "item_ref": "W-10",
+          "label": "Warehouse item 10",
+          "position": [
+            372,
+            0,
+            0
+          ],
+          "dims": [
+            75,
+            235,
+            35
+          ],
+          "orientation": 2,
+          "mass": 1050,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p17_6",
+          "item_ref": "W-126",
+          "label": "Warehouse item 126",
+          "position": [
+            0,
+            73,
+            0
+          ],
+          "dims": [
+            31,
+            163,
+            121
+          ],
+          "orientation": 4,
+          "mass": 1102,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p17_7",
+          "item_ref": "W-172",
+          "label": "Warehouse item 172",
+          "position": [
+            284,
+            126,
+            0
+          ],
+          "dims": [
+            71,
+            77,
+            107
+          ],
+          "orientation": 0,
+          "mass": 2764,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p17_8",
+          "item_ref": "W-228",
+          "label": "Warehouse item 228",
+          "position": [
+            59,
+            125,
+            0
+          ],
+          "dims": [
+            43,
+            179,
+            73
+          ],
+          "orientation": 4,
+          "mass": 2596,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p17_9",
+          "item_ref": "W-182",
+          "label": "Warehouse item 182",
+          "position": [
+            172,
+            164,
+            0
+          ],
+          "dims": [
+            41,
+            117,
+            117
+          ],
+          "orientation": 0,
+          "mass": 934,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p17_10",
+          "item_ref": "W-49",
+          "label": "Warehouse item 49",
+          "position": [
+            213,
+            164,
+            0
+          ],
+          "dims": [
+            44,
+            72,
+            174
+          ],
+          "orientation": 4,
+          "mass": 2033,
+          "sequence": 10,
+          "tags": []
+        },
+        {
+          "placement_id": "p17_11",
+          "item_ref": "W-59",
+          "label": "Warehouse item 59",
+          "position": [
+            114,
+            166,
+            0
+          ],
+          "dims": [
+            42,
+            54,
+            214
+          ],
+          "orientation": 1,
+          "mass": 203,
+          "sequence": 11,
+          "tags": []
+        },
+        {
+          "placement_id": "p17_12",
+          "item_ref": "W-63",
+          "label": "Warehouse item 63",
+          "position": [
+            31,
+            73,
+            0
+          ],
+          "dims": [
+            28,
+            214,
+            78
+          ],
+          "orientation": 4,
+          "mass": 591,
+          "sequence": 12,
+          "tags": []
+        },
+        {
+          "placement_id": "p17_13",
+          "item_ref": "W-39",
+          "label": "Warehouse item 39",
+          "position": [
+            284,
+            203,
+            0
+          ],
+          "dims": [
+            34,
+            102,
+            134
+          ],
+          "orientation": 4,
+          "mass": 1063,
+          "sequence": 13,
+          "tags": []
+        },
+        {
+          "placement_id": "p17_14",
+          "item_ref": "W-11",
+          "label": "Warehouse item 11",
+          "position": [
+            318,
+            203,
+            0
+          ],
+          "dims": [
+            48,
+            136,
+            66
+          ],
+          "orientation": 0,
+          "mass": 1147,
+          "sequence": 14,
+          "tags": []
+        },
+        {
+          "placement_id": "p17_15",
+          "item_ref": "W-1",
+          "label": "Warehouse item 1",
+          "position": [
+            114,
+            220,
+            0
+          ],
+          "dims": [
+            56,
+            78,
+            96
+          ],
+          "orientation": 4,
+          "mass": 177,
+          "sequence": 15,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c18",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 19413,
+      "fill_rate": 0.0998,
+      "centre_of_mass": [
+        196,
+        102,
+        35
+      ],
+      "placements": [
+        {
+          "placement_id": "p18_0",
+          "item_ref": "W-141",
+          "label": "Warehouse item 141",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            118,
+            86,
+            46
+          ],
+          "orientation": 0,
+          "mass": 2557,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p18_1",
+          "item_ref": "W-113",
+          "label": "Warehouse item 113",
+          "position": [
+            118,
+            0,
+            0
+          ],
+          "dims": [
+            64,
+            88,
+            78
+          ],
+          "orientation": 0,
+          "mass": 2641,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p18_2",
+          "item_ref": "W-204",
+          "label": "Warehouse item 204",
+          "position": [
+            182,
+            0,
+            0
+          ],
+          "dims": [
+            67,
+            129,
+            49
+          ],
+          "orientation": 0,
+          "mass": 268,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p18_3",
+          "item_ref": "W-91",
+          "label": "Warehouse item 91",
+          "position": [
+            249,
+            0,
+            0
+          ],
+          "dims": [
+            38,
+            76,
+            146
+          ],
+          "orientation": 0,
+          "mass": 507,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p18_4",
+          "item_ref": "W-242",
+          "label": "Warehouse item 242",
+          "position": [
+            287,
+            0,
+            0
+          ],
+          "dims": [
+            91,
+            167,
+            27
+          ],
+          "orientation": 0,
+          "mass": 1154,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p18_5",
+          "item_ref": "W-225",
+          "label": "Warehouse item 225",
+          "position": [
+            378,
+            0,
+            0
+          ],
+          "dims": [
+            50,
+            80,
+            100
+          ],
+          "orientation": 0,
+          "mass": 2305,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p18_6",
+          "item_ref": "W-50",
+          "label": "Warehouse item 50",
+          "position": [
+            378,
+            80,
+            0
+          ],
+          "dims": [
+            45,
+            115,
+            75
+          ],
+          "orientation": 2,
+          "mass": 2130,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p18_7",
+          "item_ref": "W-25",
+          "label": "Warehouse item 25",
+          "position": [
+            0,
+            86,
+            0
+          ],
+          "dims": [
+            40,
+            190,
+            50
+          ],
+          "orientation": 2,
+          "mass": 2505,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p18_8",
+          "item_ref": "W-214",
+          "label": "Warehouse item 214",
+          "position": [
+            249,
+            76,
+            0
+          ],
+          "dims": [
+            37,
+            169,
+            59
+          ],
+          "orientation": 0,
+          "mass": 1238,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p18_9",
+          "item_ref": "W-162",
+          "label": "Warehouse item 162",
+          "position": [
+            40,
+            86,
+            0
+          ],
+          "dims": [
+            37,
+            101,
+            97
+          ],
+          "orientation": 2,
+          "mass": 1794,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p18_10",
+          "item_ref": "W-190",
+          "label": "Warehouse item 190",
+          "position": [
+            77,
+            86,
+            0
+          ],
+          "dims": [
+            35,
+            155,
+            65
+          ],
+          "orientation": 2,
+          "mass": 1710,
+          "sequence": 10,
+          "tags": []
+        },
+        {
+          "placement_id": "p18_11",
+          "item_ref": "W-92",
+          "label": "Warehouse item 92",
+          "position": [
+            423,
+            80,
+            0
+          ],
+          "dims": [
+            27,
+            81,
+            137
+          ],
+          "orientation": 4,
+          "mass": 604,
+          "sequence": 11,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c19",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 19979,
+      "fill_rate": 0.0681,
+      "centre_of_mass": [
+        213,
+        71,
+        34
+      ],
+      "placements": [
+        {
+          "placement_id": "p19_0",
+          "item_ref": "W-194",
+          "label": "Warehouse item 194",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            97,
+            89,
+            39
+          ],
+          "orientation": 0,
+          "mass": 2098,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p19_1",
+          "item_ref": "W-102",
+          "label": "Warehouse item 102",
+          "position": [
+            97,
+            0,
+            0
+          ],
+          "dims": [
+            51,
+            177,
+            37
+          ],
+          "orientation": 0,
+          "mass": 1574,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p19_2",
+          "item_ref": "W-81",
+          "label": "Warehouse item 81",
+          "position": [
+            148,
+            0,
+            0
+          ],
+          "dims": [
+            68,
+            36,
+            136
+          ],
+          "orientation": 0,
+          "mass": 2337,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p19_3",
+          "item_ref": "W-78",
+          "label": "Warehouse item 78",
+          "position": [
+            216,
+            0,
+            0
+          ],
+          "dims": [
+            169,
+            43,
+            43
+          ],
+          "orientation": 0,
+          "mass": 2046,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p19_4",
+          "item_ref": "W-103",
+          "label": "Warehouse item 103",
+          "position": [
+            385,
+            0,
+            0
+          ],
+          "dims": [
+            48,
+            94,
+            68
+          ],
+          "orientation": 2,
+          "mass": 1671,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p19_5",
+          "item_ref": "W-22",
+          "label": "Warehouse item 22",
+          "position": [
+            148,
+            36,
+            0
+          ],
+          "dims": [
+            61,
+            47,
+            107
+          ],
+          "orientation": 0,
+          "mass": 2214,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p19_6",
+          "item_ref": "W-243",
+          "label": "Warehouse item 243",
+          "position": [
+            216,
+            43,
+            0
+          ],
+          "dims": [
+            134,
+            38,
+            58
+          ],
+          "orientation": 0,
+          "mass": 1251,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p19_7",
+          "item_ref": "W-215",
+          "label": "Warehouse item 215",
+          "position": [
+            216,
+            81,
+            0
+          ],
+          "dims": [
+            80,
+            40,
+            90
+          ],
+          "orientation": 0,
+          "mass": 1335,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p19_8",
+          "item_ref": "W-166",
+          "label": "Warehouse item 166",
+          "position": [
+            296,
+            81,
+            0
+          ],
+          "dims": [
+            43,
+            91,
+            71
+          ],
+          "orientation": 0,
+          "mass": 2182,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p19_9",
+          "item_ref": "W-54",
+          "label": "Warehouse item 54",
+          "position": [
+            148,
+            83,
+            0
+          ],
+          "dims": [
+            57,
+            99,
+            49
+          ],
+          "orientation": 0,
+          "mass": 2518,
+          "sequence": 9,
+          "tags": []
+        },
+        {
+          "placement_id": "p19_10",
+          "item_ref": "W-209",
+          "label": "Warehouse item 209",
+          "position": [
+            0,
+            89,
+            0
+          ],
+          "dims": [
+            52,
+            54,
+            54
+          ],
+          "orientation": 0,
+          "mass": 753,
+          "sequence": 10,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "carton_id": "c20",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 14525,
+      "fill_rate": 0.0396,
+      "centre_of_mass": [
+        215,
+        53,
+        29
+      ],
+      "placements": [
+        {
+          "placement_id": "p20_0",
+          "item_ref": "W-131",
+          "label": "Warehouse item 131",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            148,
+            46,
+            36
+          ],
+          "orientation": 0,
+          "mass": 1587,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p20_1",
+          "item_ref": "W-134",
+          "label": "Warehouse item 134",
+          "position": [
+            148,
+            0,
+            0
+          ],
+          "dims": [
+            47,
+            39,
+            129
+          ],
+          "orientation": 0,
+          "mass": 1878,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p20_2",
+          "item_ref": "W-156",
+          "label": "Warehouse item 156",
+          "position": [
+            195,
+            0,
+            0
+          ],
+          "dims": [
+            73,
+            51,
+            61
+          ],
+          "orientation": 0,
+          "mass": 1212,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p20_3",
+          "item_ref": "W-247",
+          "label": "Warehouse item 247",
+          "position": [
+            268,
+            0,
+            0
+          ],
+          "dims": [
+            76,
+            92,
+            32
+          ],
+          "orientation": 0,
+          "mass": 1639,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p20_4",
+          "item_ref": "W-44",
+          "label": "Warehouse item 44",
+          "position": [
+            344,
+            0,
+            0
+          ],
+          "dims": [
+            87,
+            59,
+            39
+          ],
+          "orientation": 0,
+          "mass": 1548,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p20_5",
+          "item_ref": "W-75",
+          "label": "Warehouse item 75",
+          "position": [
+            148,
+            39,
+            0
+          ],
+          "dims": [
+            40,
+            50,
+            100
+          ],
+          "orientation": 0,
+          "mass": 1755,
+          "sequence": 5,
+          "tags": []
+        },
+        {
+          "placement_id": "p20_6",
+          "item_ref": "W-184",
+          "label": "Warehouse item 184",
+          "position": [
+            0,
+            46,
+            0
+          ],
+          "dims": [
+            127,
+            49,
+            29
+          ],
+          "orientation": 0,
+          "mass": 1128,
+          "sequence": 6,
+          "tags": []
+        },
+        {
+          "placement_id": "p20_7",
+          "item_ref": "W-107",
+          "label": "Warehouse item 107",
+          "position": [
+            195,
+            51,
+            0
+          ],
+          "dims": [
+            36,
+            102,
+            42
+          ],
+          "orientation": 0,
+          "mass": 2059,
+          "sequence": 7,
+          "tags": []
+        },
+        {
+          "placement_id": "p20_8",
+          "item_ref": "W-97",
+          "label": "Warehouse item 97",
+          "position": [
+            231,
+            51,
+            0
+          ],
+          "dims": [
+            32,
+            66,
+            62
+          ],
+          "orientation": 4,
+          "mass": 1089,
+          "sequence": 8,
+          "tags": []
+        },
+        {
+          "placement_id": "p20_9",
+          "item_ref": "W-150",
+          "label": "Warehouse item 150",
+          "position": [
+            344,
+            59,
+            0
+          ],
+          "dims": [
+            45,
+            65,
+            25
+          ],
+          "orientation": 0,
+          "mass": 630,
+          "sequence": 9,
+          "tags": []
+        }
+      ]
+    }
+  ],
+  "rejects": []
+}

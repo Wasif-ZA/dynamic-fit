@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "solution_id": "sol_08_orientation_locked",
+  "order_id": "FIX-08",
+  "solver": {
+    "version": "0.1.0",
+    "seed": 6975702759919959002,
+    "mode": "rigid",
+    "time_budget_ms": 1200,
+    "elapsed_ms": 0,
+    "tier": 1
+  },
+  "coordinate_system": {
+    "up": "z",
+    "handedness": "right",
+    "origin": "min_corner"
+  },
+  "units": {
+    "length": "mm",
+    "mass": "g"
+  },
+  "metrics": {
+    "carton_count": 1,
+    "fill_rate": 0.0972,
+    "total_mass": 910
+  },
+  "cartons": [
+    {
+      "carton_id": "c1",
+      "sku": "BOX-M",
+      "inner_dims": [
+        320,
+        240,
+        180
+      ],
+      "tare_mass": 210,
+      "contents_mass": 700,
+      "fill_rate": 0.0972,
+      "centre_of_mass": [
+        120,
+        80,
+        17
+      ],
+      "placements": [
+        {
+          "placement_id": "p1_0",
+          "item_ref": "BOOK-1",
+          "label": "Hardcover book",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            240,
+            160,
+            35
+          ],
+          "orientation": 0,
+          "mass": 700,
+          "sequence": 0,
+          "tags": []
+        }
+      ]
+    }
+  ],
+  "rejects": [
+    {
+      "item_ref": "WINE-1",
+      "reason_code": "NO_FITTING_CARTON",
+      "message": "Exceeds every carton in all permitted orientations"
+    }
+  ]
+}

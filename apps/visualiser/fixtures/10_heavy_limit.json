@@ -1,0 +1,163 @@
+{
+  "schema_version": "1.0.0",
+  "solution_id": "sol_10_heavy_limit",
+  "order_id": "FIX-10",
+  "solver": {
+    "version": "0.1.0",
+    "seed": 2098360902868115693,
+    "mode": "rigid",
+    "time_budget_ms": 1200,
+    "elapsed_ms": 0,
+    "tier": 1
+  },
+  "coordinate_system": {
+    "up": "z",
+    "handedness": "right",
+    "origin": "min_corner"
+  },
+  "units": {
+    "length": "mm",
+    "mass": "g"
+  },
+  "metrics": {
+    "carton_count": 1,
+    "fill_rate": 0.1778,
+    "total_mass": 19580
+  },
+  "cartons": [
+    {
+      "carton_id": "c1",
+      "sku": "BOX-L",
+      "inner_dims": [
+        450,
+        350,
+        300
+      ],
+      "tare_mass": 380,
+      "contents_mass": 19200,
+      "fill_rate": 0.1778,
+      "centre_of_mass": [
+        200,
+        150,
+        35
+      ],
+      "placements": [
+        {
+          "placement_id": "p1_0",
+          "item_ref": "BRICK-0",
+          "label": "Brick 0",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "dims": [
+            200,
+            100,
+            70
+          ],
+          "orientation": 0,
+          "mass": 3200,
+          "sequence": 0,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_1",
+          "item_ref": "BRICK-1",
+          "label": "Brick 1",
+          "position": [
+            200,
+            0,
+            0
+          ],
+          "dims": [
+            200,
+            100,
+            70
+          ],
+          "orientation": 0,
+          "mass": 3200,
+          "sequence": 1,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_2",
+          "item_ref": "BRICK-2",
+          "label": "Brick 2",
+          "position": [
+            0,
+            100,
+            0
+          ],
+          "dims": [
+            200,
+            100,
+            70
+          ],
+          "orientation": 0,
+          "mass": 3200,
+          "sequence": 2,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_3",
+          "item_ref": "BRICK-3",
+          "label": "Brick 3",
+          "position": [
+            200,
+            100,
+            0
+          ],
+          "dims": [
+            200,
+            100,
+            70
+          ],
+          "orientation": 0,
+          "mass": 3200,
+          "sequence": 3,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_4",
+          "item_ref": "BRICK-4",
+          "label": "Brick 4",
+          "position": [
+            0,
+            200,
+            0
+          ],
+          "dims": [
+            200,
+            100,
+            70
+          ],
+          "orientation": 0,
+          "mass": 3200,
+          "sequence": 4,
+          "tags": []
+        },
+        {
+          "placement_id": "p1_5",
+          "item_ref": "BRICK-5",
+          "label": "Brick 5",
+          "position": [
+            200,
+            200,
+            0
+          ],
+          "dims": [
+            200,
+            100,
+            70
+          ],
+          "orientation": 0,
+          "mass": 3200,
+          "sequence": 5,
+          "tags": []
+        }
+      ]
+    }
+  ],
+  "rejects": []
+}

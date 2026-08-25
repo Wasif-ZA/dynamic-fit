@@ -1,0 +1,265 @@
+html {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}
+
+h1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  margin: 0.75rem 1rem;
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+canvas {
+  width: 100vw;
+  height: 100vh;
+  display: block;
+}
+
+#carton-info {
+  position: absolute;
+  top: 3rem;
+  left: 1rem;
+  z-index: 100;
+  min-width: 14rem;
+  max-width: 18rem;
+  max-height: calc(100vh - 4rem);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  font-size: 1rem;
+}
+
+.carton-info-entry {
+  margin: 0;
+}
+
+.carton-info-entry + .carton-info-entry {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #d0d7de;
+}
+
+.carton-info-summary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.carton-info-summary::-webkit-details-marker {
+  display: none;
+}
+
+.carton-info-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.carton-expand-btn {
+  flex-shrink: 0;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #b8c2cc;
+  border-radius: 0.35rem;
+  background: #f4f7fa;
+  color: #1f2328;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.carton-collapse-label {
+  display: none;
+}
+
+.carton-info-entry[open] .carton-expand-label {
+  display: none;
+}
+
+.carton-info-entry[open] .carton-collapse-label {
+  display: inline;
+}
+
+.carton-info-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.carton-info-id {
+  color: #57606a;
+  font-size: 1.2rem;
+}
+
+.carton-info-dims {
+  font-size: 1rem;
+}
+
+.carton-info-empty,
+.placement-info-empty {
+  margin: 0;
+  color: #57606a;
+  font-size: 0.95rem;
+}
+
+.placement-info-list {
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.placement-info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.5rem 0;
+}
+
+.placement-info-item + .placement-info-item {
+  border-top: 1px solid #e8ecf0;
+}
+
+.placement-info-tags {
+  list-style: none;
+  padding: 0;
+}
+
+.placement-highlight-toggle {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  margin: 0.2rem 0 0;
+  accent-color: #1f2328;
+  cursor: pointer;
+}
+
+.placement-info-item:has(.placement-highlight-toggle:checked) .placement-swatch {
+  box-shadow: 0 0 0 2px #1f2328;
+}
+
+.placement-swatch {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.2rem;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.2rem;
+}
+
+.placement-info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.placement-info-ref {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.placement-info-label {
+  color: #57606a;
+  font-size: 0.9rem;
+}
+
+.label {
+  z-index: 10;
+  padding: 0.3rem 0.55rem;
+  border-radius: 0.3rem;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  color: #1f2328;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Mobile View */
+@media (max-width: 768px) {
+  html {
+    font-size: 18px;
+  }
+
+  h1 {
+    margin: 0.5rem 0.75rem;
+    font-size: 1rem;
+  }
+
+  #carton-info {
+    top: auto;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    min-width: 0;
+    max-width: none;
+    width: auto;
+    max-height: min(42vh, 22rem);
+    padding: 1rem;
+    font-size: 1rem;
+  }
+
+  .carton-expand-btn {
+    min-height: 2.25rem;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.95rem;
+  }
+
+  .carton-info-dims {
+    font-size: 1.05rem;
+  }
+
+  .placement-info-ref {
+    font-size: 1rem;
+  }
+
+  .placement-info-label {
+    font-size: 0.95rem;
+  }
+
+  .placement-highlight-toggle,
+  .placement-swatch {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  .dimension-label {
+    padding: 0.4rem 0.65rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #carton-info {
+    max-height: min(48vh, 24rem);
+  }
+
+  .carton-info-summary {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .carton-expand-btn {
+    align-self: flex-start;
+  }
+
+  .dimension-label {
+    font-size: 1.05rem;
+  }
+}
