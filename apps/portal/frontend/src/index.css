@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-panel text-ink-700 font-body antialiased;
+}
+
+/* Signature element: hazard corner ribbon, echoing a diagonal hazmat label */
+.hazard-ribbon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 3.25rem;
+  height: 3.25rem;
+  overflow: hidden;
+  pointer-events: none;
+}
+.hazard-ribbon::after {
+  content: 'HAZARD';
+  position: absolute;
+  top: 0.55rem;
+  right: -1.15rem;
+  width: 4.5rem;
+  transform: rotate(45deg);
+  background: repeating-linear-gradient(
+    45deg,
+    #e8a400,
+    #e8a400 6px,
+    #16232e 6px,
+    #16232e 12px
+  );
+  color: transparent;
+  font-size: 0.5rem;
+  text-align: center;
+  line-height: 1rem;
+}
+
+/* Manifest cut-line: a dashed rule used to separate label-like data blocks */
+.cut-line {
+  border-top: 1.5px dashed theme('colors.ink.200');
+}
+
+/* Focus visibility */
+:focus-visible {
+  outline: 2px solid theme('colors.brand.500');
+  outline-offset: 2px;
+}
