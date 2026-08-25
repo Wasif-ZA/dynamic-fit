@@ -6,9 +6,9 @@ draws the result.
 
 Three subsystems, one repository:
 
-| Subsystem | Lives in |What it does |
-|---|---|---|---|
-| **FitPortal** | `apps/portal/`  Takes the order, shows the result |
+| Subsystem | Lives in | What it does |
+|---|---|---|
+| **FitPortal** | `apps/portal/` | Takes the order, shows the result |
 | **FitSolver** | `packages/solver/` | Does the packing |
 | **FitVisualizer** | `apps/visualiser/` | Draws it in 3D |
 
