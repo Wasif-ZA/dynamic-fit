@@ -6,7 +6,7 @@ draws the result.
 
 Three subsystems, one repository:
 
-| Subsystem | Lives in | Owner | What it does |
+| Subsystem | Lives in |What it does |
 |---|---|---|---|
 | **FitPortal** | `apps/portal/`  Takes the order, shows the result |
 | **FitSolver** | `packages/solver/` | Does the packing |
