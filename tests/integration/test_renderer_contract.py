@@ -126,6 +126,26 @@ def test_a_multi_carton_solution_satisfies_the_renderer(tmp_path):
     check_with_node(document, tmp_path)
 
 
+def test_a_hazardous_item_still_satisfies_the_renderer(tmp_path):
+    document = solve_order(
+        [
+            {
+                "ItemCode": "CLEANER",
+                "ItemReference": "Aerosol Cleaner",
+                "Width": 90,
+                "Length": 90,
+                "Depth": 90,
+                "Weight": 0.5,
+                "BoxGroup": "DG-8",
+                "Hazardous": True,
+            }
+        ]
+    )
+    tags = [p["tags"] for c in document["cartons"] for p in c["placements"]]
+    assert tags == [["HAZARDOUS"]]
+    check_with_node(document, tmp_path)
+
+
 @pytest.mark.parametrize(
     "fixture", sorted((ROOT / "contract" / "fixtures").glob("*.json")), ids=lambda p: p.stem
 )

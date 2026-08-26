@@ -12,7 +12,13 @@ items. Box types are reusable reference data and are therefore kept independent
 of orders.
 """
 
-from pydantic import BaseModel, ConfigDict, Field
+from datetime import datetime, timezone
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+# Draft until packed, Packed once a solution exists.
+OrderStatus = Literal["Draft", "Packed"]
 
 
 class PortalModel(BaseModel):
@@ -26,7 +32,7 @@ class PortalModel(BaseModel):
 
 
 class Item(PortalModel):
-    """An item to be packed."""
+    """An item to pack. Quantity defaults to 1; Hazardous defaults to false."""
 
     item_code: str = Field(alias="ItemCode", min_length=1)
     item_reference: str = Field(alias="ItemReference", min_length=1)
@@ -35,6 +41,18 @@ class Item(PortalModel):
     depth: int = Field(alias="Depth", gt=0)
     weight: float = Field(alias="Weight", gt=0)
     box_group: str | None = Field(default=None, alias="BoxGroup", min_length=1)
+    quantity: int = Field(default=1, alias="Quantity", ge=1)
+    hazardous: bool = Field(default=False, alias="Hazardous")
+
+    @field_validator("box_group", mode="before")
+    @classmethod
+    def empty_box_group_is_none(cls, value: object) -> object:
+        """Blank BoxGroup is treated as omitted."""
+        if value is None:
+            return None
+        if isinstance(value, str) and not value.strip():
+            return None
+        return value
 
 
 # TODO(#30): Persist reusable BoxType data in Supabase independently from
@@ -58,18 +76,17 @@ class BoxType(PortalModel):
 
 
 class Order(PortalModel):
-    """An order containing items to be packed."""
+    """Items to pack. Reference is an optional customer name for the order."""
 
+    reference: str | None = Field(default=None, alias="Reference", min_length=1)
     items: list[Item] = Field(alias="Items", min_length=1)
 
 
 class StoredOrder(Order):
-    """An order that FitPortal has accepted and assigned a reference to.
-
-    The order ID is assigned by the Portal, so it is never supplied by the
-    caller and only appears on orders that already exist. `OrderId` is the
-    public `ORD-###` representation of the order's internal numeric database
-    ID, so no separate reference column is needed.
-    """
+    """A stored order. OrderId, Status and CreatedAt are assigned by the Portal."""
 
     order_id: str = Field(alias="OrderId")
+    status: OrderStatus = Field(default="Draft", alias="Status")
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), alias="CreatedAt"
+    )

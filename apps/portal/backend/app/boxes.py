@@ -1,19 +1,4 @@
-"""The box types the warehouse stocks.
-
-Reference data, not order content, so it is deliberately kept out of `Order`.
-Ticket #30 moves this to Supabase; until then it is a module-level catalogue so
-the solve endpoint has something to pack into.
-
-The three SKUs and their interiors reproduce the solver's committed fixtures
-(`contract/fixtures/`), so a solved order and a fixture render at the same scale
-and a difference on screen means a real difference rather than two unrelated
-catalogues.
-
-Field order matters here. `fitsolver.portal.AXIS_ORDER` reads Portal boxes as
-(Width, Length, Depth) into the solver's (x, y, z), so these values are chosen to
-produce the fixture `inner_dims` exactly. Which of those axes is vertical is still
-open with the client; see `docs/decisions/0006-portal-solver-integration.md`.
-"""
+"""Warehouse box types. TODO(#30): move to Supabase. Interiors match contract/fixtures."""
 
 from __future__ import annotations
 
@@ -53,9 +38,5 @@ DEFAULT_BOX_TYPES: list[BoxType] = [
 
 
 def active_box_types() -> list[BoxType]:
-    """The catalogue the solver may draw from.
-
-    TODO(#30): read this from Supabase. Keep the return type so callers do not
-    change when persistence lands.
-    """
+    """Active boxes the solver may pack into. TODO(#30): read from Supabase."""
     return [box for box in DEFAULT_BOX_TYPES if box.active]

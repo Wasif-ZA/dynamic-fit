@@ -1,37 +1,23 @@
-"""Solve API.
+"""Pack a stored order. Re-solving overwrites the solution for the same OrderId."""
 
-The middle of the Dynamic Fit flow: FitPortal -> FitSolver -> FitPortal ->
-FitVisualizer. The Portal owns the order, the solver owns the packing, and the
-Portal hands the result on.
-
-The solver is imported in process rather than called over HTTP. It is a package in
-this repository with no I/O of its own, so a network hop between two halves of the
-same deployment would buy nothing and add a failure mode. `fitsolver.api` still
-exposes `/v1/solve` for a deployment that does split them.
-
-The solution document the solver returns is already the shape the visualiser
-renders, so the Portal passes it through untouched rather than translating it.
-Translating it would be a second place for the schema to drift.
-
-Solutions are held in memory beside orders. Ticket #30 moves both to Supabase.
-"""
+import logging
 
 from fastapi import APIRouter, HTTPException, status
-from fitsolver import io, portal
+from fitsolver import io
 from fitsolver.engine import solve as solve_request
 
+from app import store
 from app.boxes import active_box_types
-from app.routes.orders import find_order
+from app.models import StoredOrder
+from app.solver_adapter import to_solver_request
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/orders", tags=["solve"])
 
-# TODO(#30): Persist solutions in Supabase against the order. Keep the response
-# shapes unchanged; only the storage moves.
-_solutions: dict[str, dict] = {}
 
-
-def _require_order(order_id: str):
-    stored = find_order(order_id)
+def _require_order(order_id: str) -> StoredOrder:
+    stored = store.find_order(order_id)
     if stored is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -55,32 +41,33 @@ def solve_order(order_id: str) -> dict:
             detail="No active box types: the solver has nothing to pack into.",
         )
 
-    payload = stored.model_dump(by_alias=True, exclude_none=True, mode="json")
-    payload["Boxes"] = [
-        box.model_dump(by_alias=True, exclude_none=True, mode="json") for box in boxes
-    ]
+    request = to_solver_request(stored, boxes)
 
     try:
-        contract_request = portal.to_contract(payload)
-    except portal.PortalRequestError as exc:
+        document = solve_request(request)
+    except io.RequestError as exc:
+        logger.exception("solver rejected the request for %s", order_id)
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"malformed Portal request: {exc}",
+            detail=f"The packing request for {order_id} was rejected: {exc}",
         ) from exc
-
-    try:
-        document = solve_request(contract_request)
-    except io.RequestError as exc:
+    except Exception as exc:  # noqa: BLE001
+        logger.exception("solver failed on %s", order_id)
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"The packing service failed while solving {order_id}.",
         ) from exc
 
-    _solutions[order_id] = document
+    store.save_solution(order_id, document)
+
+    stored.status = "Packed"
+    store.update_order(stored)
+
     return document
 
 
 def _require_solution(order_id: str) -> dict:
-    document = _solutions.get(order_id)
+    document = store.find_solution(order_id)
     if document is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -102,11 +89,7 @@ def get_solution(order_id: str) -> dict:
     summary="Solution headline for the order page",
 )
 def get_solution_summary(order_id: str) -> dict:
-    """The flat shape the order summary page renders.
-
-    Kilograms here and only here: the solver speaks grams throughout, and this is
-    the display boundary where the Portal converts back.
-    """
+    """Kilograms for the order page. Solver document stays in grams."""
     document = _require_solution(order_id)
     return {
         "OrderId": document.get("order_id", order_id),
@@ -114,6 +97,9 @@ def get_solution_summary(order_id: str) -> dict:
         "FillRate": document["metrics"]["fill_rate"],
         "TotalWeightKg": round(document["metrics"]["total_mass"] / 1000, 3),
         "SolveTimeMs": document["solver"]["elapsed_ms"],
+        "ItemsPacked": sum(
+            len(carton["placements"]) for carton in document["cartons"]
+        ),
         "Boxes": [
             {
                 "CartonId": carton["carton_id"],

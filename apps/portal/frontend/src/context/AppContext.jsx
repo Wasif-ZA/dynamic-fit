@@ -1,35 +1,60 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
-import { SEED_ORDERS } from '../data/mockData.js';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { createOrder, listOrders } from '../api/client.js';
 
 const AppContext = createContext(null);
-
-let nextOrderNumber = 1003;
 
 export function AppProvider({ children }) {
   // Mock auth only - no backend call yet. Any credentials "succeed".
   const [user, setUser] = useState(null);
-  const [orders, setOrders] = useState(SEED_ORDERS);
+
+  const [orders, setOrders] = useState([]);
+  const [ordersError, setOrdersError] = useState(null);
+  const [loadingOrders, setLoadingOrders] = useState(true);
 
   const login = (email) => setUser({ email, name: email.split('@')[0] });
   const logout = () => setUser(null);
 
-  const addOrder = (order) => {
-    const id = `ORD-${nextOrderNumber++}`;
-    const newOrder = {
-      id,
-      status: 'Draft',
-      createdAt: new Date().toISOString().slice(0, 10),
-      ...order,
-    };
-    setOrders((prev) => [newOrder, ...prev]);
-    return id;
+  const refreshOrders = useCallback(async () => {
+    setLoadingOrders(true);
+    try {
+      setOrders(await listOrders());
+      setOrdersError(null);
+    } catch (error) {
+      setOrdersError(error);
+    } finally {
+      setLoadingOrders(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshOrders();
+  }, [refreshOrders]);
+
+  const addOrder = async ({ reference, items }) => {
+    const created = await createOrder({ reference, items });
+    setOrders((previous) => [created, ...previous]);
+    return created.OrderId;
   };
 
-  const getOrder = (id) => orders.find((o) => o.id === id);
-
   const value = useMemo(
-    () => ({ user, login, logout, orders, addOrder, getOrder }),
-    [user, orders]
+    () => ({
+      user,
+      login,
+      logout,
+      orders,
+      ordersError,
+      loadingOrders,
+      refreshOrders,
+      addOrder,
+    }),
+    [user, orders, ordersError, loadingOrders, refreshOrders]
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
