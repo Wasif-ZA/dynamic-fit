@@ -431,7 +431,34 @@ function buildSceneFromData( data ) {
   frameCameraOnObject( cartonsGroup, cartons );
 }
 
-const jsonFileName = canvas.dataset.json;
+/* A ?solution= URL wins over data-json, so the Portal can hand this page a
+   just-packed order. Restricted to loopback and same-origin: this fetches and
+   renders whatever it is given, so an arbitrary host would make the page a
+   reader for someone else's data. */
+function solutionSource() {
+  const requested = new URLSearchParams( window.location.search ).get( 'solution' );
+  if ( !requested ) {
+    return canvas.dataset.json;
+  }
+  let target;
+  try {
+    target = new URL( requested, window.location.href );
+  } catch {
+    console.error( `Ignoring unreadable ?solution= value: ${ requested }` );
+    return canvas.dataset.json;
+  }
+  const loopback = [ '127.0.0.1', 'localhost', '::1' ];
+  const allowed =
+    target.origin === window.location.origin ||
+    ( [ 'http:', 'https:' ].includes( target.protocol ) && loopback.includes( target.hostname ) );
+  if ( !allowed ) {
+    console.error( `Ignoring off-origin ?solution= host: ${ target.host }` );
+    return canvas.dataset.json;
+  }
+  return target.href;
+}
+
+const jsonFileName = solutionSource();
 loadSceneData( jsonFileName )
   .then( buildSceneFromData )
   .catch( ( error ) => console.error( error ) );

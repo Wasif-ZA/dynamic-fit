@@ -14,6 +14,32 @@ Three subsystems, one repository:
 
     FitPortal  ->  FitSolver  ->  FitPortal  ->  FitVisualizer
 
+## Where it lives
+
+    https://github.com/Wasif-ZA/dynamic-fit
+
+```bash
+git clone https://github.com/Wasif-ZA/dynamic-fit.git
+cd dynamic-fit
+```
+
+**This is the only repository the team works in now.** The three we came from still
+exist, so a stale clone or bookmark will keep working and quietly put your commits
+somewhere nobody reads:
+
+| Old repository | Status |
+|---|---|
+| `Wasif-ZA/DynamicSolver` | Superseded. Its history is here under `packages/solver/` |
+| `AaronMinhas/comp4050-portal` | Superseded. Its history is here under `apps/portal/` |
+| `sweetpea004/COMP4050-2026-Discovery-Visualiser` | Superseded. Its history is here under `apps/visualiser/` |
+
+Every commit came across with its original author and date, so nobody's contribution
+record moved. Push nothing to the old three from here on.
+
+`main` takes no direct pushes. Branch, open a pull request, and the subsystem's owner
+reviews it. [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) has the rules;
+[`.github/CODEOWNERS`](.github/CODEOWNERS) has who owns what.
+
 ## Start here
 
 | Doc | What it covers |
