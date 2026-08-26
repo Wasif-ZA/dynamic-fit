@@ -5,6 +5,7 @@ import Field, { inputClass } from '../components/common/Field.jsx';
 import Button from '../components/common/Button.jsx';
 import ItemEntryForm from '../components/orders/ItemEntryForm.jsx';
 import ItemsTable from '../components/orders/ItemsTable.jsx';
+import { orderTotals } from '../lib/orders.js';
 
 export default function OrderCreatePage() {
   const { addOrder } = useApp();
@@ -12,18 +13,14 @@ export default function OrderCreatePage() {
   const [reference, setReference] = useState('');
   const [items, setItems] = useState([]);
   const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
 
-  const totals = useMemo(() => {
-    const units = items.reduce((sum, i) => sum + (i.qty || 1), 0);
-    const weight = items.reduce((sum, i) => sum + i.Weight * (i.qty || 1), 0);
-    const hazardCount = items.filter((i) => i.Hazardous).length;
-    return { units, weight: Math.round(weight * 100) / 100, hazardCount };
-  }, [items]);
+  const totals = useMemo(() => orderTotals(items), [items]);
 
   const handleAddItem = (item) => setItems((prev) => [...prev, item]);
   const handleRemoveItem = (idx) => setItems((prev) => prev.filter((_, i) => i !== idx));
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!reference) {
       setError('Add a reference so the depot can identify this order.');
       return;
@@ -32,8 +29,17 @@ export default function OrderCreatePage() {
       setError('Add at least one item before creating the order.');
       return;
     }
-    const id = addOrder({ reference, items });
-    navigate(`/orders/${id}`);
+
+    setSaving(true);
+    setError('');
+    try {
+      const orderId = await addOrder({ reference, items });
+      navigate(`/orders/${orderId}`);
+    } catch (apiError) {
+      setError(apiError.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -85,8 +91,8 @@ export default function OrderCreatePage() {
             </div>
           </dl>
           {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
-          <Button className="mt-5 w-full" onClick={handleSubmit}>
-            Create order
+          <Button className="mt-5 w-full" onClick={handleSubmit} disabled={saving}>
+            {saving ? 'Creating...' : 'Create order'}
           </Button>
         </section>
       </div>

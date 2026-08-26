@@ -3,15 +3,35 @@ import { Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext.jsx';
 import Button from '../components/common/Button.jsx';
 import HazardBadge from '../components/common/HazardBadge.jsx';
+import { formatCreated, orderTotals } from '../lib/orders.js';
 
 const STATUS_STYLE = {
   Draft: 'bg-ink-50 text-ink-500',
-  'Ready to pack': 'bg-brand-50 text-brand-600',
   Packed: 'bg-ink-700 text-white',
 };
 
 export default function OrdersListPage() {
-  const { orders } = useApp();
+  const { orders, ordersError, loadingOrders, refreshOrders } = useApp();
+
+  if (loadingOrders) {
+    return (
+      <div className="rounded-sm border border-dashed border-ink-200 bg-white p-10 text-center text-sm text-ink-400">
+        Loading orders...
+      </div>
+    );
+  }
+
+  if (ordersError) {
+    return (
+      <div className="rounded-sm border border-red-200 bg-red-50 p-10 text-center">
+        <p className="font-display text-xl text-red-700">Cannot load orders</p>
+        <p className="mt-1 text-sm text-red-600">{ordersError.message}</p>
+        <Button className="mt-5" variant="secondary" onClick={refreshOrders}>
+          Try again
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -44,28 +64,30 @@ export default function OrdersListPage() {
             </thead>
             <tbody>
               {orders.map((order) => {
-                const hasHazard = order.items.some((i) => i.Hazardous);
+                const totals = orderTotals(order.Items);
                 return (
-                  <tr key={order.id} className="cut-line hover:bg-ink-50/60">
+                  <tr key={order.OrderId} className="cut-line hover:bg-ink-50/60">
                     <td className="px-4 py-3">
                       <Link
-                        to={`/orders/${order.id}`}
+                        to={`/orders/${order.OrderId}`}
                         className="font-mono font-medium text-brand-600 hover:underline"
                       >
-                        {order.id}
+                        {order.OrderId}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 text-ink-700">{order.reference}</td>
-                    <td className="px-4 py-3 text-ink-500">
-                      {order.items.reduce((sum, i) => sum + (i.qty || 1), 0)} units
+                    <td className="px-4 py-3 text-ink-700">{order.Reference}</td>
+                    <td className="px-4 py-3 text-ink-500">{totals.units} units</td>
+                    <td className="px-4 py-3">
+                      {totals.hazardCount > 0 && <HazardBadge />}
                     </td>
-                    <td className="px-4 py-3">{hasHazard && <HazardBadge />}</td>
-                    <td className="px-4 py-3 text-ink-400">{order.createdAt}</td>
+                    <td className="px-4 py-3 text-ink-400">
+                      {formatCreated(order.CreatedAt)}
+                    </td>
                     <td className="px-4 py-3">
                       <span
-                        className={`rounded-sm px-2 py-1 text-xs font-medium ${STATUS_STYLE[order.status] || 'bg-ink-50 text-ink-500'}`}
+                        className={`rounded-sm px-2 py-1 text-xs font-medium ${STATUS_STYLE[order.Status] || 'bg-ink-50 text-ink-500'}`}
                       >
-                        {order.status}
+                        {order.Status}
                       </span>
                     </td>
                   </tr>

@@ -25,54 +25,83 @@ Three subsystems, one repository:
 | [`docs/contract.md`](docs/contract.md) | The reasoning behind the interface. **Superseded**: its field names were never implemented ([ADR-0006](docs/decisions/0006-the-implemented-schema-is-canonical.md)) |
 | [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) | Branching, PRs, and how we log work for the unit |
 
-## Running it
+## How to run it
 
-Python 3.11 or newer, Node 20 or newer. [uv](https://docs.astral.sh/uv/) manages the
-Python side.
+You need **Python 3.11+** and **Node 20+**. All commands below start from this
+folder (the repo root). You do **not** need [uv](https://docs.astral.sh/uv/).
 
-```bash
-uv sync --group dev
-```
+The website talks only to the Portal API. The API packs the order by calling the
+solver as a Python library in the same process. The 3D view is a separate app
+that loads the packed result. You need all three running.
 
-On OneDrive, prefix uv commands with `UV_LINK_MODE=copy`: hardlinks fail there with
-OS error 396.
-
-**Everything, in one run:**
+### First time
 
 ```bash
-uv run pytest
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e packages/solver
+pip install -r apps/portal/backend/requirements.txt
+pip install jsonschema
 ```
 
-That is the point of the merge. Each subsystem's own tests passed for months while the
-three disagreed about field names, because nothing ran them together.
+On Windows, activate with `.venv\Scripts\activate` instead of `source`.
 
-**The Portal API:**
+### Three terminals
+
+Keep the venv activated in the API terminal.
+
+**1. Portal API** — http://127.0.0.1:8000
 
 ```bash
-cd apps/portal/backend && uvicorn app.main:app --reload
+source .venv/bin/activate
+uvicorn app.main:app --reload --app-dir apps/portal/backend
 ```
 
-`POST /orders` to create one, `POST /orders/{id}/solve` to pack it, then
-`GET /orders/{id}/solution` for the document the visualiser renders. Interactive docs
-at `/docs`.
+API docs: http://127.0.0.1:8000/docs
 
-**The solver on its own**, over its own HTTP surface:
+**2. Portal website** — http://127.0.0.1:5174
 
 ```bash
-uv run uvicorn fitsolver.api:app --port 8000
-curl -X POST localhost:8000/v1/solve -H 'content-type: application/json' -d @contract/fixtures_request_example.json
+cd apps/portal/frontend
+npm install
+npm run dev
 ```
 
-`/v1/solve/portal` is the same solver taking the Portal's field names instead.
-
-**The visualiser:**
+**3. 3D visualiser** — http://localhost:5173
 
 ```bash
-cd apps/visualiser && npm install && npx vite
+cd apps/visualiser
+npm install
+npx vite
 ```
 
-It reads whichever solution file `index.html` points its canvas at, so any file in
-`contract/fixtures/` works, as does a document saved from `GET /orders/{id}/solution`.
+Open the visualiser as **`localhost`**, not `127.0.0.1`. On macOS those are
+different sockets; mix them and the 3D panel is blank.
+
+### Use it
+
+1. Open http://127.0.0.1:5174 and sign in with any email and password (login is mocked).
+2. Create an order with at least one item. The URL becomes `/orders/ORD-00N` — that ID is assigned by the API, not the browser.
+3. Click **Pack this order**. The same ID is packed and drawn in 3D.
+4. **Pack again** re-packs that order. It does not create a second one.
+
+On its own, the visualiser draws a sample fixture. The packed order only appears
+when the Portal embeds it (or you open
+`http://localhost:5173/?solution=http://127.0.0.1:8000/orders/ORD-00N/solution`).
+
+### Tests
+
+From the repo root, with the venv on:
+
+```bash
+source .venv/bin/activate
+pytest tests/integration
+```
+
+`pytest` with no path also runs the Portal API tests and the solver tests.
+
+If you have uv: `uv sync --group dev` then `uv run pytest`. On OneDrive, prefix
+uv commands with `UV_LINK_MODE=copy`.
 
 ## Layout
 

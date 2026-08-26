@@ -20,12 +20,15 @@ export default function ItemEntryForm({ onAdd }) {
       return;
     }
     onAdd({
-      ...draft,
+      ItemCode: draft.ItemCode,
+      ItemReference: draft.ItemReference,
       Width: Number(draft.Width),
       Length: Number(draft.Length),
       Depth: Number(draft.Depth),
       Weight: Number(draft.Weight),
-      qty: Number(draft.qty) || 1,
+      Quantity: Number(draft.Quantity) || 1,
+      Hazardous: draft.Hazardous,
+      ...(draft.BoxGroup.trim() ? { BoxGroup: draft.BoxGroup.trim() } : {}),
     });
     setDraft(emptyItemDraft());
     setError('');
@@ -93,7 +96,10 @@ export default function ItemEntryForm({ onAdd }) {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Box group" hint="Optional - groups items that must ship together">
+        <Field
+          label="Box group"
+          hint="Optional - items in different groups are never packed in the same box"
+        >
           <input
             className={inputClass('font-mono')}
             placeholder="GROUP-A"
@@ -106,8 +112,8 @@ export default function ItemEntryForm({ onAdd }) {
             type="number"
             min="1"
             className={inputClass('font-mono')}
-            value={draft.qty}
-            onChange={update('qty')}
+            value={draft.Quantity}
+            onChange={update('Quantity')}
           />
         </Field>
       </div>

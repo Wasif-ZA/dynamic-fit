@@ -1,7 +1,9 @@
+from datetime import datetime
+
 import pytest
 from pydantic import ValidationError
 
-from app.models import BoxType, Item, Order
+from app.models import BoxType, Item, Order, StoredOrder
 
 SAMPLE_ITEMS = [
     {
@@ -64,9 +66,16 @@ SAMPLE_BOX_TYPES = [
 VALID_ITEM = SAMPLE_ITEMS[0]
 VALID_BOX_TYPE = SAMPLE_BOX_TYPES[0]
 
+# Quantity 1, Hazardous false unless the caller sets them.
+ITEM_DEFAULTS = {"Quantity": 1, "Hazardous": False}
+
 
 def without(payload: dict, key: str) -> dict:
     return {k: v for k, v in payload.items() if k != key}
+
+
+def as_stored(payload: dict) -> dict:
+    return {**ITEM_DEFAULTS, **payload, "Weight": float(payload["Weight"])}
 
 
 class TestItem:
@@ -110,7 +119,7 @@ class TestItem:
             Item(**{**VALID_ITEM, "Weight": value})
 
     @pytest.mark.parametrize(
-        "field", ["ItemCode", "ItemReference", "BoxGroup"]
+        "field", ["ItemCode", "ItemReference"]
     )
     def test_blank_string_is_rejected(self, field):
         with pytest.raises(ValidationError):
@@ -120,6 +129,28 @@ class TestItem:
         item = Item(**without(VALID_ITEM, "BoxGroup"))
 
         assert item.box_group is None
+
+    def test_blank_box_group_is_treated_as_omitted(self):
+        assert Item(**{**VALID_ITEM, "BoxGroup": ""}).box_group is None
+        assert Item(**{**VALID_ITEM, "BoxGroup": "   "}).box_group is None
+
+    def test_quantity_defaults_to_one(self):
+        assert Item(**VALID_ITEM).quantity == 1
+
+    @pytest.mark.parametrize("value", [2, 250])
+    def test_quantity_above_one_is_accepted(self, value):
+        assert Item(**{**VALID_ITEM, "Quantity": value}).quantity == value
+
+    @pytest.mark.parametrize("value", [0, -1])
+    def test_non_positive_quantity_is_rejected(self, value):
+        with pytest.raises(ValidationError):
+            Item(**{**VALID_ITEM, "Quantity": value})
+
+    def test_hazardous_defaults_to_false(self):
+        assert Item(**VALID_ITEM).hazardous is False
+
+    def test_hazardous_may_be_flagged(self):
+        assert Item(**{**VALID_ITEM, "Hazardous": True}).hazardous is True
 
 
 class TestBoxType:
@@ -207,7 +238,7 @@ class TestOrder:
 
         payload = order.model_dump(by_alias=True, exclude_none=True)
 
-        assert payload["Items"] == SAMPLE_ITEMS
+        assert payload["Items"] == [as_stored(item) for item in SAMPLE_ITEMS]
 
     def test_order_round_trips_through_aliases(self):
         order = Order(Items=SAMPLE_ITEMS)
@@ -216,9 +247,39 @@ class TestOrder:
 
         assert Order(**payload) == order
 
+    def test_reference_may_be_omitted(self):
+        assert Order(Items=SAMPLE_ITEMS).reference is None
+
+    def test_reference_is_carried(self):
+        order = Order(Reference="Bunnings - Chullora", Items=SAMPLE_ITEMS)
+
+        assert order.reference == "Bunnings - Chullora"
+
+    def test_blank_reference_is_rejected(self):
+        with pytest.raises(ValidationError):
+            Order(Reference="   ", Items=SAMPLE_ITEMS)
+
+
+class TestStoredOrder:
+
+    def test_status_starts_as_draft(self):
+        assert StoredOrder(OrderId="ORD-001", Items=SAMPLE_ITEMS).status == "Draft"
+
+    def test_created_at_is_assigned_automatically(self):
+        stored = StoredOrder(OrderId="ORD-001", Items=SAMPLE_ITEMS)
+
+        assert isinstance(stored.created_at, datetime)
+
+    def test_unknown_status_is_rejected(self):
+        with pytest.raises(ValidationError):
+            StoredOrder(OrderId="ORD-001", Status="Shipped", Items=SAMPLE_ITEMS)
+
+    def test_order_id_is_required(self):
+        with pytest.raises(ValidationError):
+            StoredOrder(Items=SAMPLE_ITEMS)
+
 
 class TestValidationBehaviour:
-    """Covers the shared PortalModel configuration rather than any one contract."""
 
     def test_pascal_case_aliases_populate_models(self):
         assert Item(**VALID_ITEM).item_code == "ITM-001"
@@ -245,7 +306,7 @@ class TestValidationBehaviour:
     def test_dump_by_alias_round_trips(self):
         payload = Item(**VALID_ITEM).model_dump(by_alias=True, exclude_none=True)
 
-        assert payload == VALID_ITEM
+        assert payload == as_stored(VALID_ITEM)
         assert Item(**payload) == Item(**VALID_ITEM)
 
     def test_surrounding_whitespace_is_stripped(self):

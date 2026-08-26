@@ -23,12 +23,20 @@ import jsonschema
 import pytest
 from fastapi.testclient import TestClient
 
+from app import store
 from app.main import app
 
 ROOT = Path(__file__).resolve().parents[2]
 SOLUTION_SCHEMA = json.loads((ROOT / "contract" / "solution.schema.json").read_text())
 
 client = TestClient(app)
+
+
+@pytest.fixture(autouse=True)
+def isolated_store():
+    store.reset()
+    yield
+    store.reset()
 
 
 def item(code: str, w: int, length: int, d: int, kg: float = 0.4, group: str | None = None) -> dict:
@@ -261,3 +269,64 @@ def test_health_and_docs_still_work():
     """The solve router must not have disturbed what was already there."""
     assert client.get("/health").json() == {"status": "ok"}
     assert client.get("/openapi.json").status_code == 200
+
+
+def test_one_canonical_order_id_across_create_get_solve_and_solution():
+    created = client.post("/orders", json={"Items": [item("MUG", 100, 100, 120, 0.35)]})
+    assert created.status_code == 201, created.text
+    order_id = created.json()["OrderId"]
+
+    fetched = client.get(f"/orders/{order_id}")
+    solved = client.post(f"/orders/{order_id}/solve")
+    stored = client.get(f"/orders/{order_id}/solution")
+
+    assert fetched.json()["OrderId"] == order_id
+    assert solved.json()["order_id"] == order_id
+    assert stored.json()["order_id"] == order_id
+    assert stored.json() == solved.json()
+
+
+def test_resolving_does_not_create_a_second_order():
+    order_id = order_of([item("MUG", 100, 100, 120, 0.35)])
+    first = solve(order_id)
+    second = solve(order_id)
+
+    listed = [order["OrderId"] for order in client.get("/orders").json()]
+    assert listed == [order_id]
+    assert first["order_id"] == second["order_id"] == order_id
+
+
+def test_quantity_greater_than_one_packs_that_many_units():
+    created = client.post(
+        "/orders",
+        json={"Items": [{**item("MUG", 100, 100, 120, 0.35), "Quantity": 3}]},
+    )
+    assert created.status_code == 201, created.text
+    order_id = created.json()["OrderId"]
+
+    document = solve(order_id)
+    placed = [p["item_ref"] for c in document["cartons"] for p in c["placements"]]
+
+    assert created.json()["Items"][0]["ItemCode"] == "MUG"
+    assert created.json()["Items"][0]["Quantity"] == 3
+    assert placed == ["MUG", "MUG", "MUG"]
+    assert client.get("/orders").json()[0]["OrderId"] == order_id
+
+
+def test_hazardous_arrives_as_a_tag_on_the_placement():
+    created = client.post(
+        "/orders",
+        json={
+            "Items": [
+                {
+                    **item("CLEANER", 90, 90, 90, 0.5, group="DG-8"),
+                    "Hazardous": True,
+                }
+            ]
+        },
+    )
+    assert created.status_code == 201, created.text
+    document = solve(created.json()["OrderId"])
+
+    tags = [p["tags"] for c in document["cartons"] for p in c["placements"]]
+    assert tags == [["HAZARDOUS"]]

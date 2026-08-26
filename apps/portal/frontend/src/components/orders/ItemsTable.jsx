@@ -34,7 +34,7 @@ export default function ItemsTable({ items, onRemove }) {
                 {item.Width}×{item.Length}×{item.Depth}
               </td>
               <td className="px-3 py-2 font-mono text-ink-500">{item.Weight} kg</td>
-              <td className="px-3 py-2 text-ink-500">{item.qty || 1}</td>
+              <td className="px-3 py-2 text-ink-500">{item.Quantity || 1}</td>
               <td className="px-3 py-2 text-ink-500">
                 {item.BoxGroup ? (
                   <span className="font-mono text-xs text-ink-400">{item.BoxGroup}</span>

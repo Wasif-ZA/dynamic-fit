@@ -53,44 +53,31 @@ Development follows a branch and pull-request workflow:
 
 Direct changes to `main` are restricted.
 
-## Local Backend Setup
+## How to run it
 
-The FitPortal backend is a FastAPI application located in `backend/`.
+Full setup (venv, solver install, three terminals) is in the [monorepo README](../../README.md).
+Do that from the **repo root**, not from this folder. Summary:
 
-### Requirements
+| What | URL |
+|---|---|
+| Portal API | http://127.0.0.1:8000 |
+| Portal website | http://127.0.0.1:5174 |
+| 3D visualiser | http://localhost:5173 |
 
-- Python 3.11 or newer (tested on 3.14)
+The website is on 5174 so the visualiser can keep 5173. Use `localhost` for the
+visualiser, not `127.0.0.1`, or the 3D panel will be blank.
 
-### Setup
+The API packs by importing the solver in-process. You do not start a solver server.
 
-Create and activate a virtual environment, then install dependencies:
+API routes: `POST /orders` (assigns `ORD-###`), `GET /orders`, `GET /orders/{id}`,
+`POST /orders/{id}/solve`, `GET /orders/{id}/solution`, `GET /orders/{id}/solution/summary`,
+`GET /health`, `/docs`.
 
-```bash
-cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
+Sign in with any email and password. Create an order, then **Pack this order**.
+**Pack again** re-packs the same ID.
 
-On Windows, activate with `.venv\Scripts\activate` instead.
-
-### Running the API
-
-From `backend/` with the virtual environment activated:
-
-```bash
-uvicorn app.main:app --reload
-```
-
-The API is then available at `http://127.0.0.1:8000`:
-
-- `GET /health` — service status check
-- `/docs` — interactive API documentation
-
-### Running Tests
-
-From `backend/` with the virtual environment activated:
+Portal-only tests, from the repo root with the venv on:
 
 ```bash
-pytest
+pytest apps/portal/backend/tests
 ```
