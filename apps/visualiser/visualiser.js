@@ -434,7 +434,16 @@ function buildSceneFromData( data ) {
 const jsonFileName = canvas.dataset.json;
 loadSceneData( jsonFileName )
   .then( buildSceneFromData )
-  .catch( ( error ) => console.error( error ) );
+  .catch( ( error ) => {
+    console.error( error );
+    const panel = document.getElementById( 'carton-info' );
+
+    panel.innerHTML =`
+      <h1>Error: ${ error.status == 404 ? `File Not Found` : `Failure to Load` }</h1>
+      </br>
+      <p>Please return and try again</p>
+    `;
+  });
 
 window.addEventListener( 'resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
