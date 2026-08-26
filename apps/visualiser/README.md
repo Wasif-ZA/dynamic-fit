@@ -23,6 +23,8 @@ The MVP is the product with the minimum amount of features added in order to mee
 | Req04 | UI Legend for each Box and Items | An `<aside>` SHALL display a scrollable legend that displays each box and its items with all relevant information. It SHALL also be resized for optimal mobile usage. |
 | Req05 | Displaying Item Rejections | The `<aside>` SHALL display the list of rejected items, if any, after the list of boxes. |
 | Req06 | Return to Portal Functionality | UI will display a "DONE" and a "CANCEL" button to return to the Portal Page, it will return the values String OrderID and Bool Complete. |
+| Req07 | Error/empty-state handling for malformed or missing JSON | The visualiser SHALL detect an invalid, incomplete, or missing solution JSON file and SHALL display a clear error message in the <aside> in place of an empty or broken 3D scene.
+| Req08 |
 
 ## Additional Functionality Requirements
 
@@ -30,4 +32,7 @@ These are requirements that surpass the MVP
 
 | Requirement ID | Title | Description |
 | ----- | ----- | ---------- |
-| Req07 | Presenting Each Box with LEGO-like Instructions | The user SHALL be able to click a button on the aside UI to view the step-by-step packing order of a single box with progression bar, side arrows to step through, and exit button. |
+| Req08 | Presenting Each Box with LEGO-like Instructions | The user SHALL be able to click a button on the aside UI to view the step-by-step packing order of a single box with progression bar, side arrows to step through, and exit button. |
+
+## Architecture
+
