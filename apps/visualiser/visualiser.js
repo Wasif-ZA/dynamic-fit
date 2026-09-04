@@ -126,8 +126,9 @@ function computeCartonLayouts( cartons ) {
   } );
 }
 
-/* Placement Colors */
+/* Placement Colors — one hue per item_ref, reused across items (placements) */
 let placementColorSeed = 0;
+const itemRefColors = new Map();
 
 function placementColorAt( index ) {
   const hue = ( index * 0.61803398875 ) % 1;
@@ -138,8 +139,24 @@ function nextPlacementColor() {
   return placementColorAt( placementColorSeed++ );
 }
 
+function colorForItemRef( itemRef ) {
+  const key = itemRef ?? '';
+  let color = itemRefColors.get( key );
+  if ( !color ) {
+    color = nextPlacementColor();
+    itemRefColors.set( key, color );
+  }
+  return color;
+}
+
 function colorToHex( color ) {
   return `#${ color.getHexString() }`;
+}
+
+function getPlacementEdgeColor( baseColor ) {
+  const hsl = { h: 0, s: 0, l: 0 };
+  baseColor.getHSL( hsl );
+  return new THREE.Color().setHSL( hsl.h, Math.min( 1, hsl.s * 0.7 ), 0.22 );
 }
 
 function getPlacementHighlightColor( baseColor ) {
@@ -228,14 +245,26 @@ function createCartonMesh( carton ) {
 function createPlacementMesh( placement ) {
   const [ width, height, depth ] = jsonDimsToThree( placement.dims );
   const geometry = new THREE.BoxGeometry( width, height, depth );
-  const color = nextPlacementColor();
-  const material = new THREE.MeshStandardMaterial( { color } );
+  const color = colorForItemRef( placement.item_ref );
+  const material = new THREE.MeshStandardMaterial( {
+    color,
+    polygonOffset: true,
+    polygonOffsetFactor: 1,
+    polygonOffsetUnits: 1,
+  } );
   const mesh = new THREE.Mesh( geometry, material );
   mesh.position.copy( jsonMinCornerToThreeCenter( placement.position, placement.dims ) );
   mesh.renderOrder = 1;
 
+  const edgeGeometry = new THREE.EdgesGeometry( geometry );
+  const edges = new THREE.LineSegments(
+    edgeGeometry,
+    new THREE.LineBasicMaterial( { color: getPlacementEdgeColor( color ) } ),
+  );
+  mesh.add( edges );
+
   const outline = new THREE.LineSegments(
-    new THREE.EdgesGeometry( geometry ),
+    edgeGeometry,
     new THREE.LineBasicMaterial( {
       color: getPlacementHighlightColor( color ),
       depthTest: false,
@@ -307,7 +336,7 @@ function updateCartonInfoUI( cartons, rejects ) {
     const placements = carton.placements ?? [];
     const placementItems = placements.map( ( placement ) => {
       const placementIndex = placementColorIndex++;
-      const colorHex = colorToHex( placementColorAt( placementIndex ) );
+      const colorHex = colorToHex( colorForItemRef( placement.item_ref ) );
       return `
         <li class="placement-info-item">
           <input
@@ -412,6 +441,7 @@ function frameCameraOnObject( object, cartons ) {
 
 function buildSceneFromData( data ) {
   placementColorSeed = 0;
+  itemRefColors.clear();
   placementMeshes.length = 0;
 
   const cartons = data.cartons ?? [];
