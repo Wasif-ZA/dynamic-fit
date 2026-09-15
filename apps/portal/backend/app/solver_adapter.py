@@ -9,8 +9,6 @@ AXIS_ORDER = ("Width", "Length", "Depth")
 
 GRAMS_PER_KG = 1000
 
-HAZARDOUS_TAG = "HAZARDOUS"
-
 
 def _grams(kilograms: float) -> int:
     return round(kilograms * GRAMS_PER_KG)
@@ -32,7 +30,6 @@ def item_to_contract(item: Item) -> dict:
         "mass": _grams(item.weight),
         "quantity": item.quantity,
         "dg_class": item.box_group or None,
-        "tags": [HAZARDOUS_TAG] if item.hazardous else [],
     }
 
 
@@ -44,6 +41,7 @@ def box_to_contract(box: BoxType) -> dict:
         "max_contents_mass": (
             _grams(box.max_weight) if box.max_weight is not None else None
         ),
+        "maximum_boxes": box.maximum_boxes,
     }
 
 

@@ -7,13 +7,19 @@ import TopBar from './TopBar.jsx';
 const TITLES = {
   '/orders': ['Orders', 'All orders raised by your team'],
   '/orders/new': ['New order', 'Add items and confirm details for packing'],
+  '/boxes': ['Box Inventory', 'Reusable box types and available quantities'],
+  '/users': ['User management', 'Portal roles and account access'],
 };
 
 export default function AppLayout() {
-  const { user } = useApp();
+  const { identity, authInitializing } = useApp();
   const location = useLocation();
 
-  if (!user) {
+  if (authInitializing) {
+    return <div className="p-10 text-center text-sm text-ink-400">Restoring session…</div>;
+  }
+
+  if (!identity) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
@@ -21,9 +27,12 @@ export default function AppLayout() {
     k === '/orders' ? location.pathname === '/orders' : location.pathname.startsWith(k)
   );
   const isOrderDetail = /^\/orders\/[^/]+$/.test(location.pathname) && !matchedKey;
-  const [title, subtitle] = isOrderDetail
-    ? ['Order details', 'Items, flags and status for this order']
-    : TITLES[matchedKey] || ['FitPortal', ''];
+  const isOrderEdit = /^\/orders\/[^/]+\/edit$/.test(location.pathname);
+  const [title, subtitle] = isOrderEdit
+    ? ['Edit order', 'Update items before submitting for optimisation']
+    : isOrderDetail
+      ? ['Order details', 'Items and status for this order']
+      : TITLES[matchedKey] || ['FitPortal', ''];
 
   return (
     <div className="flex h-screen bg-panel">

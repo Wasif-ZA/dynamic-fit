@@ -1,42 +1,79 @@
-"""Warehouse box types. TODO(#30): move to Supabase. Interiors match contract/fixtures."""
+"""Deployment-wide Box Inventory API."""
 
 from __future__ import annotations
 
-from app.models import BoxType
+from sqlalchemy import delete
 
-# Chosen so portal.to_contract yields the fixture inner_dims:
-#   BOX-S [220, 160, 120], BOX-M [320, 240, 180], BOX-L [450, 350, 300]
-DEFAULT_BOX_TYPES: list[BoxType] = [
-    BoxType(
-        Reference="BOX-S",
-        Width=220,
-        Length=160,
-        Depth=120,
-        MaxWeight=15.0,
-        BoxWeight=0.12,
-        Active=True,
-    ),
-    BoxType(
-        Reference="BOX-M",
-        Width=320,
-        Length=240,
-        Depth=180,
-        MaxWeight=25.0,
-        BoxWeight=0.21,
-        Active=True,
-    ),
-    BoxType(
-        Reference="BOX-L",
-        Width=450,
-        Length=350,
-        Depth=300,
-        MaxWeight=32.0,
-        BoxWeight=0.38,
-        Active=True,
-    ),
+from app.database import session_scope
+from app.db.models import BoxTypeRecord
+from app.errors import (
+    DuplicateBoxReferenceError,
+    DuplicateImportReferenceError,
+    InventoryConsumptionError,
+)
+from app.inventory import required_cartons
+from app.models import BoxType, BoxTypeUpdate, InventoryFeasibility
+from app.repositories import boxes as box_repository
+
+__all__ = [
+    "DuplicateBoxReferenceError",
+    "DuplicateImportReferenceError",
+    "InventoryConsumptionError",
+    "active_box_types",
+    "add_box_type",
+    "assess_solution_inventory",
+    "delete_box_type",
+    "find_box_type",
+    "import_box_types",
+    "list_box_types",
+    "reset_box_inventory",
+    "update_box_type",
 ]
 
 
+def reset_box_inventory() -> None:
+    with session_scope() as session:
+        session.execute(delete(BoxTypeRecord))
+
+
+def list_box_types() -> list[BoxType]:
+    with session_scope() as session:
+        return box_repository.list_box_types(session)
+
+
+def find_box_type(reference: str) -> BoxType | None:
+    with session_scope() as session:
+        return box_repository.find_box_type(session, reference)
+
+
+def add_box_type(box: BoxType) -> BoxType:
+    with session_scope() as session:
+        return box_repository.add_box_type(session, box)
+
+
+def update_box_type(reference: str, changes: BoxTypeUpdate) -> BoxType | None:
+    with session_scope() as session:
+        return box_repository.update_box_type(session, reference, changes)
+
+
+def delete_box_type(reference: str) -> bool:
+    with session_scope() as session:
+        return box_repository.delete_box_type(session, reference)
+
+
+def import_box_types(imported: list[BoxType]) -> list[BoxType]:
+    with session_scope() as session:
+        return box_repository.import_box_types(session, imported)
+
+
 def active_box_types() -> list[BoxType]:
-    """Active boxes the solver may pack into. TODO(#30): read from Supabase."""
-    return [box for box in DEFAULT_BOX_TYPES if box.active]
+    with session_scope() as session:
+        return box_repository.active_box_types(session)
+
+
+def assess_solution_inventory(solution: dict) -> InventoryFeasibility:
+    """Advisory only; finalisation re-checks inventory under row locks."""
+    with session_scope() as session:
+        return box_repository.assess_requirements(
+            session, required_cartons(solution)
+        )

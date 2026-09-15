@@ -9,7 +9,7 @@ export default function AuthShell({ heading, subheading, children }) {
             FitPortal
           </p>
           <p className="mt-1 text-[11px] uppercase tracking-[0.25em] text-ink-300">
-            Project Perfect Fit
+            Dynamic Fit
           </p>
         </div>
         <div className="rounded-sm bg-white p-8 shadow-xl">
