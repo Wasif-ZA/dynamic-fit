@@ -27,37 +27,97 @@ Three subsystems, one repository:
 
 ## How to run it
 
-You need **Python 3.11+** and **Node 20+**. All commands below start from this
-folder (the repo root). You do **not** need [uv](https://docs.astral.sh/uv/).
+You need:
 
-The website talks only to the Portal API. The API packs the order by calling the
-solver as a Python library in the same process. The 3D view is a separate app
-that loads the packed result. You need all three running.
+- **Python 3.11+**
+- **Node 20+** and npm
+- **Docker Desktop** (or another Docker runtime), running
+- The [Supabase CLI](https://supabase.com/docs/guides/local-development)
+
+Run every command from this folder (the repo root) unless a step says otherwise. You do
+**not** need [uv](https://docs.astral.sh/uv/).
+
+The website talks only to the Portal API. The API stores orders, box inventory and
+users in a local Supabase (PostgreSQL) database, signs users in with Supabase Auth, and
+packs orders by calling the solver as a Python library in the same process. The 3D view
+is a separate app that loads the packed result. You need the database and all three
+apps running.
 
 ### First time
 
+**1. Install the Python environment** (solver, Portal backend and test tools):
+
 ```bash
 python3 -m venv .venv
-source .venv/bin/activate
-pip install -e packages/solver
-pip install -r apps/portal/backend/requirements.txt
-pip install jsonschema
+.venv/bin/python -m pip install -e packages/solver -r apps/portal/backend/requirements.txt pytest jsonschema hypothesis
 ```
 
-On Windows, activate with `.venv\Scripts\activate` instead of `source`.
+On Windows, use `.venv\Scripts\python` in place of `.venv/bin/python`.
+
+If you use uv, `uv sync --group dev` builds the same environment, and `uv run` works in
+place of `.venv/bin/python`.
+
+**2. Start the local database and auth.** The Supabase project lives in
+`apps/portal/supabase`. This applies every migration:
+
+```bash
+supabase start --workdir apps/portal
+supabase status --workdir apps/portal -o env
+```
+
+`--workdir` is relative to the folder you are in, so run these from the repo root. To
+wipe the database and reapply the migrations later, use
+`supabase db reset --workdir apps/portal`.
+
+**3. Configure the backend.** Copy the template:
+
+```bash
+cp apps/portal/backend/.env.example apps/portal/backend/.env
+```
+
+Fill it in from `supabase status` output:
+
+| Variable | Value |
+|---|---|
+| `DATABASE_URL` | `DB_URL` |
+| `SUPABASE_URL` | `API_URL` |
+| `SUPABASE_SECRET_KEY` | `SECRET_KEY` (the one starting `sb_secret_`, not the legacy `SERVICE_ROLE_KEY`) |
+| `SUPABASE_JWKS_URL` | Leave as `http://127.0.0.1:54321/auth/v1/.well-known/jwks.json` |
+| `VISUALIZER_TOKEN_SECRET` | Any random value of at least 32 characters |
+| `PORTAL_PUBLIC_API_URL` | Leave as `http://127.0.0.1:8000` |
+
+**4. Configure the website.** Copy the template:
+
+```bash
+cp apps/portal/frontend/.env.example apps/portal/frontend/.env
+```
+
+Set `VITE_SUPABASE_PUBLISHABLE_KEY` to `PUBLISHABLE_KEY` from `supabase status`. Leave the
+other values as they are. The browser only ever gets this public key.
+
+**5. Create the first accounts.** There is no sign-up page so this creates an
+Administrator and a Supervisor, and is safe to run again:
+
+```bash
+export BOOTSTRAP_ADMIN_EMAIL=admin@local.test
+export BOOTSTRAP_ADMIN_PASSWORD='localtest'
+export BOOTSTRAP_SUPERVISOR_EMAIL=supervisor@local.test
+export BOOTSTRAP_SUPERVISOR_PASSWORD='localtest'
+.venv/bin/python apps/portal/backend/scripts/bootstrap_users.py
+```
+
+These credentials are for local use only. Further accounts are created from the Users
+page in the Portal.
 
 ### Three terminals
 
-Keep the venv activated in the API terminal.
-
-**1. Portal API** — http://127.0.0.1:8000
+**1. Portal API** — http://127.0.0.1:8000 (docs at http://127.0.0.1:8000/docs)
 
 ```bash
-source .venv/bin/activate
-uvicorn app.main:app --reload --app-dir apps/portal/backend
+.venv/bin/python -m uvicorn app.main:app --reload --app-dir apps/portal/backend
 ```
 
-API docs: http://127.0.0.1:8000/docs
+The API refuses to start if the database or auth settings are missing or unreachable.
 
 **2. Portal website** — http://127.0.0.1:5174
 
@@ -80,28 +140,45 @@ different sockets; mix them and the 3D panel is blank.
 
 ### Use it
 
-1. Open http://127.0.0.1:5174 and sign in with any email and password (login is mocked).
-2. Create an order with at least one item. The URL becomes `/orders/ORD-00N` — that ID is assigned by the API, not the browser.
-3. Click **Pack this order**. The same ID is packed and drawn in 3D.
-4. **Pack again** re-packs that order. It does not create a second one.
+1. Open http://127.0.0.1:5174 and sign in with an account from step 5.
+2. A new database has no boxes. On **Box Inventory**, import a `boxes.json` or add box
+   types by hand.
+3. Create an order with at least one item, then click **Submit for Optimisation**.
+4. As a Supervisor or Administrator, click **Run Optimisation**. The packing result and
+   the 3D view appear on the order page.
+5. **Re-optimise** packs the same order again with the current inventory.
+   **Finalise Order** locks the order and subtracts the boxes used from any box type
+   with a set quantity. An order with unpacked items cannot be finalised.
 
-On its own, the visualiser draws a sample fixture. The packed order only appears
-when the Portal embeds it (or you open
-`http://localhost:5173/?solution=http://127.0.0.1:8000/orders/ORD-00N/solution`).
+On its own, the visualiser draws a sample fixture. Packed orders reach it through a
+short-lived link the Portal creates, so the Portal's normal solution URLs cannot be
+opened directly in the visualiser.
 
 ### Tests
 
-From the repo root, with the venv on:
+From the repo root:
 
 ```bash
-source .venv/bin/activate
-pytest tests/integration
+.venv/bin/python -m pytest packages/solver/tests tests/integration
 ```
 
-`pytest` with no path also runs the Portal API tests and the solver tests.
+The Portal backend suite needs the local Supabase stack from step 2 running. It builds
+and migrates its own `fitportal_test` database and refuses to run against a non-local
+host:
 
-If you have uv: `uv sync --group dev` then `uv run pytest`. On OneDrive, prefix
-uv commands with `UV_LINK_MODE=copy`.
+```bash
+.venv/bin/python -m pytest apps/portal/backend/tests
+```
+
+`.venv/bin/python -m pytest` with no path runs all three suites. Website unit tests:
+
+```bash
+cd apps/portal/frontend
+npm test
+```
+
+To wipe local data and reapply the migrations, run
+`supabase db reset --workdir apps/portal`, then repeat step 5.
 
 ## Layout
 
@@ -136,8 +213,9 @@ Changing it changes someone else's sprint:
 | Suite | Covers |
 |---|---|
 | `packages/solver/tests/` | The engine. Schema conformance, Hypothesis property tests over random orders, the Portal adapter, scaling |
-| `apps/portal/backend/tests/` | The order API and the solve routes |
-| `tests/integration/` | Portal to solver to visualiser, end to end. Includes a check that a Portal-built solution satisfies every field `visualiser.js` actually reads |
+| `apps/portal/backend/tests/` | Orders, box inventory, users, auth, finalisation and the solve routes, against a real PostgreSQL database. Needs local Supabase |
+| `apps/portal/frontend/` | `npm test`: item and box validation, box import rules, box group labels |
+| `tests/integration/` | The Portal app starts alongside the solver, and every committed fixture satisfies every field `visualiser.js` actually reads. The Portal-to-visualiser checks that needed a database have been removed for now |
 | `apps/visualiser/` | `npx vite build` |
 
 `tests/integration/renderer_contract.mjs` extracts the field list from the renderer's
