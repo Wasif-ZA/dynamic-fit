@@ -1,14 +1,27 @@
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routes import orders, solve
+from app.auth import verify_auth_configuration
+from app.database import verify_connection
+from app.routes import boxes, orders, solve, users
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+    verify_connection()
+    verify_auth_configuration()
+    yield
+
 
 app = FastAPI(
     title="FitPortal API",
     description="Backend API for FitPortal.",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 # Portal on 5174, Visualiser on 5173. Override with FITPORTAL_CORS_ORIGINS.
@@ -29,12 +42,14 @@ _origins = (
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_origins,
-    allow_methods=["GET", "POST"],
-    allow_headers=["content-type"],
+    allow_methods=["DELETE", "GET", "POST", "PUT"],
+    allow_headers=["authorization", "content-type"],
 )
 
 app.include_router(orders.router)
 app.include_router(solve.router)
+app.include_router(boxes.router)
+app.include_router(users.router)
 
 
 @app.get("/health", tags=["status"])

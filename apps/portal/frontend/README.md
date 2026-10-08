@@ -1,8 +1,9 @@
-# FitPortal — MVP Frontend
+# FitPortal Frontend
 
-Customer-facing UI for FitPortal. Order creation, the order list, packing, and
-the FitVisualizer embed all talk to the Portal API. The browser never talks to
-FitSolver: the backend translates a Portal order into a solver request.
+Authenticated UI for FitPortal. Order creation, inventory, user management,
+packing and FitVisualizer integration all use the Portal API. Supabase Auth
+establishes the browser session, but the browser never accesses the Portal
+database or FitSolver directly.
 
 ## Stack
 
@@ -12,38 +13,64 @@ FitSolver: the backend translates a Portal order into a solver request.
 
 ## Getting started
 
-The Portal API must already be running at `http://127.0.0.1:8000`, and the
-visualiser at `http://localhost:5173`. See the [monorepo README](../../../README.md).
+Follow the [repository setup](../README.md) first. Local Supabase and the Portal
+API must already be running. FitVisualizer is optional unless you need the 3D
+visualisation.
 
 ```bash
+cp .env.example .env
 npm install
 npm run dev
 ```
 
-The app is at `http://127.0.0.1:5174`. Sign in with any email/password (auth is
-mocked — no credential check happens yet) or use "Create account".
+Set `VITE_SUPABASE_PUBLISHABLE_KEY` in `.env` to the `PUBLISHABLE_KEY` printed by
+`supabase status -o env`. The frontend must receive only the public
+`sb_publishable_...` key, never `SUPABASE_SECRET_KEY`.
 
-API and visualiser URLs default in `src/api/client.js`. Override with `VITE_PORTAL_API_BASE` or `VITE_VISUALISER_BASE` only if you need different hosts.
+The app runs at `http://127.0.0.1:5174`. Sign in using an account created by the
+local bootstrap process documented in the repository README. API, visualiser and
+Supabase URLs are configured through:
+
+- `VITE_PORTAL_API_BASE`
+- `VITE_VISUALISER_BASE`
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_PUBLISHABLE_KEY`
+
+Vite embeds these values at build time, so hosted values must be set before the
+frontend is built and deployed.
 
 ## What's here
 
 | Acceptance criterion | Where |
 |---|---|
 | App layout/navigation | `src/components/layout/AppLayout.jsx`, `Sidebar.jsx`, `TopBar.jsx` |
-| Login / Register pages | `src/pages/LoginPage.jsx`, `RegisterPage.jsx` |
+| Supabase email/password login | `src/pages/LoginPage.jsx`, `src/auth/supabase.js` |
 | Portal API client | `src/api/client.js` |
 | Order creation page | `src/pages/OrderCreatePage.jsx` |
 | Item entry components | `src/components/orders/ItemEntryForm.jsx`, `ItemsTable.jsx` |
 | Order list / details | `src/pages/OrdersListPage.jsx`, `OrderSummaryPage.jsx` |
+| Box Inventory (create, edit, delete) and reviewed JSON import | `src/pages/BoxInventoryPage.jsx`, `src/components/boxes/BoxJsonImport.jsx`, `src/lib/boxValidation.js` |
+| Role-based user management | `src/pages/UserManagementPage.jsx` |
 | Pack and visualise | `OrderSummaryPage.jsx` (calls `POST /orders/{id}/solve`, embeds FitVisualizer) |
-| Hazard flag in UI | `src/components/common/HazardBadge.jsx` (tag in tables, ribbon on the order summary card) + checkbox in item entry |
+| Packing details with box group per box and item | `src/components/orders/PackingDetails.jsx`, `src/lib/boxGroups.js` |
 
 Item fields match the Portal API: `ItemCode`, `ItemReference`, `Width`,
-`Length`, `Depth` (mm), `Weight` (kg), `BoxGroup` (optional), `Quantity`,
-`Hazardous`. The backend assigns `OrderId`.
+`Length`, `Depth` (mm), `Weight` (kg), `BoxGroup` (optional) and `Quantity`.
+`ItemCode` accepts any non-blank text. The backend assigns `OrderId`. 
+`BoxGroup` is the client-defined way to keep items apart.
 
-## Next steps (not in this MVP)
+Box fields: `Reference`, `Width`, `Length`, `Depth`, `MaxWeight`, `BoxWeight`,
+`Active` (defaults to true) and `MaximumBoxes` (available quantity, where
+omitted means no limit).
 
-- Real authentication (currently any input signs you in).
-- Persist orders to the database instead of resetting when the API restarts
-  (Portal issue #30).
+## Testing
+
+Unit tests for the validation and box group logic in `src/lib` run with Vitest:
+
+```bash
+npm test
+```
+
+Supabase access tokens are sent only to the Portal API as bearer tokens. Portal
+roles and account status come from the backend's `portal_users` table, not from
+editable browser state or token metadata.
