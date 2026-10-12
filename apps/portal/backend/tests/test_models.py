@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 from pydantic import ValidationError
 
-from app.models import BoxType, Item, Order, StoredOrder
+from app.models import ROLE_LABELS, BoxType, Item, Order, Role, StoredOrder
 
 SAMPLE_ITEMS = [
     {
@@ -53,6 +53,7 @@ SAMPLE_BOX_TYPES = [
         "MaxWeight": 15.2,
         "BoxWeight": 0.75,
         "Active": True,
+        "MaximumBoxes": 100,
     },
     {
         "Reference": "LRG",
@@ -66,8 +67,16 @@ SAMPLE_BOX_TYPES = [
 VALID_ITEM = SAMPLE_ITEMS[0]
 VALID_BOX_TYPE = SAMPLE_BOX_TYPES[0]
 
-# Quantity 1, Hazardous false unless the caller sets them.
-ITEM_DEFAULTS = {"Quantity": 1, "Hazardous": False}
+# Quantity 1 unless the caller sets it.
+ITEM_DEFAULTS = {"Quantity": 1}
+
+
+def test_roles_have_stable_values_and_user_facing_labels():
+    assert {role.value: ROLE_LABELS[role] for role in Role} == {
+        "ADMINISTRATOR": "Administrator",
+        "SUPERVISOR": "Supervisor",
+        "USER": "User",
+    }
 
 
 def without(payload: dict, key: str) -> dict:
@@ -107,6 +116,12 @@ class TestItem:
         with pytest.raises(ValidationError):
             Item(**{**VALID_ITEM, "Weght": 2.8})
 
+    @pytest.mark.parametrize(
+        "value", ["ITM-001", "ABC", "12", "01", "PART-123-A", "ROD-A", "Cube 89"]
+    )
+    def test_any_non_blank_item_code_is_accepted_unchanged(self, value):
+        assert Item(**{**VALID_ITEM, "ItemCode": value}).item_code == value
+
     @pytest.mark.parametrize("dimension", ["Width", "Length", "Depth"])
     @pytest.mark.parametrize("value", [0, -1])
     def test_non_positive_dimension_is_rejected(self, dimension, value):
@@ -117,6 +132,13 @@ class TestItem:
     def test_non_positive_weight_is_rejected(self, value):
         with pytest.raises(ValidationError):
             Item(**{**VALID_ITEM, "Weight": value})
+
+    def test_weight_at_maximum_is_accepted(self):
+        assert Item(**{**VALID_ITEM, "Weight": 32}).weight == 32
+
+    def test_weight_above_maximum_is_rejected(self):
+        with pytest.raises(ValidationError):
+            Item(**{**VALID_ITEM, "Weight": 32.01})
 
     @pytest.mark.parametrize(
         "field", ["ItemCode", "ItemReference"]
@@ -146,11 +168,24 @@ class TestItem:
         with pytest.raises(ValidationError):
             Item(**{**VALID_ITEM, "Quantity": value})
 
-    def test_hazardous_defaults_to_false(self):
-        assert Item(**VALID_ITEM).hazardous is False
+    def test_client_item_schema_validates(self):
+        item = Item(**{
+            "ItemCode": "ACID",
+            "ItemReference": "Acid Bottle (boxed)",
+            "Width": 100,
+            "Length": 100,
+            "Depth": 200,
+            "Weight": 1.9,
+            "Quantity": 8,
+            "BoxGroup": "CORROSIVE",
+        })
 
-    def test_hazardous_may_be_flagged(self):
-        assert Item(**{**VALID_ITEM, "Hazardous": True}).hazardous is True
+        assert (item.item_code, item.box_group, item.quantity) == ("ACID", "CORROSIVE", 8)
+        assert not hasattr(item, "hazardous")
+
+    def test_hazardous_is_not_an_item_field(self):
+        with pytest.raises(ValidationError, match="Extra inputs are not permitted"):
+            Item(**{**VALID_ITEM, "Hazardous": True})
 
 
 class TestBoxType:
@@ -187,25 +222,43 @@ class TestBoxType:
         with pytest.raises(ValidationError):
             BoxType(**{**VALID_BOX_TYPE, "Reference": "   "})
 
-    @pytest.mark.parametrize(
-        "field", ["MaxWeight", "BoxWeight", "MaximumBoxes"]
-    )
+    @pytest.mark.parametrize("field", ["MaxWeight", "BoxWeight"])
     def test_optional_field_may_be_omitted(self, field):
         box_type = BoxType(**without(VALID_BOX_TYPE, field))
 
         assert getattr(box_type, {
             "MaxWeight": "max_weight",
             "BoxWeight": "box_weight",
-            "MaximumBoxes": "maximum_boxes",
         }[field]) is None
 
-    @pytest.mark.parametrize(
-        "field", ["MaxWeight", "BoxWeight", "MaximumBoxes"]
-    )
+    @pytest.mark.parametrize("field", ["MaxWeight", "BoxWeight"])
     @pytest.mark.parametrize("value", [0, -1])
     def test_non_positive_optional_value_is_rejected(self, field, value):
         with pytest.raises(ValidationError):
             BoxType(**{**VALID_BOX_TYPE, field: value})
+
+    def test_omitted_maximum_boxes_means_no_limit(self):
+        assert BoxType(**without(VALID_BOX_TYPE, "MaximumBoxes")).maximum_boxes is None
+
+    def test_null_maximum_boxes_means_no_limit(self):
+        assert BoxType(**{**VALID_BOX_TYPE, "MaximumBoxes": None}).maximum_boxes is None
+
+    def test_zero_maximum_boxes_is_preserved(self):
+        box_type = BoxType(**{**VALID_BOX_TYPE, "MaximumBoxes": 0})
+
+        assert box_type.maximum_boxes == 0
+        assert box_type.maximum_boxes is not None
+
+    def test_stock_is_not_a_box_field(self):
+        with pytest.raises(ValidationError, match="Extra inputs are not permitted"):
+            BoxType(**{**VALID_BOX_TYPE, "Stock": 5})
+
+    def test_positive_maximum_boxes_is_preserved(self):
+        assert BoxType(**{**VALID_BOX_TYPE, "MaximumBoxes": 7}).maximum_boxes == 7
+
+    def test_negative_maximum_boxes_is_rejected(self):
+        with pytest.raises(ValidationError):
+            BoxType(**{**VALID_BOX_TYPE, "MaximumBoxes": -1})
 
     def test_active_defaults_to_true_when_omitted(self):
         box_type = BoxType(**without(VALID_BOX_TYPE, "Active"))
@@ -247,36 +300,39 @@ class TestOrder:
 
         assert Order(**payload) == order
 
-    def test_reference_may_be_omitted(self):
-        assert Order(Items=SAMPLE_ITEMS).reference is None
-
-    def test_reference_is_carried(self):
-        order = Order(Reference="Bunnings - Chullora", Items=SAMPLE_ITEMS)
-
-        assert order.reference == "Bunnings - Chullora"
-
-    def test_blank_reference_is_rejected(self):
-        with pytest.raises(ValidationError):
-            Order(Reference="   ", Items=SAMPLE_ITEMS)
+    def test_client_supplied_reference_is_rejected(self):
+        with pytest.raises(ValidationError, match="Extra inputs are not permitted"):
+            Order(Reference="MQ-999", Items=SAMPLE_ITEMS)
 
 
 class TestStoredOrder:
 
     def test_status_starts_as_draft(self):
-        assert StoredOrder(OrderId="ORD-001", Items=SAMPLE_ITEMS).status == "Draft"
+        stored = StoredOrder(OrderId="ORD-001", Reference="MQ-001", Items=SAMPLE_ITEMS)
+
+        assert stored.status == "DRAFT"
 
     def test_created_at_is_assigned_automatically(self):
-        stored = StoredOrder(OrderId="ORD-001", Items=SAMPLE_ITEMS)
+        stored = StoredOrder(OrderId="ORD-001", Reference="MQ-001", Items=SAMPLE_ITEMS)
 
         assert isinstance(stored.created_at, datetime)
 
     def test_unknown_status_is_rejected(self):
         with pytest.raises(ValidationError):
-            StoredOrder(OrderId="ORD-001", Status="Shipped", Items=SAMPLE_ITEMS)
+            StoredOrder(
+                OrderId="ORD-001",
+                Reference="MQ-001",
+                Status="Shipped",
+                Items=SAMPLE_ITEMS,
+            )
 
     def test_order_id_is_required(self):
         with pytest.raises(ValidationError):
-            StoredOrder(Items=SAMPLE_ITEMS)
+            StoredOrder(Reference="MQ-001", Items=SAMPLE_ITEMS)
+
+    def test_reference_is_required(self):
+        with pytest.raises(ValidationError):
+            StoredOrder(OrderId="ORD-001", Items=SAMPLE_ITEMS)
 
 
 class TestValidationBehaviour:
@@ -294,7 +350,9 @@ class TestValidationBehaviour:
             depth=30,
             weight=1.5,
         )
-        box_type = BoxType(reference="XL", width=10, length=20, depth=30)
+        box_type = BoxType(
+            reference="XL", width=10, length=20, depth=30, maximum_boxes=1
+        )
 
         assert item.item_code == "ITM-004"
         assert box_type.reference == "XL"
@@ -311,3 +369,4 @@ class TestValidationBehaviour:
 
     def test_surrounding_whitespace_is_stripped(self):
         assert Item(**{**VALID_ITEM, "ItemCode": "  ITM-001  "}).item_code == "ITM-001"
+        assert Item(**{**VALID_ITEM, "ItemCode": "  ABC  "}).item_code == "ABC"
