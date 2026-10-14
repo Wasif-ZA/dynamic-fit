@@ -8,6 +8,5 @@ export const emptyItemDraft = () => ({
   Depth: '',
   Weight: '',
   BoxGroup: '',
-  Hazardous: false,
   Quantity: 1,
 });
