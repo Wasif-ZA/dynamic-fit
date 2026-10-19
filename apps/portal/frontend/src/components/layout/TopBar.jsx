@@ -2,9 +2,10 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext.jsx';
 import Button from '../common/Button.jsx';
+import { ROLE_LABELS } from '../../lib/roles.js';
 
 export default function TopBar({ title, subtitle }) {
-  const { user, logout } = useApp();
+  const { identity, logout } = useApp();
   const navigate = useNavigate();
 
   return (
@@ -17,13 +18,15 @@ export default function TopBar({ title, subtitle }) {
       </div>
       <div className="flex items-center gap-4">
         <div className="text-right">
-          <p className="text-sm font-medium text-ink-700">{user?.name}</p>
-          <p className="text-xs text-ink-300">{user?.email}</p>
+          <p className="text-sm font-medium text-ink-700">{identity?.name}</p>
+          <p className="text-xs text-ink-300">
+            {ROLE_LABELS[identity?.role]}
+          </p>
         </div>
         <Button
           variant="secondary"
-          onClick={() => {
-            logout();
+          onClick={async () => {
+            await logout();
             navigate('/login');
           }}
         >

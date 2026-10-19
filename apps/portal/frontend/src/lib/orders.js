@@ -4,9 +4,8 @@ export function orderTotals(items = []) {
     (sum, item) => sum + item.Weight * (item.Quantity || 1),
     0
   );
-  const hazardCount = items.filter((item) => item.Hazardous).length;
 
-  return { units, weight: Math.round(weight * 100) / 100, hazardCount };
+  return { units, weight: Math.round(weight * 100) / 100 };
 }
 
 export function formatCreated(createdAt) {

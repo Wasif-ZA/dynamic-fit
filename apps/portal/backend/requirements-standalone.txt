@@ -1,0 +1,3 @@
+-r requirements.txt
+
+fitsolver @ git+https://github.com/Wasif-ZA/dynamic-fit.git@c151590bee268a77d53ac41ed7bd85e227914fe2#subdirectory=packages/solver

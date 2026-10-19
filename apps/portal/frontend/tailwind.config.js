@@ -27,10 +27,6 @@ export default {
           600: '#175747',
           700: '#0F3E33',
         },
-        hazard: {
-          DEFAULT: '#E8A400',
-          ink: '#3A2A00',
-        },
       },
       fontFamily: {
         display: ['"Barlow Condensed"', 'sans-serif'],
