@@ -62,6 +62,11 @@ def check_physics(doc: dict) -> list[str]:
     count = len(doc["cartons"])
     if doc["metrics"]["carton_count"] != count:
         errs.append(f"metrics.carton_count {doc['metrics']['carton_count']} != {count} cartons")
+
+    placed = sum(len(carton["placements"]) for carton in doc["cartons"])
+    expected = "rejected" if placed == 0 else ("solved" if not doc["rejects"] else "partial")
+    if doc.get("status") != expected:
+        errs.append(f"status {doc.get('status')!r} != {expected!r}")
     return errs
 
 

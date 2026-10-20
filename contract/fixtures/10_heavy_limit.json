@@ -2,6 +2,7 @@
   "schema_version": "1.0.0",
   "solution_id": "sol_10_heavy_limit",
   "order_id": "FIX-10",
+  "status": "solved",
   "solver": {
     "version": "0.1.0",
     "seed": 2098360902868115693,

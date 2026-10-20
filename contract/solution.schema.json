@@ -9,6 +9,10 @@
     "schema_version": { "const": "1.0.0" },
     "solution_id": { "type": "string" },
     "order_id": { "type": "string" },
+    "status": {
+      "enum": ["solved", "partial", "rejected"],
+      "description": "Derived from cartons and rejects, never set independently. solved: something was placed and rejects is empty. rejected: nothing was placed. partial: otherwise. Optional so documents written before it existed stay valid."
+    },
     "solver": {
       "type": "object",
       "required": ["version", "seed", "time_budget_ms", "elapsed_ms", "tier"],

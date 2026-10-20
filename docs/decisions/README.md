@@ -28,3 +28,4 @@ the old one. The trail of what we changed our minds about is the useful part.
 | [0006](0006-the-implemented-schema-is-canonical.md) | The implemented schema is canonical, contract.md superseded | accepted |
 | [0007](0007-monorepo-with-preserved-history.md) | One repository, with history preserved | accepted |
 | [0008](0008-portal-solver-integration.md) | How the Portal reaches the solver | accepted |
+| [0009](0009-solution-status-field.md) | Solution documents carry a derived status field | accepted |

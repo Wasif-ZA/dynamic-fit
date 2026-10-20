@@ -2,6 +2,7 @@
   "schema_version": "1.0.0",
   "solution_id": "sol_04_dg_split",
   "order_id": "FIX-04",
+  "status": "solved",
   "solver": {
     "version": "0.1.0",
     "seed": 3221665207329948283,

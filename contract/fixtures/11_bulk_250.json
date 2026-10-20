@@ -2,6 +2,7 @@
   "schema_version": "1.0.0",
   "solution_id": "sol_11_bulk_250",
   "order_id": "FIX-11",
+  "status": "solved",
   "solver": {
     "version": "0.1.0",
     "seed": 14430185048319671995,

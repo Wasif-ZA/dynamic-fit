@@ -2,6 +2,7 @@
   "schema_version": "1.0.0",
   "solution_id": "sol_03_multi_carton",
   "order_id": "FIX-03",
+  "status": "solved",
   "solver": {
     "version": "0.1.0",
     "seed": 2766892571207062029,
