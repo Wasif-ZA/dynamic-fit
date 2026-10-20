@@ -10,9 +10,11 @@ import React, {
 import {
   createOrder,
   getCurrentProfile,
+  getManualHandlingSettings,
   listOrders,
   setAccessToken,
   setAuthStatusHandler,
+  updateManualHandlingSettings,
 } from '../api/client.js';
 import { requireSupabase, supabase } from '../auth/supabase.js';
 
@@ -37,9 +39,17 @@ export function AppProvider({ children }) {
   const [ordersError, setOrdersError] = useState(null);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const authGeneration = useRef(0);
+  const [handlingSettings, setHandlingSettings] = useState(null);
+  const [handlingSettingsError, setHandlingSettingsError] = useState(null);
+  const [loadingHandlingSettings, setLoadingHandlingSettings] = useState(false);
+  const handlingGeneration = useRef(0);
 
   const clearAuthState = useCallback((error = null) => {
     authGeneration.current += 1;
+    handlingGeneration.current += 1;
+    setHandlingSettings(null);
+    setHandlingSettingsError(null);
+    setLoadingHandlingSettings(false);
     setAccessToken(null);
     setIdentity(null);
     setOrders([]);
@@ -165,6 +175,47 @@ export function AppProvider({ children }) {
     if (!authInitializing && identity) refreshOrders();
   }, [authInitializing, identity, refreshOrders]);
 
+  const refreshHandlingSettings = useCallback(async () => {
+    if (!identity) return;
+    const generation = ++handlingGeneration.current;
+    setLoadingHandlingSettings(true);
+    try {
+      const settings = await getManualHandlingSettings();
+      if (generation === handlingGeneration.current) {
+        setHandlingSettings(settings);
+        setHandlingSettingsError(null);
+      }
+    } catch (error) {
+      if (generation === handlingGeneration.current) setHandlingSettingsError(error);
+    } finally {
+      if (generation === handlingGeneration.current) setLoadingHandlingSettings(false);
+    }
+  }, [identity]);
+
+  const saveHandlingSettings = useCallback(async (threshold) => {
+    const generation = ++handlingGeneration.current;
+    try {
+      const settings = await updateManualHandlingSettings(threshold);
+      if (generation === handlingGeneration.current) {
+        setHandlingSettings(settings);
+        setHandlingSettingsError(null);
+      }
+      return settings;
+    } finally {
+      if (generation === handlingGeneration.current) setLoadingHandlingSettings(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (authInitializing || !identity) return undefined;
+    refreshHandlingSettings();
+    window.addEventListener('focus', refreshHandlingSettings);
+    return () => {
+      handlingGeneration.current += 1;
+      window.removeEventListener('focus', refreshHandlingSettings);
+    };
+  }, [authInitializing, identity, refreshHandlingSettings]);
+
   const addOrder = async ({ items }) => {
     const created = await createOrder({ items });
     setOrders((previous) => [created, ...previous]);
@@ -183,8 +234,14 @@ export function AppProvider({ children }) {
       loadingOrders,
       refreshOrders,
       addOrder,
+      handlingSettings,
+      handlingSettingsError,
+      loadingHandlingSettings,
+      refreshHandlingSettings,
+      saveHandlingSettings,
     }),
-    [identity, authInitializing, authError, orders, ordersError, loadingOrders, refreshOrders]
+    [identity, authInitializing, authError, orders, ordersError, loadingOrders, refreshOrders,
+      handlingSettings, handlingSettingsError, loadingHandlingSettings, refreshHandlingSettings, saveHandlingSettings]
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

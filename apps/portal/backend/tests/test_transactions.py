@@ -250,26 +250,55 @@ class TestSolvePersistenceIsTransactional:
         self, replica_engine
     ):
         order_id = client.post("/orders", json={"Items": [ITEM]}).json()["OrderId"]
+        stored = store.find_order(order_id)
+        stored.status = "FINAL"
+        store.update_order(stored)
 
         with pytest.raises(OrderStatusConflictError):
-            store.save_solution_for_optimised_order(order_id, solution_document("MED"))
+            store.save_solution_for_optimised_order(
+                order_id, solution_document("MED"), expected_items=stored.items
+            )
 
         with committed(replica_engine) as session:
             assert session.get(SolutionRecord, order_id) is None
-            assert session.get(OrderRecord, order_id).status == "DRAFT"
+            assert session.get(OrderRecord, order_id).status == "FINAL"
 
+    @pytest.mark.parametrize("initial_status", ["DRAFT", "AWAITING_OPTIMISATION"])
     def test_the_solution_and_the_optimised_status_commit_together(
-        self, replica_engine
+        self, replica_engine, initial_status
     ):
         order_id = client.post("/orders", json={"Items": [ITEM]}).json()["OrderId"]
-        client.post(f"/orders/{order_id}/submit")
+        if initial_status == "AWAITING_OPTIMISATION":
+            client.post(f"/orders/{order_id}/submit")
         document = solution_document("MED")
 
-        store.save_solution_for_optimised_order(order_id, document)
+        store.save_solution_for_optimised_order(
+            order_id, document, expected_items=store.find_order(order_id).items
+        )
 
         with committed(replica_engine) as session:
             assert session.get(OrderRecord, order_id).status == "OPTIMISED"
             assert session.get(SolutionRecord, order_id).solution_json == document
+
+    def test_a_failed_solution_save_rolls_back_the_draft_and_solution(self, replica_engine, monkeypatch):
+        order_id = client.post("/orders", json={"Items": [ITEM]}).json()["OrderId"]
+        stored = store.find_order(order_id)
+        save_solution = solution_repository.save_solution
+
+        def fail_after_saving(session, order_id, document):
+            save_solution(session, order_id, document)
+            session.flush()
+            raise RuntimeError("Saving failed")
+
+        monkeypatch.setattr(solution_repository, "save_solution", fail_after_saving)
+        with pytest.raises(RuntimeError, match="Saving failed"):
+            store.save_solution_for_optimised_order(
+                order_id, solution_document("MED"), expected_items=stored.items
+            )
+
+        with committed(replica_engine) as session:
+            assert session.get(OrderRecord, order_id).status == "DRAFT"
+            assert session.get(SolutionRecord, order_id) is None
 
 
 class TestFinalisationIsAtomic:

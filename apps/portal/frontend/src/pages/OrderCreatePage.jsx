@@ -4,7 +4,7 @@ import { useApp } from '../context/AppContext.jsx';
 import OrderItemsEditor from '../components/orders/OrderItemsEditor.jsx';
 
 export default function OrderCreatePage() {
-  const { addOrder } = useApp();
+  const { addOrder, handlingSettings, handlingSettingsError, loadingHandlingSettings, refreshHandlingSettings } = useApp();
   const navigate = useNavigate();
 
   const create = async (items) => {
@@ -14,6 +14,8 @@ export default function OrderCreatePage() {
 
   return (
     <OrderItemsEditor
+      handlingSettings={handlingSettings} handlingSettingsError={handlingSettingsError}
+      loadingHandlingSettings={loadingHandlingSettings} refreshHandlingSettings={refreshHandlingSettings}
       onSave={create}
       saveLabel="Create order"
       savingLabel="Creating..."

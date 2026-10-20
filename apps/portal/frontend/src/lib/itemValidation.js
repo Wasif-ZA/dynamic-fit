@@ -2,7 +2,17 @@
 // both paths enforce identical rules (matches the backend `Item` model in
 // backend/app/models.py).
 
-export const MAX_ITEM_WEIGHT_KG = 32;
+// Keep aligned with MAX_ITEM_*_LENGTH in backend/app/models.py.
+export const ITEM_TEXT_LIMITS = Object.freeze({ ItemCode: 32, ItemReference: 100 });
+
+export function itemTextLimitError(field, value) {
+  const limit = ITEM_TEXT_LIMITS[field];
+  // Count Unicode code points, matching Pydantic, after whitespace trimming.
+  if (typeof value === 'string' && Array.from(value.trim()).length > limit) {
+    return `"${field}" must be ${limit} characters or fewer.`;
+  }
+  return '';
+}
 
 const REQUIRED_STRING_FIELDS = ['ItemCode', 'ItemReference'];
 const REQUIRED_POSITIVE_NUMBER_FIELDS = ['Width', 'Length', 'Depth', 'Weight'];
@@ -22,7 +32,7 @@ const KNOWN_FIELDS = new Set([
  * e.g. straight from a form or from parsed JSON). Returns an array of
  * human-readable error strings; an empty array means the item is valid.
  */
-export function validateItemFields(raw, { label } = {}) {
+export function validateItemFields(raw, { label, maxItemWeightKg = null } = {}) {
   const errors = [];
   const prefix = label ? `${label}: ` : '';
 
@@ -35,18 +45,21 @@ export function validateItemFields(raw, { label } = {}) {
     errors.push(`${prefix}Unrecognised field(s): ${unknownFields.join(', ')}.`);
   }
 
-  // ItemCode is the client's own identifier: any non-blank text.
+  // ItemCode is the client's own identifier: non-blank text within the limit.
   for (const field of REQUIRED_STRING_FIELDS) {
     const value = raw[field];
     if (typeof value !== 'string' || !value.trim()) {
       errors.push(`${prefix}"${field}" is required and must be a non-empty string.`);
+    } else {
+      const lengthError = itemTextLimitError(field, value);
+      if (lengthError) errors.push(`${prefix}${lengthError}`);
     }
   }
 
   for (const field of REQUIRED_POSITIVE_NUMBER_FIELDS) {
     const value = raw[field];
     const num = typeof value === 'number' ? value : Number(value);
-    if (value === undefined || value === null || value === '' || Number.isNaN(num)) {
+    if (value === undefined || value === null || value === '' || !Number.isFinite(num)) {
       errors.push(`${prefix}"${field}" is required and must be a number.`);
       continue;
     }
@@ -54,10 +67,8 @@ export function validateItemFields(raw, { label } = {}) {
       errors.push(`${prefix}"${field}" must be greater than 0.`);
       continue;
     }
-    if (field === 'Weight' && num > MAX_ITEM_WEIGHT_KG) {
-      errors.push(
-        `${prefix}"Weight" of ${num} kg exceeds the maximum allowed item weight of ${MAX_ITEM_WEIGHT_KG} kg.`
-      );
+    if (field === 'Weight' && weightExceedsLimit(num, maxItemWeightKg)) {
+      errors.push(`${prefix}${itemWeightError(num, maxItemWeightKg)}`);
     }
   }
 
@@ -76,9 +87,13 @@ export function validateItemFields(raw, { label } = {}) {
 }
 
 /** Check just the weight limit - used for live feedback while typing. */
-export function weightExceedsLimit(weight) {
+export function weightExceedsLimit(weight, maxItemWeightKg = null) {
   const num = Number(weight);
-  return !Number.isNaN(num) && num > MAX_ITEM_WEIGHT_KG;
+  return maxItemWeightKg !== null && Number.isFinite(num) && num > maxItemWeightKg;
+}
+
+export function itemWeightError(weight, maxItemWeightKg) {
+  return `Weight of ${weight} kg exceeds the current ${maxItemWeightKg} kg per-item capacity of available active boxes (after box weight).`;
 }
 
 /** Coerce a validated raw item into the normalised shape used in item state. */
@@ -97,7 +112,7 @@ export function normaliseItem(raw) {
   }
   return item;
 }
-export function parseItemsJson(jsonText) {
+export function parseItemsJson(jsonText, { maxItemWeightKg = null } = {}) {
   if (!jsonText || !jsonText.trim()) {
     return { items: null, errors: ['Paste or upload some JSON first.'] };
   }
@@ -129,8 +144,9 @@ export function parseItemsJson(jsonText) {
 
   const errors = [];
   candidateItems.forEach((raw, idx) => {
-    const label = `Item ${idx + 1}${raw && raw.ItemCode ? ` (${raw.ItemCode})` : ''}`;
-    errors.push(...validateItemFields(raw, { label }));
+    const code = typeof raw?.ItemCode === 'string' ? raw.ItemCode.trim() : '';
+    const label = `Item ${idx + 1}${code && !itemTextLimitError('ItemCode', code) ? ` (${code})` : ''}`;
+    errors.push(...validateItemFields(raw, { label, maxItemWeightKg }));
   });
 
   if (errors.length > 0) {

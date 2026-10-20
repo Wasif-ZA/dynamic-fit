@@ -4,11 +4,12 @@ import OrderItemsEditor from '../components/orders/OrderItemsEditor.jsx';
 import Button from '../components/common/Button.jsx';
 import { getOrder, updateOrder } from '../api/client.js';
 import { useApp } from '../context/AppContext.jsx';
+import { canRunSolver } from '../lib/roles.js';
 
 export default function OrderEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { refreshOrders } = useApp();
+  const { identity, refreshOrders, handlingSettings, handlingSettingsError, loadingHandlingSettings, refreshHandlingSettings } = useApp();
   const [order, setOrder] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -37,6 +38,17 @@ export default function OrderEditPage() {
     return <PageMessage>{error?.message || 'Order not found'}</PageMessage>;
   }
 
+  if (order.HeldAt || order.ArchivedAt) {
+    return (
+      <PageMessage>
+        <p>{order.HeldAt ? 'This order is on hold. Resume it before editing.' : 'Archived finalised orders are read-only.'}</p>
+        <Button className="mt-4" variant="secondary" onClick={() => navigate(`/orders/${id}`)}>
+          Return to order
+        </Button>
+      </PageMessage>
+    );
+  }
+
   if (order.Status === 'FINAL') {
     return (
       <PageMessage>
@@ -53,9 +65,14 @@ export default function OrderEditPage() {
     await refreshOrders();
     navigate(`/orders/${id}`);
   };
+  const nextStep = canRunSolver(identity.role)
+    ? 'You can optimise it directly after saving.'
+    : 'You will need to submit it for optimisation again.';
 
   return (
     <OrderItemsEditor
+      handlingSettings={handlingSettings} handlingSettingsError={handlingSettingsError}
+      loadingHandlingSettings={loadingHandlingSettings} refreshHandlingSettings={refreshHandlingSettings}
       initialItems={order.Items}
       onSave={save}
       onCancel={() => navigate(`/orders/${id}`)}
@@ -63,9 +80,9 @@ export default function OrderEditPage() {
       savingLabel="Saving..."
       notice={
         order.Status === 'OPTIMISED'
-          ? 'Editing this order will invalidate the current optimisation. You will need to submit and optimise the order again.'
+          ? `Editing this order will invalidate the current optimisation. ${nextStep}`
           : order.Status === 'AWAITING_OPTIMISATION'
-            ? 'Saving changes will return this order to Draft. It must be submitted again before optimisation.'
+            ? `Saving changes will return this order to Draft. ${nextStep}`
             : null
       }
     />

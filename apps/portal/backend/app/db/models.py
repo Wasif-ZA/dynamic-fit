@@ -9,6 +9,7 @@ from sqlalchemy import (
     BigInteger,
     Boolean,
     CheckConstraint,
+    DateTime,
     ForeignKey,
     Identity,
     Index,
@@ -29,6 +30,21 @@ ORDER_REFERENCE_SEQUENCE = Sequence("order_reference_sequence", start=1)
 
 class Base(DeclarativeBase):
     pass
+
+
+class ManualHandlingSettingsRecord(Base):
+    __tablename__ = "manual_handling_settings"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    warning_threshold_kg: Mapped[float | None] = mapped_column(Numeric, nullable=True)
+
+    __table_args__ = (
+        CheckConstraint("id = 1", name="manual_handling_settings_singleton"),
+        CheckConstraint(
+            "warning_threshold_kg is null or (warning_threshold_kg > 0 and warning_threshold_kg < 'Infinity'::numeric)",
+            name="manual_handling_threshold_is_positive_finite",
+        ),
+    )
 
 
 class PortalUserRecord(Base):
@@ -73,6 +89,9 @@ class OrderRecord(Base):
     order_number: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
     reference: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
     status: Mapped[str] = mapped_column(Text, nullable=False)
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    held_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    finalised_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         nullable=False, server_default=func.now()
     )
@@ -96,6 +115,10 @@ class OrderRecord(Base):
             "length(btrim(reference)) > 0", name="orders_reference_not_blank"
         ),
         Index("orders_newest_first_idx", created_at.desc(), order_number.desc()),
+        CheckConstraint("archived_at is null or status = 'FINAL'", name="orders_only_finalised_are_archived"),
+        CheckConstraint("held_at is null or status <> 'FINAL'", name="orders_only_unfinished_are_held"),
+        Index("orders_pending_archive_idx", finalised_at,
+              postgresql_where=(status == "FINAL") & archived_at.is_(None)),
     )
 
 
@@ -140,7 +163,7 @@ class OrderItemRecord(Base):
             name="order_items_dimensions_are_positive",
         ),
         CheckConstraint(
-            "weight > 0 and weight <= 32", name="order_items_weight_within_limits"
+            "weight > 0 and weight < 'Infinity'::numeric", name="order_items_weight_is_positive_finite"
         ),
         CheckConstraint(
             "box_group is null or length(btrim(box_group)) > 0",

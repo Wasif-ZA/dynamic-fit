@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from app.database import session_scope
 from app.errors import (
+    ARCHIVED_ORDER_IS_READ_ONLY,
+    HELD_ORDER_IS_READ_ONLY,
     OrderStatusConflictError,
     SolutionHasRejectsError,
     SolutionNotFoundError,
@@ -21,6 +23,10 @@ def finalise_order(order_id: str) -> StoredOrder:
     """Deduct stock and set FINAL atomically."""
     with session_scope() as session:
         record = order_repository.lock_record(session, order_id)
+        if record.held_at is not None:
+            raise OrderStatusConflictError(HELD_ORDER_IS_READ_ONLY)
+        if record.archived_at is not None:
+            raise OrderStatusConflictError(ARCHIVED_ORDER_IS_READ_ONLY)
         if record.status != "OPTIMISED":
             raise OrderStatusConflictError(ONLY_OPTIMISED_ORDERS_CAN_BE_FINALISED)
 

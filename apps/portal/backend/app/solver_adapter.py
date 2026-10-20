@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from app.models import BoxType, Item, StoredOrder
+from app.item_weights import contents_capacity_grams
 
 # Width, Length, Depth -> solver [x, y, z]. Matches fitsolver.portal.AXIS_ORDER.
 AXIS_ORDER = ("Width", "Length", "Depth")
@@ -38,9 +39,7 @@ def box_to_contract(box: BoxType) -> dict:
         "sku": box.reference,
         "inner_dims": _box_dims(box),
         "tare_mass": _grams(box.box_weight or 0),
-        "max_contents_mass": (
-            _grams(box.max_weight) if box.max_weight is not None else None
-        ),
+        "max_contents_mass": contents_capacity_grams(box),
         "maximum_boxes": box.maximum_boxes,
     }
 
