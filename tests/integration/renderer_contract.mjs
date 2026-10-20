@@ -2,7 +2,8 @@
  * Does a solution document carry every field the renderer actually reads?
  *
  * The field list is not written here. It is extracted from
- * `apps/visualiser/visualiser.js` at run time, so when Persephone reads a new
+ * `apps/visualiser/visualiser.js` and the modules in `apps/visualiser/js/` at
+ * run time, so when Persephone reads a new
  * field the check picks it up without anyone remembering to update a list, and
  * when the solver stops emitting one the build fails instead of the legend
  * quietly rendering "undefined".
@@ -14,13 +15,20 @@
  */
 
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname( fileURLToPath( import.meta.url ) );
-const rendererPath = join( here, '..', '..', 'apps', 'visualiser', 'visualiser.js' );
-const source = readFileSync( rendererPath, 'utf8' );
+const visualiserDir = join( here, '..', '..', 'apps', 'visualiser' );
+
+// The renderer was split into js/ modules, so read the entry file and every module.
+const moduleFiles = readdirSync( join( visualiserDir, 'js' ) )
+  .filter( ( name ) => name.endsWith( '.js' ) )
+  .map( ( name ) => join( visualiserDir, 'js', name ) );
+const source = [ join( visualiserDir, 'visualiser.js' ), ...moduleFiles ]
+  .map( ( path ) => readFileSync( path, 'utf8' ) )
+  .join( '\n' );
 
 /** Every `<object>.<field>` the renderer reads, for one variable name. */
 function fieldsRead( variable ) {
