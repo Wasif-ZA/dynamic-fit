@@ -9,6 +9,11 @@ export function setAccessToken(token) {
   accessToken = token;
 }
 
+// Fire-and-forget request so a sleeping hosted backend starts waking while the user signs in.
+export function warmUpApi() {
+  fetch(`${API_BASE}/health`).catch(() => {});
+}
+
 export function setAuthStatusHandler(handler) {
   authStatusHandler = handler;
 }

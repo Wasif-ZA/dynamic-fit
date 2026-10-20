@@ -8,7 +8,8 @@ export async function loadSceneData( jsonPath ) {
   return response.json();
 }
 
-/* Default: fixture named on the canvas. ?solution=<url> loads that URL instead (same origin or loopback only). */
+/* Default: fixture named on the canvas. ?solution=<url> loads that URL instead (same origin, loopback, or the
+   hosted Portal API named by VITE_PORTAL_API_BASE at build time). */
 export function solutionSource( canvas ) {
   const requested = new URLSearchParams( window.location.search ).get( 'solution' );
   if ( !requested ) {
@@ -24,9 +25,11 @@ export function solutionSource( canvas ) {
   }
 
   const loopback = [ '127.0.0.1', 'localhost', '::1' ];
+  const portalApi = import.meta.env.VITE_PORTAL_API_BASE;
   const allowed =
     target.origin === window.location.origin ||
-    ( [ 'http:', 'https:' ].includes( target.protocol ) && loopback.includes( target.hostname ) );
+    ( [ 'http:', 'https:' ].includes( target.protocol ) && loopback.includes( target.hostname ) ) ||
+    ( Boolean( portalApi ) && target.origin === new URL( portalApi ).origin );
 
   if ( !allowed ) {
     console.error( `Ignoring off-origin ?solution= host: ${ target.host }` );
