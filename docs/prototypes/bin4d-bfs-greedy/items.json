@@ -24,5 +24,14 @@
 		"Depth": 120,
 		"Weight": 0.82,
 		"BoxGroup": "GROUP-B"
+	},
+	{
+		"ItemCode": "ITM-004",
+		"ItemReference": "Sonic Toy",
+		"Width": 100,
+		"Length": 40,
+		"Depth": 30,
+		"Weight": 0.2
 	}
+
 ]
