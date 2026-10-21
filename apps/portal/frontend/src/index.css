@@ -17,6 +17,41 @@ body {
   border-top: 1.5px dashed theme('colors.ink.200');
 }
 
+/* Draw the hover outline inside cells so the table never shifts. */
+.order-row {
+  --row-outline: transparent;
+  transition: background-color 180ms ease;
+}
+
+.order-row + .order-row {
+  border-top: 1px solid theme('colors.ink.100');
+}
+
+.order-row:is(:hover, :focus-within) {
+  --row-outline: theme('colors.brand.400');
+  background-color: theme('colors.brand.50');
+}
+
+.order-row > td {
+  box-shadow: inset 0 1px 0 var(--row-outline), inset 0 -1px 0 var(--row-outline);
+  transition: box-shadow 180ms ease;
+}
+
+.order-row > td:first-child {
+  box-shadow: inset 1px 0 0 var(--row-outline), inset 0 1px 0 var(--row-outline), inset 0 -1px 0 var(--row-outline);
+}
+
+.order-row > td:last-child {
+  box-shadow: inset -1px 0 0 var(--row-outline), inset 0 1px 0 var(--row-outline), inset 0 -1px 0 var(--row-outline);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .order-row,
+  .order-row > td {
+    transition: none;
+  }
+}
+
 /* Focus visibility */
 :focus-visible {
   outline: 2px solid theme('colors.brand.500');

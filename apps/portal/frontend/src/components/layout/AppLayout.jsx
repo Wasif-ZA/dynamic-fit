@@ -6,6 +6,8 @@ import TopBar from './TopBar.jsx';
 
 const TITLES = {
   '/orders': ['Orders', 'All orders raised by your team'],
+  '/orders/backlog': ['Orders', 'Manage active work and orders on hold'],
+  '/orders/archived': ['Orders', 'Finalised orders retained for reference'],
   '/orders/new': ['New order', 'Add items and confirm details for packing'],
   '/boxes': ['Box Inventory', 'Reusable box types and available quantities'],
   '/users': ['User management', 'Portal roles and account access'],

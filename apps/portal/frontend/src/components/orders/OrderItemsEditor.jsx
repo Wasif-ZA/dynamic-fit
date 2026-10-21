@@ -1,9 +1,12 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Button from '../common/Button.jsx';
 import ItemEntryForm from './ItemEntryForm.jsx';
 import ItemJsonImport from './ItemJsonImport.jsx';
 import ItemsTable from './ItemsTable.jsx';
 import { orderTotals } from '../../lib/orders.js';
+import { getItemWeightLimit } from '../../api/client.js';
+import { validateItemFields } from '../../lib/itemValidation.js';
+import HandlingWarningsStatus from './HandlingWarningsStatus.jsx';
 
 const ENTRY_TABS = [
   { id: 'manual', label: 'Manual entry' },
@@ -17,19 +20,61 @@ export default function OrderItemsEditor({
   saveLabel,
   savingLabel,
   notice,
+  handlingSettings,
+  handlingSettingsError,
+  loadingHandlingSettings,
+  refreshHandlingSettings,
 }) {
   const [items, setItems] = useState(() => initialItems.map((item) => ({ ...item })));
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
   const [entryTab, setEntryTab] = useState('manual');
   const [editingIndex, setEditingIndex] = useState(null);
+  const [capacity, setCapacity] = useState(null);
+  const [capacityError, setCapacityError] = useState(null);
+  const [loadingCapacity, setLoadingCapacity] = useState(true);
+  const capacityGeneration = useRef(0);
+  const refreshCapacity = useCallback(async () => {
+    const generation = ++capacityGeneration.current;
+    setLoadingCapacity(true);
+    try {
+      const current = await getItemWeightLimit();
+      if (generation !== capacityGeneration.current) throw new Error('Box Inventory changed while checking. Please try again.');
+      setCapacity(current);
+      setCapacityError(null);
+      return current;
+    } catch (error) {
+      if (generation === capacityGeneration.current) setCapacityError(error);
+      throw error;
+    } finally {
+      if (generation === capacityGeneration.current) setLoadingCapacity(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const refresh = () => { refreshCapacity().catch(() => {}); };
+    refresh();
+    window.addEventListener('focus', refresh);
+    return () => { capacityGeneration.current += 1; window.removeEventListener('focus', refresh); };
+  }, [refreshCapacity]);
+
+  const maxItemWeightKg = capacity?.MaxItemWeightKg ?? null;
+  const warningThresholdKg = handlingSettings?.WarningThresholdKg ?? null;
+  const checkingWeightLimit = loadingCapacity || Boolean(capacityError);
+  const itemErrors = items.flatMap((item, index) => validateItemFields(item, { label: `Item ${index + 1} (${item.ItemCode})`, maxItemWeightKg }));
 
   const totals = useMemo(() => orderTotals(items), [items]);
 
-  const handleAddItem = (item) => setItems((current) => [...current, item]);
-  const handleImportItems = (importedItems) =>
+  const handleAddItem = (item) => {
+    setError('');
+    setItems((current) => [...current, item]);
+  };
+  const handleImportItems = (importedItems) => {
+    setError('');
     setItems((current) => [...current, ...importedItems]);
+  };
   const handleRemoveItem = (index) => {
+    setError('');
     setItems((current) => current.filter((_, itemIndex) => itemIndex !== index));
     setEditingIndex((current) => {
       if (current === index) return null;
@@ -37,6 +82,7 @@ export default function OrderItemsEditor({
     });
   };
   const handleEditItem = (item) => {
+    setError('');
     setItems((current) =>
       current.map((existing, index) => (index === editingIndex ? item : existing))
     );
@@ -52,6 +98,11 @@ export default function OrderItemsEditor({
     setSaving(true);
     setError('');
     try {
+      const current = await refreshCapacity();
+      const validationErrors = items.flatMap((item, index) => validateItemFields(item, { label: `Item ${index + 1} (${item.ItemCode})`, maxItemWeightKg: current.MaxItemWeightKg }));
+      if (validationErrors.length > 0) {
+        return;
+      }
       await onSave(items);
     } catch (saveError) {
       setError(saveError.message);
@@ -62,9 +113,23 @@ export default function OrderItemsEditor({
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      {(handlingSettings || handlingSettingsError || loadingHandlingSettings) && (
+        <div className="lg:col-span-3"><HandlingWarningsStatus settings={handlingSettings} error={handlingSettingsError} loading={loadingHandlingSettings} onRetry={refreshHandlingSettings} /></div>
+      )}
       {notice && (
         <p className="rounded-sm border border-ink-100 bg-white p-3 text-sm text-ink-600 lg:col-span-3">
           {notice}
+        </p>
+      )}
+      {capacityError && (
+        <div role="alert" className="rounded-sm border border-red-200 bg-red-50 p-3 text-sm text-red-700 lg:col-span-3">
+          Cannot check current box weight capacities. {capacityError.message}
+          <Button className="ml-3" variant="secondary" onClick={() => refreshCapacity().catch(() => {})}>Try again</Button>
+        </div>
+      )}
+      {capacity && !capacity.HasAvailableBoxes && !capacityError && (
+        <p className="rounded-sm border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 lg:col-span-3">
+          No active boxes are currently available. You can prepare this draft, but add or restock active boxes in Box Inventory before optimising. Item weights will be checked against those boxes.
         </p>
       )}
       <div className="space-y-6 lg:col-span-2">
@@ -92,9 +157,9 @@ export default function OrderItemsEditor({
           </div>
           <div className="cut-line my-4" />
           {entryTab === 'manual' ? (
-            <ItemEntryForm onAdd={handleAddItem} />
+            <ItemEntryForm onAdd={handleAddItem} maxItemWeightKg={maxItemWeightKg} checkingWeightLimit={checkingWeightLimit} warningThresholdKg={warningThresholdKg} />
           ) : (
-            <ItemJsonImport onImport={handleImportItems} />
+            <ItemJsonImport onImport={handleImportItems} maxItemWeightKg={maxItemWeightKg} checkingWeightLimit={checkingWeightLimit} warningThresholdKg={warningThresholdKg} />
           )}
         </section>
       </div>
@@ -108,14 +173,14 @@ export default function OrderItemsEditor({
             <SummaryRow label="Total units" value={totals.units} />
             <SummaryRow label="Total weight" value={`${totals.weight} kg`} />
           </dl>
-          {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+          {(error || itemErrors.length > 0) && <p className="mt-4 text-sm text-red-600">{error || itemErrors[0]}</p>}
           <div className="mt-5 flex gap-2">
             {onCancel && (
               <Button className="flex-1" variant="secondary" onClick={onCancel}>
                 Cancel
               </Button>
             )}
-            <Button className="flex-1" onClick={handleSave} disabled={saving}>
+            <Button className="flex-1" onClick={handleSave} disabled={saving || checkingWeightLimit || itemErrors.length > 0}>
               {saving ? savingLabel : saveLabel}
             </Button>
           </div>
@@ -127,6 +192,7 @@ export default function OrderItemsEditor({
           Items on this order
         </h2>
         <ItemsTable
+          warningThresholdKg={warningThresholdKg}
           items={items}
           onRemove={handleRemoveItem}
           onEdit={setEditingIndex}
@@ -136,6 +202,9 @@ export default function OrderItemsEditor({
           <section className="mt-4 rounded-sm border border-brand-200 bg-brand-50/40 p-4">
             <h3 className="mb-3 font-display font-semibold text-ink-700">Edit item</h3>
             <ItemEntryForm
+              warningThresholdKg={warningThresholdKg}
+              maxItemWeightKg={maxItemWeightKg}
+              checkingWeightLimit={checkingWeightLimit}
               key={`edit-${editingIndex}`}
               initialItem={items[editingIndex]}
               onAdd={handleEditItem}

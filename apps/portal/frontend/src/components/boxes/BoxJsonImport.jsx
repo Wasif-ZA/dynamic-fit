@@ -241,7 +241,7 @@ function Snapshot({ title, box }) {
     ['Width', `${box.Width} mm`],
     ['Length', `${box.Length} mm`],
     ['Depth', `${box.Depth} mm`],
-    ['Max Weight', box.MaxWeight == null ? '—' : `${box.MaxWeight} kg`],
+    ['Max packed weight', box.MaxWeight == null ? '—' : `${box.MaxWeight} kg`],
     ['Box Weight', box.BoxWeight == null ? '—' : `${box.BoxWeight} kg`],
     ['Active', box.Active ? 'Yes' : 'No'],
     ['Available', formatMaximumBoxes(box.MaximumBoxes)],
@@ -346,7 +346,7 @@ function ResultFields({ box, referenceReadOnly, showQuantity, onChange }) {
         <ResultInput label="Width (mm)" type="number" min="0.01" value={box.Width} onChange={(value) => onChange('Width', value)} />
         <ResultInput label="Length (mm)" type="number" min="0.01" value={box.Length} onChange={(value) => onChange('Length', value)} />
         <ResultInput label="Depth (mm)" type="number" min="0.01" value={box.Depth} onChange={(value) => onChange('Depth', value)} />
-        <ResultInput label="Max weight (kg)" type="number" min="0.01" value={box.MaxWeight ?? ''} onChange={(value) => onChange('MaxWeight', value)} />
+        <ResultInput label="Max packed weight (kg)" type="number" min="0.01" value={box.MaxWeight ?? ''} onChange={(value) => onChange('MaxWeight', value)} />
         <ResultInput label="Box weight (kg)" type="number" min="0.01" value={box.BoxWeight ?? ''} onChange={(value) => onChange('BoxWeight', value)} />
         <label className="flex items-center gap-2 self-end py-2 text-sm text-ink-600">
           <input type="checkbox" checked={box.Active} onChange={(event) => onChange('Active', event.target.checked)} />

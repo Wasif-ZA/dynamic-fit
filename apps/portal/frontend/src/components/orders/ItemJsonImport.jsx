@@ -16,7 +16,7 @@ const PLACEHOLDER = `[
   }
 ]`;
 
-export default function ItemJsonImport({ onImport }) {
+export default function ItemJsonImport({ onImport, maxItemWeightKg = null, checkingWeightLimit = false, warningThresholdKg = null }) {
   const [text, setText] = useState('');
   const [errors, setErrors] = useState([]);
   const [success, setSuccess] = useState('');
@@ -25,8 +25,9 @@ export default function ItemJsonImport({ onImport }) {
   const fileInputRef = useRef(null);
 
   const runImport = (jsonText) => {
+    if (checkingWeightLimit) return;
     setSuccess('');
-    const { items, errors: parseErrors } = parseItemsJson(jsonText);
+    const { items, errors: parseErrors } = parseItemsJson(jsonText, { maxItemWeightKg });
     if (parseErrors.length > 0) {
       setErrors(parseErrors);
       return;
@@ -81,6 +82,7 @@ export default function ItemJsonImport({ onImport }) {
               type="file"
               accept=".json,application/json"
               className="hidden"
+              disabled={checkingWeightLimit}
               onChange={handleFileChange}
             />
           </label>
@@ -111,7 +113,7 @@ export default function ItemJsonImport({ onImport }) {
       </div>
 
       <div className="text-center">
-        <Button type="button" onClick={handlePasteImport} disabled={!text.trim()}>
+        <Button type="button" onClick={handlePasteImport} disabled={checkingWeightLimit || !text.trim()}>
           Review pasted JSON
         </Button>
       </div>
@@ -137,6 +139,9 @@ export default function ItemJsonImport({ onImport }) {
 
       {previewItems && (
         <ImportedItemsReviewModal
+          warningThresholdKg={warningThresholdKg}
+          maxItemWeightKg={maxItemWeightKg}
+          checkingWeightLimit={checkingWeightLimit}
           items={previewItems}
           onCancel={() => setPreviewItems(null)}
           onConfirm={handleConfirm}

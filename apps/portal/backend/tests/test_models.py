@@ -136,9 +136,13 @@ class TestItem:
     def test_weight_at_maximum_is_accepted(self):
         assert Item(**{**VALID_ITEM, "Weight": 32}).weight == 32
 
-    def test_weight_above_maximum_is_rejected(self):
+    def test_weight_has_no_hardcoded_maximum(self):
+        assert Item(**{**VALID_ITEM, "Weight": 80}).weight == 80
+
+    @pytest.mark.parametrize("value", [float('inf'), float('-inf'), float('nan')])
+    def test_non_finite_weight_is_rejected(self, value):
         with pytest.raises(ValidationError):
-            Item(**{**VALID_ITEM, "Weight": 32.01})
+            Item(**{**VALID_ITEM, "Weight": value})
 
     @pytest.mark.parametrize(
         "field", ["ItemCode", "ItemReference"]

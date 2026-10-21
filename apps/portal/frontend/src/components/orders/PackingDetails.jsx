@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
 import { buildBoxGroupLookup, cartonBoxGroups, itemBoxGroups } from '../../lib/boxGroups.js';
+import { packedWeightKg } from '../../lib/manualHandling.js';
+import HandlingWarning from './HandlingWarning.jsx';
 
-export default function PackingDetails({ solution, items }) {
+export default function PackingDetails({ solution, items, warningThresholdKg = null }) {
   const cartons = solution?.cartons ?? [];
   const boxGroupLookup = useMemo(() => buildBoxGroupLookup(items), [items]);
 
@@ -18,6 +20,7 @@ export default function PackingDetails({ solution, items }) {
           <p className="text-sm text-ink-400">No boxes were packed.</p>
         ) : cartons.map((carton, index) => (
           <PackedBox
+            warningThresholdKg={warningThresholdKg}
             key={carton.carton_id}
             carton={carton}
             number={index + 1}
@@ -37,16 +40,16 @@ export function UnpackedItems({ rejects }) {
 
   return (
     <section
-      className="mt-5 rounded-sm border border-ink-100 bg-white p-4"
+      className="mt-5 rounded-sm border border-red-200 bg-red-50 p-4"
       aria-labelledby="unpacked-items-title"
     >
-      <h4 id="unpacked-items-title" className="font-display font-semibold text-ink-700">
+      <h4 id="unpacked-items-title" className="font-display font-semibold text-red-700">
         Items not packed
       </h4>
-      <p className="mt-1 text-sm text-ink-500">
+      <p className="mt-1 text-sm text-red-700">
         FitSolver could not place the following items:
       </p>
-      <ul className="mt-3 space-y-2 text-sm text-ink-600">
+      <ul className="mt-3 space-y-2 text-sm text-red-700">
         {groupedRejects.map((reject) => (
           <li key={`${reject.itemRef}-${reject.reason}`}>
             <span className="font-mono font-semibold">{reject.itemRef}</span>
@@ -59,7 +62,7 @@ export function UnpackedItems({ rejects }) {
   );
 }
 
-function PackedBox({ carton, number, boxGroups, boxGroupLookup }) {
+function PackedBox({ carton, number, boxGroups, boxGroupLookup, warningThresholdKg }) {
   const items = groupPlacements(carton.placements ?? []);
   return (
     <article className="rounded-sm border border-ink-100 bg-white p-4">
@@ -69,12 +72,14 @@ function PackedBox({ carton, number, boxGroups, boxGroupLookup }) {
             Box {number} — <span className="font-mono">{carton.sku}</span>
           </h4>
           <p className="mt-1 font-mono text-xs text-ink-300">{carton.carton_id}</p>
+          <HandlingWarning kind="box" weightKg={packedWeightKg(carton)} thresholdKg={warningThresholdKg} className="mt-1" />
         </div>
-        <dl className="grid grid-cols-2 gap-x-5 gap-y-1 text-xs sm:grid-cols-5">
+        <dl className="grid grid-cols-2 gap-x-5 gap-y-1 text-xs sm:grid-cols-3 xl:grid-cols-6">
           <BoxFact label="Box group" value={boxGroups.length ? boxGroups.join(', ') : '—'} />
           <BoxFact label="Inner dimensions" value={`${carton.inner_dims.join(' × ')} mm`} />
           <BoxFact label="Items" value={carton.placements.length} />
           <BoxFact label="Contents weight" value={`${formatKg(carton.contents_mass)} kg`} />
+          <BoxFact label="Packed weight" value={`${packedWeightKg(carton)} kg`} />
           <BoxFact label="Fill rate" value={formatPercent(carton.fill_rate)} />
         </dl>
       </div>

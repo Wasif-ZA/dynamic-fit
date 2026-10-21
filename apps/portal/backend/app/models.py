@@ -20,6 +20,11 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 OrderStatus = Literal["DRAFT", "AWAITING_OPTIMISATION", "OPTIMISED", "FINAL"]
+OrderView = Literal["active", "backlog", "archived"]
+
+# Keep aligned with ITEM_TEXT_LIMITS in frontend/src/lib/itemValidation.js.
+MAX_ITEM_CODE_LENGTH = 32
+MAX_ITEM_REFERENCE_LENGTH = 100
 
 
 class Role(StrEnum):
@@ -55,13 +60,15 @@ class PortalModel(BaseModel):
 class Item(PortalModel):
     """An item to pack, following the client's item schema. Quantity defaults to 1."""
 
-    # The client's own identifier: any non-blank text, stored as given.
-    item_code: str = Field(alias="ItemCode", min_length=1)
-    item_reference: str = Field(alias="ItemReference", min_length=1)
+    # The client's own identifier: non-blank text within the character limit.
+    item_code: str = Field(alias="ItemCode", min_length=1, max_length=MAX_ITEM_CODE_LENGTH)
+    item_reference: str = Field(
+        alias="ItemReference", min_length=1, max_length=MAX_ITEM_REFERENCE_LENGTH
+    )
     width: int = Field(alias="Width", gt=0)
     length: int = Field(alias="Length", gt=0)
     depth: int = Field(alias="Depth", gt=0)
-    weight: float = Field(alias="Weight", gt=0, le=32)
+    weight: float = Field(alias="Weight", gt=0, allow_inf_nan=False)
     box_group: str | None = Field(default=None, alias="BoxGroup", min_length=1)
     quantity: int = Field(default=1, alias="Quantity", ge=1)
 
@@ -81,14 +88,15 @@ class BoxType(PortalModel):
 
     MaximumBoxes is the quantity of this box type available to use. None means
     no limit; finalising an order subtracts the boxes used from a set quantity.
+    MaxWeight is the total packed weight, including the empty BoxWeight.
     """
 
     reference: str = Field(alias="Reference", min_length=1)
     width: float = Field(alias="Width", gt=0)
     length: float = Field(alias="Length", gt=0)
     depth: float = Field(alias="Depth", gt=0)
-    max_weight: float | None = Field(default=None, alias="MaxWeight", gt=0)
-    box_weight: float | None = Field(default=None, alias="BoxWeight", gt=0)
+    max_weight: float | None = Field(default=None, alias="MaxWeight", gt=0, allow_inf_nan=False)
+    box_weight: float | None = Field(default=None, alias="BoxWeight", gt=0, allow_inf_nan=False)
     active: bool = Field(default=True, alias="Active")
     maximum_boxes: int | None = Field(default=None, alias="MaximumBoxes", ge=0)
 
@@ -99,8 +107,8 @@ class BoxTypeUpdate(PortalModel):
     width: float = Field(alias="Width", gt=0)
     length: float = Field(alias="Length", gt=0)
     depth: float = Field(alias="Depth", gt=0)
-    max_weight: float | None = Field(default=None, alias="MaxWeight", gt=0)
-    box_weight: float | None = Field(default=None, alias="BoxWeight", gt=0)
+    max_weight: float | None = Field(default=None, alias="MaxWeight", gt=0, allow_inf_nan=False)
+    box_weight: float | None = Field(default=None, alias="BoxWeight", gt=0, allow_inf_nan=False)
     active: bool = Field(alias="Active")
     maximum_boxes: int | None = Field(default=None, alias="MaximumBoxes", ge=0)
 
@@ -148,6 +156,14 @@ class BoxImportResponse(PortalModel):
     boxes: list[BoxType] = Field(alias="Boxes")
 
 
+class ManualHandlingSettings(PortalModel):
+    """Site-selected advisory trigger; null leaves warnings unconfigured."""
+
+    warning_threshold_kg: float | None = Field(
+        alias="WarningThresholdKg", gt=0, allow_inf_nan=False
+    )
+
+
 class Order(PortalModel):
     """Create-order request. Portal assigns identity after validation."""
 
@@ -160,6 +176,13 @@ class StoredOrder(Order):
     order_id: str = Field(alias="OrderId")
     reference: str = Field(alias="Reference", min_length=1)
     status: OrderStatus = Field(default="DRAFT", alias="Status")
+    rejected_count: int = Field(default=0, alias="RejectedCount", ge=0)
+    max_packed_weight_kg: float | None = Field(
+        default=None, alias="MaxPackedWeightKg", ge=0, allow_inf_nan=False
+    )
+    archived_at: datetime | None = Field(default=None, alias="ArchivedAt")
+    held_at: datetime | None = Field(default=None, alias="HeldAt")
+    finalised_at: datetime | None = Field(default=None, alias="FinalisedAt")
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc), alias="CreatedAt"
     )

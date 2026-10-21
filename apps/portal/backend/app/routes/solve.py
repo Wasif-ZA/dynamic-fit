@@ -1,4 +1,4 @@
-"""Optimise submitted orders and expose the active solution."""
+"""Optimise draft or submitted orders and expose the active solution."""
 
 import logging
 from typing import Annotated
@@ -13,7 +13,8 @@ from app import boxes as box_inventory
 from app import store
 from app.auth import get_current_user, require_solver_user
 from app.boxes import active_box_types
-from app.errors import OrderNotFoundError, OrderStatusConflictError
+from app.errors import ARCHIVED_ORDER_IS_READ_ONLY, HELD_ORDER_IS_READ_ONLY, ItemWeightLimitError, OrderNotFoundError, OrderStatusConflictError
+from app.item_weights import validate_item_weights
 from app.models import PortalUser, StoredOrder, VisualizerHandoff
 from app.solver_adapter import to_solver_request
 from app.visualizer_tokens import create_token, solution_digest, verify_token
@@ -48,10 +49,14 @@ def solve_order(
     _user: Annotated[PortalUser, Depends(require_solver_user)],
 ) -> dict:
     stored = _require_order(order_id)
-    if stored.status not in {"AWAITING_OPTIMISATION", "OPTIMISED"}:
+    if stored.held_at is not None:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=HELD_ORDER_IS_READ_ONLY)
+    if stored.archived_at is not None:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=ARCHIVED_ORDER_IS_READ_ONLY)
+    if stored.status not in store.SOLVABLE_ORDER_STATUSES:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Only orders awaiting optimisation or already optimised can be solved",
+            detail=store.ONLY_SOLVABLE_ORDERS_CAN_BE_OPTIMISED,
         )
 
     boxes = active_box_types()
@@ -61,6 +66,10 @@ def solve_order(
             detail=NO_AVAILABLE_BOXES_DETAIL,
         )
 
+    try:
+        validate_item_weights(stored.items, boxes)
+    except ItemWeightLimitError as exc:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
     request = to_solver_request(stored, boxes)
 
     try:
@@ -78,9 +87,11 @@ def solve_order(
             detail=f"The packing service failed while solving {order_id}.",
         ) from exc
 
-    # The Solver ran without a lock, re-check state before replacing the result.
+    # The Solver ran without a lock; re-check state and items before saving.
     try:
-        return store.save_solution_for_optimised_order(order_id, document)
+        return store.save_solution_for_optimised_order(
+            order_id, document, expected_items=stored.items
+        )
     except OrderNotFoundError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -116,9 +127,9 @@ def get_solution(
 
 
 def _inventory_feasibility(order_id: str, document: dict) -> dict | None:
-    """Return null after finalisation, when stock has already been consumed."""
+    """Inventory advice applies only to active, unfinalised orders."""
     stored = store.find_order(order_id)
-    if stored is None or stored.status == "FINAL":
+    if stored is None or stored.status == "FINAL" or stored.archived_at is not None or stored.held_at is not None:
         return None
     return box_inventory.assess_solution_inventory(document).model_dump(by_alias=True)
 
@@ -149,6 +160,7 @@ def get_solution_summary(
                 "BoxType": carton["sku"],
                 "ItemCount": len(carton["placements"]),
                 "ContentsWeightKg": round(carton["contents_mass"] / 1000, 3),
+                "PackedWeightKg": round((carton["contents_mass"] + carton.get("tare_mass", 0)) / 1000, 3),
                 "FillRate": carton["fill_rate"],
             }
             for carton in document["cartons"]

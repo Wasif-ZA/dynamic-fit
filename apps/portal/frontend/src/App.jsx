@@ -19,6 +19,8 @@ export default function App() {
 
       <Route element={<AppLayout />}>
         <Route path="/orders" element={<OrdersListPage />} />
+        <Route path="/orders/backlog" element={<OrdersListPage view="backlog" />} />
+        <Route path="/orders/archived" element={<OrdersListPage view="archived" />} />
         <Route path="/orders/new" element={<OrderCreatePage />} />
         <Route path="/orders/:id/edit" element={<OrderEditPage />} />
         <Route path="/orders/:id" element={<OrderSummaryPage />} />

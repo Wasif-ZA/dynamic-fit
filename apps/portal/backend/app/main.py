@@ -1,5 +1,6 @@
 from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
+import asyncio
 import os
 
 from fastapi import FastAPI
@@ -7,14 +8,22 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.auth import verify_auth_configuration
 from app.database import verify_connection
-from app.routes import boxes, orders, solve, users
+from app.routes import boxes, orders, settings, solve, users
+from app.maintenance import archive_loop, archive_sweep
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     verify_connection()
     verify_auth_configuration()
-    yield
+    await archive_sweep()
+    maintenance = asyncio.create_task(archive_loop())
+    try:
+        yield
+    finally:
+        maintenance.cancel()
+        with suppress(asyncio.CancelledError):
+            await maintenance
 
 
 app = FastAPI(
@@ -50,6 +59,7 @@ app.include_router(orders.router)
 app.include_router(solve.router)
 app.include_router(boxes.router)
 app.include_router(users.router)
+app.include_router(settings.router)
 
 
 @app.get("/health", tags=["status"])

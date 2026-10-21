@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useApp } from '../../context/AppContext.jsx';
 import { canManageUsers } from '../../lib/roles.js';
 
@@ -12,6 +12,7 @@ const LINKS = [
 
 export default function Sidebar() {
   const { identity } = useApp();
+  const { pathname } = useLocation();
   const links = LINKS.filter(
     (link) => !link.managersOnly || canManageUsers(identity?.role)
   );
@@ -30,7 +31,7 @@ export default function Sidebar() {
           <NavLink
             key={link.to}
             to={link.to}
-            end={link.to === '/orders'}
+            end={link.to === '/orders' && pathname.replace(/\/+$/, '') === '/orders/new'}
             className={({ isActive }) =>
               `mb-1 flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium transition-colors ${
                 isActive

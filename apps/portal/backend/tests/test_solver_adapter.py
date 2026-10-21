@@ -141,7 +141,7 @@ def test_carton_contains_exactly_the_solver_fields():
         "sku": "BOX-S",
         "inner_dims": [220, 160, 120],
         "tare_mass": 500,
-        "max_contents_mass": 15000,
+        "max_contents_mass": 14500,
         "maximum_boxes": 4,
     }
 

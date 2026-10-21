@@ -1,8 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { createBox, deleteBox, importBoxes, listBoxes, updateBox } from '../api/client.js';
 import Button from '../components/common/Button.jsx';
 import Field, { inputClass } from '../components/common/Field.jsx';
 import BoxJsonImport from '../components/boxes/BoxJsonImport.jsx';
+import ManualHandlingSettings from '../components/boxes/ManualHandlingSettings.jsx';
 import { useApp } from '../context/AppContext.jsx';
 import { formatMaximumBoxes, normaliseMaximumBoxes } from '../lib/boxValidation.js';
 import { canManageBoxInventory } from '../lib/roles.js';
@@ -20,6 +22,8 @@ const EMPTY_BOX = {
 
 export default function BoxInventoryPage() {
   const { identity } = useApp();
+  const { hash } = useLocation();
+  const handlingSettingsRef = useRef(null);
   const canManage = canManageBoxInventory(identity.role);
   const [boxes, setBoxes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,6 +48,12 @@ export default function BoxInventoryPage() {
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    if (!loading && hash === '#handling-warnings') {
+      handlingSettingsRef.current?.scrollIntoView({ block: 'start' });
+    }
+  }, [hash, loading]);
 
   const save = async (payload) => {
     setSuccess('');
@@ -112,6 +122,10 @@ export default function BoxInventoryPage() {
         )}
       </div>
 
+      <div ref={handlingSettingsRef} className="mb-4">
+        <ManualHandlingSettings />
+      </div>
+
       {success && (
         <p className="mb-4 rounded-sm border border-green-200 bg-green-50 p-3 text-sm text-green-700">
           {success}
@@ -136,7 +150,7 @@ export default function BoxInventoryPage() {
               <tr>
                 <th className="px-4 py-3 font-mono">Reference</th>
                 <th className="px-4 py-3">Dimensions</th>
-                <th className="px-4 py-3">Max weight</th>
+                <th className="px-4 py-3">Max packed weight</th>
                 <th className="px-4 py-3">Box weight</th>
                 <th className="px-4 py-3">Available</th>
                 <th className="px-4 py-3">Status</th>
@@ -277,7 +291,7 @@ function BoxFormModal({ initialBox, isEditing, onCancel, onSave, onDelete }) {
           <NumberField label="Width (mm) *" field="Width" min="0.01" form={form} update={update} />
           <NumberField label="Length (mm) *" field="Length" min="0.01" form={form} update={update} />
           <NumberField label="Depth (mm) *" field="Depth" min="0.01" form={form} update={update} />
-          <NumberField label="Max weight (kg)" field="MaxWeight" min="0.01" form={form} update={update} optional />
+          <NumberField label="Max packed weight (kg)" field="MaxWeight" min="0.01" form={form} update={update} optional hint="Includes the empty box. Leave blank for no weight limit." />
           <NumberField label="Box weight (kg)" field="BoxWeight" min="0.01" form={form} update={update} optional />
           <label className="flex items-center gap-3 self-end py-2 text-sm font-medium text-ink-600">
             <input type="checkbox" checked={form.Active} onChange={update('Active')} />
