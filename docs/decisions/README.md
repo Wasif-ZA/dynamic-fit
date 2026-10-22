@@ -28,3 +28,6 @@ the old one. The trail of what we changed our minds about is the useful part.
 | [0006](0006-the-implemented-schema-is-canonical.md) | The implemented schema is canonical, contract.md superseded | accepted |
 | [0007](0007-monorepo-with-preserved-history.md) | One repository, with history preserved | accepted |
 | [0008](0008-portal-solver-integration.md) | How the Portal reaches the solver | accepted |
+| [0009](0009-greedy2-default-packing-algorithm.md) | greedy2 becomes the solver's default packing algorithm | accepted |
+| [0010](0010-cloudflare-pages-and-hosted-api.md) | Host on Cloudflare, with a hosted API and Supabase for the Portal | accepted |
+| [0011](0011-which-portal-axis-is-vertical.md) | Which Portal axis is vertical | proposed |
