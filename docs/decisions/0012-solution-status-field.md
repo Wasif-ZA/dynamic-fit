@@ -1,4 +1,4 @@
-# ADR-0009: Solution documents carry a derived status field
+# ADR-0012: Solution documents carry a derived status field
 
 - **Status:** accepted
 - **Date:** 2026-10-20

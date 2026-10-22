@@ -146,7 +146,7 @@ another" example. It is a core requirement, not a stretch goal
 > **Implemented 2026-10-20.** The solution schema now carries `status` as an optional
 > field with the same three values and the same derivation rule, computed from `cartons`
 > and `rejects` instead of `unpacked`. See
-> [ADR-0009](decisions/0009-solution-status-field.md).
+> [ADR-0012](decisions/0012-solution-status-field.md).
 
 The client's instruction was "just reject the order". We return the detail rather than a bare error
 so the portal can show *which* item failed and *why*. What to do about it is the portal's call.
