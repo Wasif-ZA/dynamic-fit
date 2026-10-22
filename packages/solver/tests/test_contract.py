@@ -87,3 +87,41 @@ def test_rejects_are_per_item_not_whole_request():
     assert placed == ["OK"]
     assert codes["HUGE"] == "NO_FITTING_CARTON"
     assert codes["BAD"] == "INVALID_DIMENSIONS"
+
+
+ALL_REJECTED = {
+    "order_id": "ORD-5",
+    "items": [{"item_ref": "HUGE", "dims": [900, 900, 900], "mass": 500}],
+    "cartons": [{"sku": "BOX-S", "inner_dims": [220, 160, 120],
+                 "tare_mass": 120}],
+}
+
+
+@pytest.mark.parametrize("request_, expected", [
+    (REQUESTS["single_item"], "solved"),
+    (REQUESTS["multi_carton"], "solved"),
+    (REQUESTS["with_rejects"], "partial"),
+    (ALL_REJECTED, "rejected"),
+])
+def test_status_is_derived_from_placements_and_rejects(request_, expected):
+    doc = solve(request_)
+    assert doc["status"] == expected
+    jsonschema.validate(doc, SCHEMA)
+
+
+def test_solved_has_no_rejects_and_rejected_has_no_cartons():
+    assert solve(REQUESTS["single_item"])["rejects"] == []
+    assert solve(ALL_REJECTED)["cartons"] == []
+
+
+def test_document_without_status_still_validates():
+    doc = solve(REQUESTS["single_item"])
+    del doc["status"]
+    jsonschema.validate(doc, SCHEMA)
+
+
+def test_unknown_status_value_is_rejected_by_schema():
+    doc = solve(REQUESTS["single_item"])
+    doc["status"] = "ok"
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(doc, SCHEMA)

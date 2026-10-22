@@ -2,6 +2,7 @@
   "schema_version": "1.0.0",
   "solution_id": "sol_08_orientation_locked",
   "order_id": "FIX-08",
+  "status": "partial",
   "solver": {
     "version": "0.1.0",
     "seed": 6975702759919959002,

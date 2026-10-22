@@ -2,6 +2,7 @@
   "schema_version": "1.0.0",
   "solution_id": "sol_07_all_rejects",
   "order_id": "FIX-07",
+  "status": "rejected",
   "solver": {
     "version": "0.1.0",
     "seed": 196729471658505061,

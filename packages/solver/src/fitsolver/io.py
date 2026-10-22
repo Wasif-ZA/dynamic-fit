@@ -95,6 +95,12 @@ def parse_request(payload: dict) -> tuple[list[Item], list[Carton],
     return items, cartons, rejects, budget, order_id
 
 
+def derive_status(placed: int, rejected: int) -> str:
+    if placed == 0:
+        return "rejected"
+    return "solved" if rejected == 0 else "partial"
+
+
 def emit_document(solution: Solution, order_id: str,
                   input_rejects: list[Reject]) -> dict:
     """Solution -> self-contained contract document.
@@ -128,10 +134,12 @@ def emit_document(solution: Solution, order_id: str,
             "placements": placements,
         })
     all_rejects = input_rejects + solution.rejects
+    placed = sum(len(c["placements"]) for c in cartons)
     return {
         "schema_version": SCHEMA_VERSION,
         "solution_id": f"sol_{uuid.uuid4().hex[:12]}",
         "order_id": order_id,
+        "status": derive_status(placed, len(all_rejects)),
         "solver": {
             "version": SOLVER_VERSION,
             "seed": solution.seed,

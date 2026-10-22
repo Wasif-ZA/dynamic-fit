@@ -2,6 +2,7 @@
   "schema_version": "1.0.0",
   "solution_id": "sol_05_incompatible",
   "order_id": "FIX-05",
+  "status": "solved",
   "solver": {
     "version": "0.1.0",
     "seed": 12555962309569321414,

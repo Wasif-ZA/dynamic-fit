@@ -2,6 +2,7 @@
   "schema_version": "1.0.0",
   "solution_id": "sol_06_partial_rejects",
   "order_id": "FIX-06",
+  "status": "partial",
   "solver": {
     "version": "0.1.0",
     "seed": 10252180076872946458,
