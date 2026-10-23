@@ -21,6 +21,7 @@ Three subsystems, one repository:
 | [`contract/`](contract/) | **The interface.** `request.schema.json` and `solution.schema.json` are what the subsystems actually exchange |
 | [`docs/client-requirements.md`](docs/client-requirements.md) | What the client asked for |
 | [`docs/BENCHMARK.md`](docs/BENCHMARK.md) | How well it packs, measured against a baseline |
+| [`docs/sdd/`](docs/sdd/) | The Software Design Description, one file per division, plus team roles |
 | [`docs/decisions/`](docs/decisions/) | The decision log. Read before re-opening a settled question |
 | [`docs/contract.md`](docs/contract.md) | The reasoning behind the interface. **Superseded**: its field names were never implemented ([ADR-0006](docs/decisions/0006-the-implemented-schema-is-canonical.md)) |
 | [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) | Branching, PRs, and how we log work for the unit |
