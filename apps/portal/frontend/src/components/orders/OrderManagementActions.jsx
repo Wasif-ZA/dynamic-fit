@@ -70,7 +70,7 @@ export default function OrderManagementActions({
             showInfo={showInfo('archive')}
             description="Move this finalised order to Archive now. Its items and packing result stay available to view."
           >
-            {pending === 'archive' ? 'Archiving...' : 'Archive'}
+            {pending === 'archive' ? 'Archiving…' : 'Archive'}
           </TooltipButton>
         ) : (
           <>
@@ -81,7 +81,7 @@ export default function OrderManagementActions({
                 ? 'Return this order to Active orders and continue where you left off.'
                 : 'Pause this order and move it to On hold. Your items and packing result are saved.'}
             >
-              {pending === 'resume' ? 'Resuming...' : pending === 'hold' ? 'Pausing...' : held ? 'Resume' : 'Hold'}
+              {pending === 'resume' ? 'Resuming…' : pending === 'hold' ? 'Pausing…' : held ? 'Resume' : 'Hold'}
             </TooltipButton>
             <TooltipButton
               variant="danger" size="compact" className={ACTION_BUTTON_CLASS} disabled={disabled || Boolean(pending)}
@@ -111,7 +111,7 @@ export default function OrderManagementActions({
                 variant="danger" disabled={Boolean(pending)}
                 onClick={() => run(confirmation)}
               >
-                {pending ? 'Deleting...' : 'Delete permanently'}
+                {pending ? 'Deleting…' : 'Delete permanently'}
               </Button>
             </div>
           </div>

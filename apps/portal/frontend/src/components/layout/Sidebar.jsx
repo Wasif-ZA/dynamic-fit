@@ -47,7 +47,7 @@ export default function Sidebar() {
       </nav>
       <div className="cut-line mx-4 mb-4" />
       <p className="px-5 pb-5 text-[11px] leading-relaxed text-ink-400">
-        FitPortal MVP
+        COMP4050 Final Project
       </p>
     </aside>
   );

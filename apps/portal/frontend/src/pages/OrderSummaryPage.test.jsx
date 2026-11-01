@@ -135,7 +135,7 @@ describe('order rejection display and recovery', () => {
     expectStatus('Optimised');
     expect(text(page.root.findByProps({ 'aria-label': 'Heavy order' }))).toContain('Weight threshold reached.');
     expect(text(page.root.findByProps({ 'aria-label': 'Packed box handling warnings' }))).toContain('20 kg');
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(false);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(false);
     useApp.mockReturnValue({ identity: { role: 'SUPERVISOR' }, refreshOrders, handlingSettings: { WarningThresholdKg: 25 } });
     act(() => page.update(<OrderSummaryPage />));
     expect(page.root.findAllByProps({ 'aria-label': 'Packed box handling warnings' })).toHaveLength(0);
@@ -157,7 +157,7 @@ describe('order rejection display and recovery', () => {
     await mount();
 
     expectStatus('Rejected');
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(true);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(true);
     expect(text(page.root)).toContain(`${count} ${count === 1 ? 'item was' : 'items were'} not packed`);
     expect(text(page.root)).toContain('Items not packed');
   });
@@ -169,7 +169,7 @@ describe('order rejection display and recovery', () => {
     await mount();
 
     expectStatus('Optimised');
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(false);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(false);
     expect(text(page.root)).not.toContain('Items not packed');
   });
 
@@ -179,7 +179,7 @@ describe('order rejection display and recovery', () => {
     await mount();
 
     expectStatus('Rejected');
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(true);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(true);
     expect(text(page.root)).toContain('Some optimisation details could not be loaded');
   });
 
@@ -189,10 +189,10 @@ describe('order rejection display and recovery', () => {
     api.getSolutionSummary.mockRejectedValue(new Error('Summary unavailable'));
     await mount();
 
-    await act(async () => { await buttons('Run Optimisation')[0].props.onClick(); });
+    await act(async () => { await buttons('Run optimisation')[0].props.onClick(); });
 
     expectStatus('Rejected');
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(true);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(true);
     expect(text(page.root)).toContain('Items not packed');
     expect(text(page.root)).toContain('Summary unavailable');
     expect(refreshOrders).toHaveBeenCalled();
@@ -206,7 +206,7 @@ describe('order rejection display and recovery', () => {
     await reoptimise();
 
     expectStatus('Optimised');
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(false);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(false);
     expect(text(page.root)).not.toContain('Items not packed');
     expect(text(page.root)).toContain('Re-optimisation completed');
   });
@@ -222,7 +222,7 @@ describe('order rejection display and recovery', () => {
     await reoptimise();
 
     expectStatus('Rejected');
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(true);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(true);
     expect(text(page.root)).not.toContain('Re-optimisation completed');
   });
 
@@ -292,7 +292,7 @@ describe('order rejection display and recovery', () => {
     expect(text(page.root)).toContain('Test ORD-002');
     expect(text(page.root)).not.toContain('Items not packed');
     expect(text(page.root)).not.toContain('Optimisation result');
-    expect(buttons('Run Optimisation')[0].props.disabled).toBe(false);
+    expect(buttons('Run optimisation')[0].props.disabled).toBe(false);
   });
 });
 
@@ -305,9 +305,9 @@ describe('direct draft optimisation', () => {
     await mount();
 
     expectStatus('Draft');
-    expect(buttons('Submit for Optimisation')).toHaveLength(0);
-    expect(buttons('Finalise Order')).toHaveLength(0);
-    await act(async () => { await buttons('Run Optimisation')[0].props.onClick(); });
+    expect(buttons('Submit for optimisation')).toHaveLength(0);
+    expect(buttons('Finalise order')).toHaveLength(0);
+    await act(async () => { await buttons('Run optimisation')[0].props.onClick(); });
 
     expect(api.solveOrder).toHaveBeenCalledTimes(1);
     expect(api.solveOrder).toHaveBeenCalledWith('ORD-001');
@@ -315,23 +315,23 @@ describe('direct draft optimisation', () => {
     expect(api.finaliseOrder).not.toHaveBeenCalled();
     expectStatus('Optimised');
     expect(buttons('Re-optimise')).toHaveLength(1);
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(false);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(false);
   });
 
-  it('keeps the Submit for Optimisation workflow for a regular User', async () => {
+  it('keeps the Submit for optimisation workflow for a regular User', async () => {
     useApp.mockReturnValue({ identity: { role: 'USER' }, refreshOrders });
     api.getOrder.mockResolvedValue(order('DRAFT', 0));
     api.submitOrder.mockResolvedValue(order('AWAITING_OPTIMISATION', 0));
     await mount();
 
-    expect(buttons('Run Optimisation')).toHaveLength(0);
-    await act(async () => { await buttons('Submit for Optimisation')[0].props.onClick(); });
+    expect(buttons('Run optimisation')).toHaveLength(0);
+    await act(async () => { await buttons('Submit for optimisation')[0].props.onClick(); });
 
     expect(api.submitOrder).toHaveBeenCalledTimes(1);
     expect(api.submitOrder).toHaveBeenCalledWith('ORD-001');
     expect(api.solveOrder).not.toHaveBeenCalled();
     expectStatus('Awaiting Optimisation');
-    expect(buttons('Run Optimisation')).toHaveLength(0);
+    expect(buttons('Run optimisation')).toHaveLength(0);
     expect(text(page.root)).toContain('waiting for a Supervisor');
   });
 
@@ -341,12 +341,12 @@ describe('direct draft optimisation', () => {
     api.solveOrder.mockRejectedValue(new Error('Solver unavailable'));
     await mount();
 
-    await act(async () => { await buttons('Run Optimisation')[0].props.onClick(); });
+    await act(async () => { await buttons('Run optimisation')[0].props.onClick(); });
 
     expectStatus('Draft');
     expect(text(page.root)).toContain('Solver unavailable');
-    expect(buttons('Run Optimisation')[0].props.disabled).toBe(false);
-    expect(buttons('Finalise Order')).toHaveLength(0);
+    expect(buttons('Run optimisation')[0].props.disabled).toBe(false);
+    expect(buttons('Finalise order')).toHaveLength(0);
     expect(api.submitOrder).not.toHaveBeenCalled();
     expect(api.finaliseOrder).not.toHaveBeenCalled();
   });
@@ -358,9 +358,9 @@ describe('direct draft optimisation', () => {
     api.getSolutionSummary.mockResolvedValue(summary(0));
     await mount();
 
-    await act(async () => { buttons('Run Optimisation')[0].props.onClick(); });
+    await act(async () => { buttons('Run optimisation')[0].props.onClick(); });
 
-    expect(buttons('Running...')[0].props.disabled).toBe(true);
+    expect(buttons('Running…')[0].props.disabled).toBe(true);
     expect(buttons('Edit order')[0].props.disabled).toBe(true);
     expectStatus('Draft');
     await act(async () => { finishSolve(solution(0)); });
@@ -373,10 +373,10 @@ describe('direct draft optimisation', () => {
     api.getSolutionSummary.mockResolvedValue(summary(2));
     await mount();
 
-    await act(async () => { await buttons('Run Optimisation')[0].props.onClick(); });
+    await act(async () => { await buttons('Run optimisation')[0].props.onClick(); });
 
     expectStatus('Rejected');
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(true);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(true);
     expect(text(page.root)).toContain('2 items were not packed');
   });
 });
@@ -475,7 +475,7 @@ describe('backlog and archived order details', () => {
     await mount();
 
     expect(text(page.root)).toContain('Order on hold');
-    for (const label of ['Edit order', 'Run Optimisation', 'Submit for Optimisation', 'Re-optimise', 'Finalise Order']) {
+    for (const label of ['Edit order', 'Run optimisation', 'Submit for optimisation', 'Re-optimise', 'Finalise order']) {
       expect(buttons(label)).toHaveLength(0);
     }
     expect(buttons('Resume')).toHaveLength(1);
@@ -494,13 +494,13 @@ describe('backlog and archived order details', () => {
     await act(async () => { await buttons('Hold')[0].props.onClick(); });
 
     expect(text(page.root)).toContain('Order on hold');
-    expect(buttons('Run Optimisation')).toHaveLength(0);
+    expect(buttons('Run optimisation')).toHaveLength(0);
     api.resumeOrder.mockResolvedValue(order('DRAFT', 0));
     api.getOrder.mockResolvedValue(order('DRAFT', 0));
 
     await act(async () => { await buttons('Resume')[0].props.onClick(); });
 
-    expect(buttons('Run Optimisation')[0].props.disabled).toBe(false);
+    expect(buttons('Run optimisation')[0].props.disabled).toBe(false);
     expect(refreshOrders).toHaveBeenCalled();
   });
 
@@ -567,7 +567,7 @@ describe('Further Optimise', () => {
 
     act(() => { buttons('Further Optimise')[0].props.onClick(); });
 
-    expect(buttons('Searching...')).toHaveLength(1);
+    expect(buttons('Searching…')).toHaveLength(1);
     expect(buttons('Re-optimise')[0].props.disabled).toBe(true);
     expect(messages()).toContain('Looking for a smaller box. This can take up to 30 seconds.');
     await act(async () => { finish(solution(0)); });

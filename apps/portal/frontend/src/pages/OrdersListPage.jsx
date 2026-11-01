@@ -78,7 +78,7 @@ export default function OrdersListPage({ view = 'active' }) {
       </nav>
       {loading ? (
         <div className="rounded-sm border border-dashed border-ink-200 bg-white p-10 text-center text-sm text-ink-400" role="status">
-          Loading orders...
+          Loading orders…
         </div>
       ) : error ? (
         <div className="rounded-sm border border-red-200 bg-red-50 p-10 text-center" role="alert">

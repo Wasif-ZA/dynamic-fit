@@ -98,7 +98,7 @@ export default function BoxInventoryPage() {
   };
 
   if (loading) {
-    return <PanelMessage>Loading box inventory...</PanelMessage>;
+    return <PanelMessage>Loading Box Inventory…</PanelMessage>;
   }
 
   return (
@@ -190,7 +190,7 @@ export default function BoxInventoryPage() {
                           onClick={() => toggleActive(box)}
                         >
                           {savingReference === box.Reference
-                            ? 'Saving...'
+                            ? 'Saving…'
                             : box.Active
                               ? 'Deactivate'
                               : 'Activate'}
@@ -307,13 +307,13 @@ function BoxFormModal({ initialBox, isEditing, onCancel, onSave, onDelete }) {
           <div>
             {isEditing && onDelete && (
               <Button variant="danger" onClick={remove} disabled={busy}>
-                {deleting ? 'Deleting...' : 'Delete box type'}
+                {deleting ? 'Deleting…' : 'Delete box type'}
               </Button>
             )}
           </div>
           <div className="flex gap-2">
             <Button variant="secondary" onClick={onCancel} disabled={busy}>Cancel</Button>
-            <Button type="submit" disabled={busy}>{saving ? 'Saving...' : 'Save box type'}</Button>
+            <Button type="submit" disabled={busy}>{saving ? 'Saving…' : 'Save box type'}</Button>
           </div>
         </div>
       </form>

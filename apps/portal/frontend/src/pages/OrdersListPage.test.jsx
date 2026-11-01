@@ -167,7 +167,7 @@ describe('backlog and archive views', () => {
     const navigation = archivePage.root.findByProps({ 'aria-label': 'Order views' });
     expect(navigation.findAllByType('a').map(text)).toEqual(['Active orders', 'On hold', 'Archive']);
     expect(navigation.findAllByType('a').find((node) => node.props['aria-current'] === 'page').props.href).toBe('/orders/backlog');
-    expect(text(archivePage.root)).toContain('Loading orders...');
+    expect(text(archivePage.root)).toContain('Loading orders…');
     await act(async () => { finishLoading([held]); });
     expect(archivePage.root.findAllByType('th').map(text)).toContain('Progress saved');
     expect(archivePage.root.findAllByType('th').map(text)).toContain('On hold since');
