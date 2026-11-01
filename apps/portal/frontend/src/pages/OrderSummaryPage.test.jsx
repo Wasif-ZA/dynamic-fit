@@ -582,6 +582,17 @@ describe('Further Optimise', () => {
     expect(buttons('Further Optimise')[0].props.disabled).toBe(true);
   });
 
+  it('explains itself in an info hover', async () => {
+    await mount();
+
+    const info = page.root.findAllByProps({ 'aria-label': 'About Further Optimise' });
+    expect(info.length).toBeGreaterThan(0);
+    const button = buttons('Further Optimise')[0];
+    const description = page.root.findAllByProps({ id: button.props['aria-describedby'] })
+      .find((node) => typeof node.type === 'string');
+    expect(text(description)).toBe('Spends longer looking for a more efficient solution.');
+  });
+
   it('is not offered to users who cannot run the solver', async () => {
     useApp.mockReturnValue({ identity: { role: 'USER' }, refreshOrders });
     await mount();

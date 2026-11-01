@@ -123,3 +123,16 @@ describe('action button descriptions', () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 });
+
+describe('hidden info icon', () => {
+  it('drops the icon but keeps the description for screen readers', () => {
+    act(() => { page.update(<TooltipButton description={DESCRIPTION} onClick={onClick} showInfo={false}>Hold</TooltipButton>); });
+
+    expect(page.root.findAllByProps({ 'aria-label': 'About Hold' })).toHaveLength(0);
+    const description = page.root.findByProps({ id: button().props['aria-describedby'] });
+    expect(description.children).toEqual([DESCRIPTION]);
+    expect(description.props.className).toBe('sr-only');
+    act(() => button().props.onClick({}));
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+});

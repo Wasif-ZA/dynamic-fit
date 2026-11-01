@@ -10,6 +10,7 @@ import HandlingWarningsStatus from '../components/orders/HandlingWarningsStatus.
 import PackedHandlingWarnings from '../components/orders/PackedHandlingWarnings.jsx';
 import OrderHandlingBadge from '../components/orders/OrderHandlingBadge.jsx';
 import Button from '../components/common/Button.jsx';
+import TooltipButton from '../components/common/TooltipButton.jsx';
 import {
   getOrder as fetchOrder,
   getSolution as fetchSolution,
@@ -408,18 +409,18 @@ function LifecycleActions({
           <Button onClick={onReoptimise} disabled={pending}>
             {optimising === true ? 'Re-optimising...' : 'Re-optimise'}
           </Button>
-          <Button
+          <TooltipButton
             variant="secondary"
             onClick={onFurtherOptimise}
             disabled={pending || hasRejects}
-            title={
+            description={
               hasRejects
-                ? 'Further Optimise needs every item packed first'
-                : 'Spend up to 30 seconds looking for one smaller box'
+                ? 'Resolve rejected items first.'
+                : 'Spends longer looking for a more efficient solution.'
             }
           >
             {optimising === 'further' ? 'Searching...' : 'Further Optimise'}
-          </Button>
+          </TooltipButton>
           <Button
             variant="danger"
             onClick={onFinalise}

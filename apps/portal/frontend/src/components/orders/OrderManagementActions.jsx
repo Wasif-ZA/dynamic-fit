@@ -7,8 +7,15 @@ import TooltipButton from '../common/TooltipButton.jsx';
 
 const ACTION_BUTTON_CLASS = 'h-7 w-20 shrink-0 whitespace-nowrap';
 
+// The actions this order shows, in the names used by infoFor.
+export function managementActionsFor(order) {
+  if (order.ArchivedAt) return [];
+  if (order.Status === 'FINAL') return ['archive'];
+  return [order.HeldAt ? 'resume' : 'hold', 'delete'];
+}
+
 export default function OrderManagementActions({
-  order, onChanged, onDeleted, disabled = false, onPendingChange,
+  order, onChanged, onDeleted, disabled = false, onPendingChange, infoFor,
 }) {
   const { identity } = useApp();
   const [confirmation, setConfirmation] = useState(null);
@@ -20,6 +27,8 @@ export default function OrderManagementActions({
   const archived = Boolean(order.ArchivedAt);
   const held = Boolean(order.HeldAt);
   const finalised = order.Status === 'FINAL';
+  // infoFor lists the actions that show an info icon. Missing means all of them.
+  const showInfo = (action) => !infoFor || infoFor.includes(action);
 
   useEffect(() => {
     mounted.current = true;
@@ -58,6 +67,7 @@ export default function OrderManagementActions({
         {finalised ? (
           <TooltipButton
             variant="muted" size="compact" className={ACTION_BUTTON_CLASS} disabled={disabled || Boolean(pending)} onClick={() => run('archive')}
+            showInfo={showInfo('archive')}
             description="Move this finalised order to Archive now. Its items and packing result stay available to view."
           >
             {pending === 'archive' ? 'Archiving...' : 'Archive'}
@@ -66,6 +76,7 @@ export default function OrderManagementActions({
           <>
             <TooltipButton
               variant={held ? 'primary' : 'warning'} size="compact" className={`${ACTION_BUTTON_CLASS}${held ? ' border border-transparent' : ''}`} disabled={disabled || Boolean(pending)} onClick={() => run(held ? 'resume' : 'hold')}
+              showInfo={showInfo(held ? 'resume' : 'hold')}
               description={held
                 ? 'Return this order to Active orders and continue where you left off.'
                 : 'Pause this order and move it to On hold. Your items and packing result are saved.'}
@@ -75,6 +86,7 @@ export default function OrderManagementActions({
             <TooltipButton
               variant="danger" size="compact" className={ACTION_BUTTON_CLASS} disabled={disabled || Boolean(pending)}
               onClick={() => { setError(null); setConfirmation('delete'); }}
+              showInfo={showInfo('delete')}
               description="Permanently delete this order, its items and saved packing result. You will be asked to confirm."
             >
               Delete
