@@ -135,8 +135,10 @@ export function submitOrder(orderId) {
   return request(`/orders/${encodeURIComponent(orderId)}/submit`, { method: 'POST' });
 }
 
-export function solveOrder(orderId) {
-  return request(`/orders/${encodeURIComponent(orderId)}/solve`, { method: 'POST' });
+// furtherOptimise asks the solver to spend up to 30 s looking for one smaller box.
+export function solveOrder(orderId, { furtherOptimise = false } = {}) {
+  const query = furtherOptimise ? '?optimise=true' : '';
+  return request(`/orders/${encodeURIComponent(orderId)}/solve${query}`, { method: 'POST' });
 }
 
 export function finaliseOrder(orderId) {

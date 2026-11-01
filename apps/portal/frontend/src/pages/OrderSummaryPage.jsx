@@ -111,13 +111,15 @@ export default function OrderSummaryPage() {
     }
   };
 
-  const optimise = async ({ reoptimising = false } = {}) => {
+  const optimise = async ({ reoptimising = false, furtherOptimise = false } = {}) => {
     const generation = loadGeneration.current;
-    setOptimising(true);
+    setOptimising(furtherOptimise ? 'further' : true);
     setPackError(null);
     setSuccessMessage('');
     try {
-      const updatedSolution = await solveOrder(id);
+      const updatedSolution = furtherOptimise
+        ? await solveOrder(id, { furtherOptimise: true })
+        : await solveOrder(id);
       if (generation !== loadGeneration.current) return;
       setSummary(null);
       setSolution(updatedSolution);
@@ -133,9 +135,11 @@ export default function OrderSummaryPage() {
       if (generation !== loadGeneration.current) return;
       setSummary(updatedSummary);
       setSuccessMessage(
-        reoptimising
-          ? 'Re-optimisation completed using the current Box Inventory.'
-          : 'Optimisation completed.'
+        furtherOptimise
+          ? furtherOptimiseMessage(updatedSolution)
+          : reoptimising
+            ? 'Re-optimisation completed using the current Box Inventory.'
+            : 'Optimisation completed.'
       );
     } catch (error) {
       if (generation === loadGeneration.current) setPackError(error);
@@ -247,7 +251,7 @@ export default function OrderSummaryPage() {
         held={held}
         status={order.Status}
         rejectedCount={rejectedCount}
-        pending={actionPending || optimising || managementPending}
+        pending={Boolean(actionPending || optimising || managementPending)}
         optimising={optimising}
         finalising={actionPending && order.Status === 'OPTIMISED'}
         error={packError}
@@ -255,6 +259,7 @@ export default function OrderSummaryPage() {
         onSubmit={submit}
         onOptimise={optimise}
         onReoptimise={() => setShowReoptimiseConfirm(true)}
+        onFurtherOptimise={() => optimise({ furtherOptimise: true })}
         onFinalise={() => setShowFinaliseConfirm(true)}
         canOptimise={canRunSolver(identity.role)}
         successMessage={successMessage}
@@ -263,7 +268,7 @@ export default function OrderSummaryPage() {
           <OrderManagementActions
             key={order.OrderId}
             order={order}
-            disabled={actionPending || optimising}
+            disabled={Boolean(actionPending || optimising)}
             onPendingChange={setManagementPending}
             onChanged={async () => { await load(); await refreshOrders(); }}
             onDeleted={async () => { await refreshOrders(); navigate(ordersUrl); }}
@@ -320,6 +325,15 @@ export default function OrderSummaryPage() {
   );
 }
 
+// The solver marks a Further Optimise improvement with solver.tier 2.
+export function furtherOptimiseMessage(solution) {
+  if (solution?.solver?.tier === 2) {
+    const sku = solution.cartons?.[0]?.sku;
+    return `Further Optimise found a smaller box: the whole order now fits in one ${sku ?? 'box'}.`;
+  }
+  return 'Further Optimise could not find a smaller box, so the standard result was kept.';
+}
+
 function Stat({ label, value, warning = false }) {
   return (
     <div>
@@ -342,6 +356,7 @@ function LifecycleActions({
   onSubmit,
   onOptimise,
   onReoptimise,
+  onFurtherOptimise,
   onFinalise,
   canOptimise,
   successMessage,
@@ -391,7 +406,19 @@ function LifecycleActions({
       primaryAction = (
         <>
           <Button onClick={onReoptimise} disabled={pending}>
-            {optimising ? 'Re-optimising...' : 'Re-optimise'}
+            {optimising === true ? 'Re-optimising...' : 'Re-optimise'}
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={onFurtherOptimise}
+            disabled={pending || hasRejects}
+            title={
+              hasRejects
+                ? 'Further Optimise needs every item packed first'
+                : 'Spend up to 30 seconds looking for one smaller box'
+            }
+          >
+            {optimising === 'further' ? 'Searching...' : 'Further Optimise'}
           </Button>
           <Button
             variant="danger"
@@ -438,6 +465,11 @@ function LifecycleActions({
           <p className="text-sm text-ink-500">Need to come back later? Put this order on hold.</p>
           {managementActions}
         </div>
+      )}
+      {optimising === 'further' && (
+        <p className="mt-4 rounded-sm border border-ink-100 bg-ink-50 p-3 text-sm text-ink-500">
+          Looking for a smaller box. This can take up to 30 seconds.
+        </p>
       )}
       {error && (
         <p className="mt-4 rounded-sm border border-red-200 bg-red-50 p-3 text-sm text-red-700">

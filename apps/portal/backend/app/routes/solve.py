@@ -47,7 +47,9 @@ def _require_order(order_id: str) -> StoredOrder:
 def solve_order(
     order_id: str,
     _user: Annotated[PortalUser, Depends(require_solver_user)],
+    optimise: bool = False,
 ) -> dict:
+    """optimise=true is Further Optimise: up to 30 s looking for one smaller box."""
     stored = _require_order(order_id)
     if stored.held_at is not None:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=HELD_ORDER_IS_READ_ONLY)
@@ -73,7 +75,9 @@ def solve_order(
     request = to_solver_request(stored, boxes)
 
     try:
-        document = solve_request(request)
+        document = (
+            solve_request(request, optimise=True) if optimise else solve_request(request)
+        )
     except io.RequestError as exc:
         logger.exception("solver rejected the request for %s", order_id)
         raise HTTPException(

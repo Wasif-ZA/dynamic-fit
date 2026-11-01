@@ -521,3 +521,71 @@ describe('backlog and archived order details', () => {
     expect(buttons('Archive')).toHaveLength(0);
   });
 });
+
+describe('Further Optimise', () => {
+  beforeEach(() => {
+    useApp.mockReturnValue({ identity: { role: 'SUPERVISOR' }, refreshOrders });
+    api.getOrder.mockResolvedValue(order('OPTIMISED', 0));
+    api.getSolution.mockResolvedValue(solution(0));
+    api.getSolutionSummary.mockResolvedValue(summary(0));
+  });
+
+  function messages() {
+    return page.root.findAllByType('p').map(text);
+  }
+
+  it('asks the solver to search and reports a smaller box', async () => {
+    const smaller = solution(0);
+    smaller.solver = { elapsed_ms: 12000, tier: 2 };
+    smaller.cartons[0].sku = 'BOX-M';
+    api.solveOrder.mockResolvedValue(smaller);
+    await mount();
+
+    await act(async () => { await buttons('Further Optimise')[0].props.onClick(); });
+
+    expect(api.solveOrder).toHaveBeenCalledWith('ORD-001', { furtherOptimise: true });
+    expect(messages()).toContain(
+      'Further Optimise found a smaller box: the whole order now fits in one BOX-M.'
+    );
+  });
+
+  it('says when no smaller box was found', async () => {
+    api.solveOrder.mockResolvedValue({ ...solution(0), solver: { elapsed_ms: 30000, tier: 1 } });
+    await mount();
+
+    await act(async () => { await buttons('Further Optimise')[0].props.onClick(); });
+
+    expect(messages()).toContain(
+      'Further Optimise could not find a smaller box, so the standard result was kept.'
+    );
+  });
+
+  it('shows a 30 second notice while searching', async () => {
+    let finish;
+    api.solveOrder.mockReturnValue(new Promise((resolve) => { finish = resolve; }));
+    await mount();
+
+    act(() => { buttons('Further Optimise')[0].props.onClick(); });
+
+    expect(buttons('Searching...')).toHaveLength(1);
+    expect(buttons('Re-optimise')[0].props.disabled).toBe(true);
+    expect(messages()).toContain('Looking for a smaller box. This can take up to 30 seconds.');
+    await act(async () => { finish(solution(0)); });
+  });
+
+  it('is unavailable while items are rejected', async () => {
+    api.getOrder.mockResolvedValue(order('OPTIMISED', 3));
+    api.getSolution.mockResolvedValue(solution(3));
+    api.getSolutionSummary.mockResolvedValue(summary(3));
+    await mount();
+
+    expect(buttons('Further Optimise')[0].props.disabled).toBe(true);
+  });
+
+  it('is not offered to users who cannot run the solver', async () => {
+    useApp.mockReturnValue({ identity: { role: 'USER' }, refreshOrders });
+    await mount();
+
+    expect(buttons('Further Optimise')).toHaveLength(0);
+  });
+});

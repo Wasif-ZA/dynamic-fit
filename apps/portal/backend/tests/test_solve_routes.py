@@ -11,6 +11,7 @@ from fitsolver import io, portal
 from app import boxes, database, store
 from app.boxes import active_box_types
 from app.main import app
+from app.routes import solve as solve_routes
 from app.models import BoxType, BoxTypeUpdate, Role
 from tests.auth_helpers import auth_headers
 from tests.box_fixtures import DEFAULT_BOX_TYPES
@@ -391,6 +392,39 @@ def test_solver_request_carries_maximum_boxes(monkeypatch):
     assert [
         (carton["sku"], carton["maximum_boxes"]) for carton in captured_request["cartons"]
     ] == [("BOX-S", 5), ("BOX-M", None)]
+
+
+@pytest.mark.parametrize(("query", "expected"), [("", {}), ("?optimise=true", {"optimise": True})])
+def test_further_optimise_is_passed_to_the_solver_only_when_asked(monkeypatch, query, expected):
+    order_id = create_order([an_item()])
+    submit_order(order_id)
+    captured_options = None
+    real_solve = solve_routes.solve_request
+
+    def capture_solver(request, **options):
+        nonlocal captured_options
+        captured_options = options
+        return real_solve(request)
+
+    monkeypatch.setattr("app.routes.solve.solve_request", capture_solver)
+
+    response = client.post(f"/orders/{order_id}/solve{query}", headers=SUPERVISOR_HEADERS)
+    assert response.status_code == 200, response.text
+    assert captured_options == expected
+    assert client.get(f"/orders/{order_id}").json()["Status"] == "OPTIMISED"
+
+
+def test_further_optimise_returns_a_valid_solution_document():
+    order_id = create_order([an_item()])
+    submit_order(order_id)
+
+    response = client.post(f"/orders/{order_id}/solve?optimise=true", headers=SUPERVISOR_HEADERS)
+
+    assert response.status_code == 200, response.text
+    document = response.json()
+    assert document["rejects"] == []
+    assert len(document["cartons"]) == 1
+    assert document["solver"]["tier"] in (1, 2)
 
 
 @pytest.mark.parametrize("headers", [SUPERVISOR_HEADERS, ADMINISTRATOR_HEADERS])

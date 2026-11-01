@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Dynamic Fit: portal, solver and visualiser for warehouse carton packing."
 requires-python = ">=3.11"
 dependencies = [
-    "fitsolver",
+    "fitsolver[optimise]",
     "fastapi>=0.115",
     "uvicorn[standard]>=0.30",
     "pydantic>=2.9",
