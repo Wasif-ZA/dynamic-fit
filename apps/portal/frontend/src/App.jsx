@@ -8,6 +8,7 @@ import OrderEditPage from './pages/OrderEditPage.jsx';
 import OrderSummaryPage from './pages/OrderSummaryPage.jsx';
 import BoxInventoryPage from './pages/BoxInventoryPage.jsx';
 import UserManagementPage from './pages/UserManagementPage.jsx';
+import PackingReturnPage from './pages/PackingReturnPage.jsx';
 import { useApp } from './context/AppContext.jsx';
 import { canManageUsers } from './lib/roles.js';
 
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/orders/new" element={<OrderCreatePage />} />
         <Route path="/orders/:id/edit" element={<OrderEditPage />} />
         <Route path="/orders/:id" element={<OrderSummaryPage />} />
+        <Route path="/packing-return" element={<PackingReturnPage />} />
         <Route path="/boxes" element={<BoxInventoryPage />} />
         <Route path="/users" element={<UserManagementRoute />} />
       </Route>

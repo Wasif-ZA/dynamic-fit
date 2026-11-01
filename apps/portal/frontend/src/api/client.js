@@ -169,8 +169,14 @@ export function getVisualizerHandoff(orderId) {
   });
 }
 
-export function visualiserUrl(solutionUrl) {
-  return `${VISUALISER_BASE}/?solution=${encodeURIComponent(solutionUrl)}`;
+// returnUrl is where the Visualiser's Done and Cancel buttons send the pick packer.
+export function visualiserUrl(solutionUrl, { returnUrl } = {}) {
+  const portal = returnUrl ? `&portal=${encodeURIComponent(returnUrl)}` : '';
+  return `${VISUALISER_BASE}/?solution=${encodeURIComponent(solutionUrl)}${portal}`;
+}
+
+export function recordPacking(orderId, complete) {
+  return request(`/orders/${encodeURIComponent(orderId)}/packing`, asJson({ Complete: complete }));
 }
 
 export function listBoxes() {

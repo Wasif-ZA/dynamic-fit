@@ -6,6 +6,7 @@ import PackingDetails, { UnpackedItems } from '../components/orders/PackingDetai
 import InventoryFeasibilityWarning from '../components/orders/InventoryFeasibilityWarning.jsx';
 import OrderManagementActions from '../components/orders/OrderManagementActions.jsx';
 import OrderStatusBadge from '../components/orders/OrderStatusBadge.jsx';
+import PackingStatusBadge, { packingMessage } from '../components/orders/PackingStatusBadge.jsx';
 import HandlingWarningsStatus from '../components/orders/HandlingWarningsStatus.jsx';
 import PackedHandlingWarnings from '../components/orders/PackedHandlingWarnings.jsx';
 import OrderHandlingBadge from '../components/orders/OrderHandlingBadge.jsx';
@@ -49,11 +50,14 @@ export default function OrderSummaryPage() {
   const [showFinaliseConfirm, setShowFinaliseConfirm] = useState(false);
   const loadGeneration = useRef(0);
 
-  const load = useCallback(async () => {
+  // quiet refreshes in the background, so an open Visualiser keeps its place.
+  const load = useCallback(async ({ quiet = false } = {}) => {
     const generation = ++loadGeneration.current;
-    setLoading(true);
-    setSummary(null);
-    setSolution(null);
+    if (!quiet) {
+      setLoading(true);
+      setSummary(null);
+      setSolution(null);
+    }
     setOptimising(false);
     setManagementPending(false);
     setPackError(null);
@@ -64,7 +68,10 @@ export default function OrderSummaryPage() {
       setOrder(loaded);
       setLoadError(null);
 
-      if (['OPTIMISED', 'FINAL'].includes(loaded.Status)) {
+      if (!['OPTIMISED', 'FINAL'].includes(loaded.Status)) {
+        setSummary(null);
+        setSolution(null);
+      } else {
         const [loadedSummary, loadedSolution] = await Promise.allSettled([
           fetchSolutionSummary(id),
           fetchSolution(id),
@@ -91,7 +98,7 @@ export default function OrderSummaryPage() {
   useEffect(() => {
     if (!order || optimising || actionPending || managementPending) return undefined;
     const refresh = async () => {
-      await load();
+      await load({ quiet: true });
       await refreshOrders();
     };
     window.addEventListener('focus', refresh);
@@ -235,6 +242,7 @@ export default function OrderSummaryPage() {
               orderId={order.OrderId} status={order.Status} rejectedCount={rejectedCount}
               rejections={solution?.rejects ?? summary?.Rejected}
             />
+            <PackingStatusBadge status={order.PackingStatus} updatedAt={order.PackingUpdatedAt} />
           </div>
         </div>
 
@@ -251,6 +259,8 @@ export default function OrderSummaryPage() {
         archived={archived}
         held={held}
         status={order.Status}
+        packingStatus={order.PackingStatus}
+        packingUpdatedAt={order.PackingUpdatedAt}
         rejectedCount={rejectedCount}
         pending={Boolean(actionPending || optimising || managementPending)}
         optimising={optimising}
@@ -289,6 +299,7 @@ export default function OrderSummaryPage() {
         solution={solution}
         solveCount={solveCount}
         items={order.Items}
+        packingReturnUrl={order.Status === 'FINAL' && !archived ? `${window.location?.origin ?? ''}/packing-return` : null}
       />
 
       <div className="mt-6 flex justify-end gap-3">
@@ -348,6 +359,8 @@ function LifecycleActions({
   archived,
   held,
   status,
+  packingStatus,
+  packingUpdatedAt,
   rejectedCount,
   pending,
   optimising,
@@ -439,7 +452,7 @@ function LifecycleActions({
       );
     }
   } else {
-    message = 'This order has been finalised and is now read-only. It will be archived automatically one month after finalisation.';
+    message = `This order has been finalised and is now read-only. ${packingMessage(packingStatus, packingUpdatedAt)}`;
   }
 
   return (
@@ -493,7 +506,7 @@ function LifecycleActions({
   );
 }
 
-function OptimisationPanel({ orderId, summary, solution, solveCount, items, warningThresholdKg }) {
+function OptimisationPanel({ orderId, summary, solution, solveCount, items, warningThresholdKg, packingReturnUrl }) {
   const [handoff, setHandoff] = useState(null);
   const [handoffLoading, setHandoffLoading] = useState(false);
   const [handoffError, setHandoffError] = useState(null);
@@ -501,7 +514,7 @@ function OptimisationPanel({ orderId, summary, solution, solveCount, items, warn
   useEffect(() => {
     setHandoff(null);
     setHandoffError(null);
-  }, [orderId, solution, solveCount]);
+  }, [orderId, solution?.solution_id, solveCount]);
 
   const openVisualizer = async () => {
     setHandoffLoading(true);
@@ -524,7 +537,7 @@ function OptimisationPanel({ orderId, summary, solution, solveCount, items, warn
   );
   const fillRate = summary?.FillRate ?? solution.metrics.fill_rate;
   const solveTime = solution?.solver?.elapsed_ms ?? summary?.SolveTimeMs;
-  const visualiser = handoff ? visualiserUrl(handoff.SolutionUrl) : null;
+  const visualiser = handoff ? visualiserUrl(handoff.SolutionUrl, { returnUrl: packingReturnUrl }) : null;
 
   return (
     <div className="mt-6 rounded-sm border border-ink-100 bg-white p-6">

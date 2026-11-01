@@ -52,6 +52,8 @@ def _to_stored_order(
         ArchivedAt=record.archived_at,
         HeldAt=record.held_at,
         FinalisedAt=record.finalised_at,
+        PackingStatus=record.packing_status,
+        PackingUpdatedAt=record.packing_updated_at,
         CreatedAt=record.created_at.astimezone(timezone.utc),
         Items=[_to_item(item) for item in record.items],
     )
@@ -162,6 +164,12 @@ def set_archived(session: Session, record: OrderRecord) -> None:
 
 def set_held(session: Session, record: OrderRecord, held: bool) -> None:
     record.held_at = (record.held_at or datetime.now(timezone.utc)) if held else None
+    session.flush()
+
+
+def set_packing(session: Session, record: OrderRecord, complete: bool) -> None:
+    record.packing_status = "PACKED" if complete else "INCOMPLETE"
+    record.packing_updated_at = datetime.now(timezone.utc)
     session.flush()
 
 

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createUser, deleteBox, listUsers } from './client.js';
+import { createUser, deleteBox, listUsers, recordPacking, visualiserUrl } from './client.js';
 
 function respond(status, body) {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
@@ -50,5 +50,22 @@ describe('API error messages', () => {
       respond(status, {});
       await expect(listUsers()).rejects.not.toThrow(/order|packing/i);
     }
+  });
+});
+
+describe('Visualiser link and packing result', () => {
+  it('only asks the Visualiser for Done and Cancel when a return address is given', () => {
+    expect(visualiserUrl('http://api/sol')).not.toContain('portal=');
+    expect(visualiserUrl('http://api/sol', { returnUrl: 'http://portal/packing-return' }))
+      .toContain('&portal=http%3A%2F%2Fportal%2Fpacking-return');
+  });
+
+  it('posts Done or Cancel for an order', async () => {
+    respond(200, { OrderId: 'ORD-007', PackingStatus: 'PACKED' });
+    await recordPacking('ORD-007', true);
+    const [url, options] = fetch.mock.calls[0];
+    expect(url).toMatch(/\/orders\/ORD-007\/packing$/);
+    expect(options.method).toBe('POST');
+    expect(JSON.parse(options.body)).toEqual({ Complete: true });
   });
 });

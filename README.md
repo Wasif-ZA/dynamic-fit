@@ -62,6 +62,7 @@ Each subteam develops its part in its own repository, which is then brought into
 4. Run optimisation. FitSolver packs the order into the available boxes.
 5. Review the packing result and open the 3D view in FitVisualiser.
 6. Finalise the order.
+7. The pick packer packs it using FitVisualiser and selects **Done**. FitPortal then shows the order as **Packed**.
 
 ## Screenshots
 

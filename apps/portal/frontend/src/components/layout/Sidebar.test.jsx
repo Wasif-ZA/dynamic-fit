@@ -17,7 +17,7 @@ describe('order navigation in the sidebar', () => {
       act(() => {
         page = create(<MemoryRouter initialEntries={[path]} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><Sidebar /></MemoryRouter>);
       });
-      const links = page.root.findAllByType('a');
+      const links = page.root.findByType('nav').findAllByType('a');
       expect(links.map((link) => link.props.href)).toEqual(['/orders', '/orders/new', '/boxes', '/users']);
       const selected = links.filter((link) => link.props.className.includes('bg-brand-500'));
       expect(selected).toHaveLength(1);
@@ -25,4 +25,14 @@ describe('order navigation in the sidebar', () => {
       expect(selected[0].props['aria-current']).toBe('page');
     }
   );
+});
+
+describe('FitPortal logo', () => {
+  it('takes you back to the Orders page', () => {
+    act(() => {
+      page = create(<MemoryRouter initialEntries={['/boxes']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><Sidebar /></MemoryRouter>);
+    });
+    const logo = page.root.findAllByType('a').find((a) => a.props['aria-label'] === 'FitPortal: go to Orders');
+    expect(logo.props.href).toBe('/orders');
+  });
 });
