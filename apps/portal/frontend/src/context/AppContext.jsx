@@ -20,6 +20,12 @@ import { requireSupabase, supabase } from '../auth/supabase.js';
 
 const AppContext = createContext(null);
 
+// Only the server saying "no" ends a session. A backend that is asleep or
+// unreachable (Render's free plan sleeps) should not sign anyone out.
+function sessionRejected(error) {
+  return error?.status === 401 || error?.status === 403;
+}
+
 function toIdentity(profile) {
   return {
     id: profile.Id,
@@ -35,6 +41,7 @@ export function AppProvider({ children }) {
   const [identity, setIdentity] = useState(null);
   const [authInitializing, setAuthInitializing] = useState(true);
   const [authError, setAuthError] = useState(null);
+  const [connectionError, setConnectionError] = useState(null);
   const [orders, setOrders] = useState([]);
   const [ordersError, setOrdersError] = useState(null);
   const [loadingOrders, setLoadingOrders] = useState(false);
@@ -90,9 +97,14 @@ export function AppProvider({ children }) {
         if (error) throw error;
         await applySession(data.session);
         setAuthError(null);
+        setConnectionError(null);
       } catch (initializationError) {
-        await supabase.auth.signOut({ scope: 'local' }).catch(() => {});
-        if (active) clearAuthState(initializationError);
+        if (error || sessionRejected(initializationError)) {
+          await supabase.auth.signOut({ scope: 'local' }).catch(() => {});
+          if (active) clearAuthState(initializationError);
+        } else if (active) {
+          setConnectionError(initializationError);
+        }
       } finally {
         if (active) setAuthInitializing(false);
       }
@@ -105,8 +117,11 @@ export function AppProvider({ children }) {
         try {
           await applySession(session);
           setAuthError(null);
+          setConnectionError(null);
         } catch (sessionError) {
-          if (active) clearAuthState(sessionError);
+          if (!active) return;
+          if (sessionRejected(sessionError)) clearAuthState(sessionError);
+          else setConnectionError(sessionError);
         }
       }, 0);
     });
@@ -130,6 +145,7 @@ export function AppProvider({ children }) {
           const { data } = await supabase.auth.getSession();
           await applySession(data.session);
         } catch (error) {
+          if (!sessionRejected(error)) return;
           clearAuthState(error);
           await supabase?.auth.signOut({ scope: 'local' }).catch(() => {});
         }
@@ -153,7 +169,28 @@ export function AppProvider({ children }) {
     }
   };
 
+  // Try loading the signed-in profile again after the backend was unreachable.
+  const retryConnection = useCallback(async () => {
+    if (!supabase) return;
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      await applySession(data.session);
+      setAuthError(null);
+      setConnectionError(null);
+    } catch (retryError) {
+      if (sessionRejected(retryError)) {
+        setConnectionError(null);
+        await supabase.auth.signOut({ scope: 'local' }).catch(() => {});
+        clearAuthState(retryError);
+      } else {
+        setConnectionError(retryError);
+      }
+    }
+  }, [applySession, clearAuthState]);
+
   const logout = async () => {
+    setConnectionError(null);
     clearAuthState();
     if (supabase) await supabase.auth.signOut();
   };
@@ -227,6 +264,8 @@ export function AppProvider({ children }) {
       identity,
       authInitializing,
       authError,
+      connectionError,
+      retryConnection,
       login,
       logout,
       orders,
@@ -240,7 +279,7 @@ export function AppProvider({ children }) {
       refreshHandlingSettings,
       saveHandlingSettings,
     }),
-    [identity, authInitializing, authError, orders, ordersError, loadingOrders, refreshOrders,
+    [identity, authInitializing, authError, connectionError, retryConnection, orders, ordersError, loadingOrders, refreshOrders,
       handlingSettings, handlingSettingsError, loadingHandlingSettings, refreshHandlingSettings, saveHandlingSettings]
   );
 
