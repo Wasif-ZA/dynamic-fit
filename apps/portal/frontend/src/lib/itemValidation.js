@@ -93,7 +93,7 @@ export function weightExceedsLimit(weight, maxItemWeightKg = null) {
 }
 
 export function itemWeightError(weight, maxItemWeightKg) {
-  return `Weight of ${weight} kg exceeds the current ${maxItemWeightKg} kg per-item capacity of available active boxes (after box weight).`;
+  return `Weight of ${weight} kg exceeds the current ${maxItemWeightKg} kg per-item capacity of available active boxes.`;
 }
 
 /** Coerce a validated raw item into the normalised shape used in item state. */

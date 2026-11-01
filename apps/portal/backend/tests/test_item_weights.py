@@ -17,7 +17,7 @@ ITEM = {"ItemCode": "HEAVY", "ItemReference": "Heavy test", "Width": 100, "Lengt
 
 
 def box(**changes):
-    return BoxType(**{"Reference": "HEAVY-BOX", "Width": 500, "Length": 500, "Depth": 500, "MaxWeight": 40, "BoxWeight": 2, **changes})
+    return BoxType(**{"Reference": "HEAVY-BOX", "Width": 500, "Length": 500, "Depth": 500, "MaxWeight": 38, "BoxWeight": 2, **changes})
 
 
 def update_box(**changes):
@@ -33,11 +33,12 @@ def clean_inventory():
     store.reset()
 
 
+# MaxWeight is the weight of items a box holds. BoxWeight is never taken off it.
 @pytest.mark.parametrize('maximum,tare,grams', [
-    (40, 2, 38000), (40, None, 40000), (None, 2, None),
-    (2, 2, 0), (1, 2, 0), (0.1019, 0.0019, 100), (10.0009, 0.0001, 10000),
+    (40, 2, 40000), (40, None, 40000), (None, 2, None),
+    (2, 2, 2000), (1, 2, 1000), (0.1019, 0.0019, 101), (10.0009, 0.0001, 10000),
 ])
-def test_payload_is_consistent_with_the_solver(maximum, tare, grams):
+def test_max_weight_is_the_solver_contents_limit(maximum, tare, grams):
     configured = box(MaxWeight=maximum, BoxWeight=tare)
     assert contents_capacity_grams(configured) == grams
     assert box_to_contract(configured)['max_contents_mass'] == grams
@@ -54,7 +55,7 @@ def test_capacity_uses_only_active_boxes_with_available_stock():
     for configured in [box(), box(Reference='INACTIVE', Active=False, MaxWeight=None), box(Reference='EMPTY', MaximumBoxes=0, MaxWeight=None)]:
         boxes.add_box_type(configured)
     assert client.get('/orders/item-weight-limit').json() == {'MaxItemWeightKg': 38, 'HasAvailableBoxes': True}
-    update_box(MaxWeight=62)
+    update_box(MaxWeight=60)
     assert client.get('/orders/item-weight-limit').json()['MaxItemWeightKg'] == 60
 
 
@@ -67,7 +68,7 @@ def test_items_over_the_old_32_kg_limit_are_saved_and_packed_at_the_exact_payloa
     assert document.status_code == 200, document.text
     assert document.json()['rejects'] == []
     for carton in document.json()['cartons']:
-        assert carton['contents_mass'] + carton['tare_mass'] <= 40000
+        assert carton['contents_mass'] <= 38000
     assert client.get(f'/orders/{order_id}').json()['Items'][0]['Weight'] == 38
 
 
@@ -78,7 +79,7 @@ def test_weight_validation_is_per_unit_and_solver_still_limits_combined_contents
     document = client.post(f"/orders/{response.json()['OrderId']}/solve", headers=MANAGER).json()
     assert document['rejects'] == []
     assert len(document['cartons']) == 2
-    assert all(carton['contents_mass'] + carton['tare_mass'] <= 40000 for carton in document['cartons'])
+    assert all(carton['contents_mass'] <= 38000 for carton in document['cartons'])
 
 
 def test_overweight_json_item_rejects_the_whole_order_before_persistence():
@@ -110,7 +111,7 @@ def test_changed_inventory_is_rechecked_before_reoptimising_and_keeps_the_previo
     update_box(MaxWeight=30)
     response = client.post(f'/orders/{order_id}/solve', headers=MANAGER)
     assert response.status_code == 422
-    assert '28 kg' in response.json()['detail']
+    assert '30 kg' in response.json()['detail']
     assert store.find_solution(order_id) == saved
 
 
@@ -140,10 +141,21 @@ def test_no_available_boxes_allows_drafts_but_not_optimisation():
     assert client.post(f"/orders/{response.json()['OrderId']}/solve", headers=MANAGER).status_code == 409
 
 
-def test_boxes_with_no_remaining_payload_never_become_unlimited():
+def test_box_weight_does_not_reduce_the_item_limit():
     boxes.add_box_type(box(MaxWeight=2, BoxWeight=2))
-    assert client.get('/orders/item-weight-limit').json()['MaxItemWeightKg'] == 0
-    assert client.post('/orders', json={'Items': [{**ITEM, 'Weight': 0.001}]}).status_code == 422
+    assert client.get('/orders/item-weight-limit').json()['MaxItemWeightKg'] == 2
+    assert client.post('/orders', json={'Items': [{**ITEM, 'Weight': 2.001}]}).status_code == 422
+    assert client.post('/orders', json={'Items': [{**ITEM, 'Weight': 2}]}).status_code == 201
+
+
+def test_item_up_to_max_weight_packs_even_with_a_heavy_empty_box():
+    # The client's Chaotic example: a 4.5 kg glass sheet in a Large Cube rated 5 kg, box 1.5 kg.
+    boxes.add_box_type(box(Reference='LARGE-CUBE', Width=550, Length=550, Depth=550, MaxWeight=5, BoxWeight=1.5))
+    glass = {**ITEM, 'ItemCode': 'GLASS', 'Width': 540, 'Length': 540, 'Depth': 20, 'Weight': 4.5, 'Quantity': 3}
+    order_id = client.post('/orders', json={'Items': [glass]}).json()['OrderId']
+    document = client.post(f'/orders/{order_id}/solve', headers=MANAGER).json()
+    assert document['rejects'] == []
+    assert len(document['cartons']) == 3
 
 
 def test_capacity_endpoint_requires_authentication():
