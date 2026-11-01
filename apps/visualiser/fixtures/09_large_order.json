@@ -63,8 +63,8 @@
         },
         {
           "placement_id": "p1_1",
-          "item_ref": "MIX-27",
-          "label": "Mixed item 27",
+          "item_ref": "MIX-55",
+          "label": "Mixed item 55",
           "position": [
             255,
             0,
@@ -101,8 +101,8 @@
         },
         {
           "placement_id": "p1_3",
-          "item_ref": "MIX-47",
-          "label": "Mixed item 47",
+          "item_ref": "MIX-55",
+          "label": "Mixed item 55",
           "position": [
             0,
             0,
