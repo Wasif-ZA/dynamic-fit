@@ -263,6 +263,8 @@ test.describe( 'LEGO packing steps (Req10)', () => {
 test.describe( 'Done / Cancel back to the Portal (Req08)', () => {
   const dialog = ( page ) => page.getByRole( 'alertdialog' );
   const button = ( page, name ) => page.getByRole( 'button', { name, exact: true } );
+  // The Portal adds ?portal= for finalised orders; without it Done and Cancel are hidden.
+  const openForPortal = ( page, name ) => page.goto( `/?solution=/fixtures/${ name }&portal=/portal` );
 
   // Stand-in Portal so the redirect lands on a real page.
   const stubPortal = ( page, path = '/portal' ) =>
@@ -275,15 +277,22 @@ test.describe( 'Done / Cancel back to the Portal (Req08)', () => {
     await dialog( page ).getByRole( 'button', { name: which === 'Done' ? 'Yes, done' : 'Yes, cancel' } ).click();
   }
 
-  test( 'shows Done and Cancel once a solution loads', async ( { page } ) => {
+  test( 'hides Done and Cancel when the Portal does not ask for them', async ( { page } ) => {
     await open( page, '03_multi_carton.json' );
+    await expect( aside( page ).locator( '.carton-info-entry' ).first() ).toBeVisible();
+    await expect( button( page, 'Done' ) ).toBeHidden();
+    await expect( button( page, 'Cancel' ) ).toBeHidden();
+  } );
+
+  test( 'shows Done and Cancel once a solution loads', async ( { page } ) => {
+    await openForPortal( page, '03_multi_carton.json' );
     await expect( button( page, 'Done' ) ).toBeEnabled();
     await expect( button( page, 'Cancel' ) ).toBeEnabled();
   } );
 
   test( 'Done asks for confirmation, then returns OrderID and complete=true', async ( { page } ) => {
     await stubPortal( page );
-    await open( page, '03_multi_carton.json' );
+    await openForPortal( page, '03_multi_carton.json' );
     await confirm( page, 'Done' );
     await page.waitForURL( '**/portal?*' );
     const url = new URL( page.url() );
@@ -293,7 +302,7 @@ test.describe( 'Done / Cancel back to the Portal (Req08)', () => {
 
   test( 'Cancel asks for confirmation, then returns OrderID and complete=false', async ( { page } ) => {
     await stubPortal( page );
-    await open( page, '06_partial_rejects.json' );
+    await openForPortal( page, '06_partial_rejects.json' );
     await confirm( page, 'Cancel' );
     await page.waitForURL( '**/portal?*' );
     const url = new URL( page.url() );
@@ -302,7 +311,7 @@ test.describe( 'Done / Cancel back to the Portal (Req08)', () => {
   } );
 
   test( 'Go Back and Escape close the dialog without leaving the page', async ( { page } ) => {
-    await open( page, '03_multi_carton.json' );
+    await openForPortal( page, '03_multi_carton.json' );
     await button( page, 'Done' ).click();
     await dialog( page ).getByRole( 'button', { name: 'Go Back' } ).click();
     await expect( dialog( page ) ).toBeHidden();
@@ -330,14 +339,14 @@ test.describe( 'Done / Cancel back to the Portal (Req08)', () => {
 
   test( 'disables Done and Cancel when the solution fails to load', async ( { page } ) => {
     await mockPath( page, '/fixtures/does_not_exist.json', { status: 404, body: 'Not Found' } );
-    await open( page, 'does_not_exist.json' );
+    await openForPortal( page, 'does_not_exist.json' );
     await expect( aside( page ) ).toContainText( 'Error: File Not Found' );
     await expect( button( page, 'Done' ) ).toBeDisabled();
     await expect( button( page, 'Cancel' ) ).toBeDisabled();
   } );
 
   test( 'do not cover the sidebar or the packing steps', async ( { page } ) => {
-    await open( page, '03_multi_carton.json' );
+    await openForPortal( page, '03_multi_carton.json' );
     await aside( page ).getByRole( 'button', { name: 'Focus on box c1' } ).click();
     const actions = await page.locator( '#portal-actions' ).boundingBox();
     // Compare against the visible cards; #packing-steps itself is a large transparent wrapper.

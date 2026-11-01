@@ -117,4 +117,11 @@ describe( 'resolveAllowedUrl (shared by ?solution= and ?portal=)', () => {
     expect( resolveAllowedUrl( 'https://evil.example.com/p', '/portal' ) ).toBe( '/portal' );
     expect( resolveAllowedUrl( 'javascript:alert(1)', '/portal' ) ).toBe( '/portal' );
   } );
+
+  it( 'allows the hosted Portal addresses it is given', () => {
+    const portal = 'https://dynamicfit.example.dev';
+    expect( resolveAllowedUrl( `${ portal }/packing-return`, '/portal', [ portal ] ) ).toBe( `${ portal }/packing-return` );
+    expect( resolveAllowedUrl( `${ portal }/packing-return`, '/portal', [ null ] ) ).toBe( '/portal' );
+    expect( resolveAllowedUrl( 'https://evil.example.com/p', '/portal', [ portal ] ) ).toBe( '/portal' );
+  } );
 } );
