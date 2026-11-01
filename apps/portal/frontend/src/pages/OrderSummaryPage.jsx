@@ -10,6 +10,7 @@ import HandlingWarningsStatus from '../components/orders/HandlingWarningsStatus.
 import PackedHandlingWarnings from '../components/orders/PackedHandlingWarnings.jsx';
 import OrderHandlingBadge from '../components/orders/OrderHandlingBadge.jsx';
 import Button from '../components/common/Button.jsx';
+import TooltipButton from '../components/common/TooltipButton.jsx';
 import {
   getOrder as fetchOrder,
   getSolution as fetchSolution,
@@ -111,13 +112,15 @@ export default function OrderSummaryPage() {
     }
   };
 
-  const optimise = async ({ reoptimising = false } = {}) => {
+  const optimise = async ({ reoptimising = false, furtherOptimise = false } = {}) => {
     const generation = loadGeneration.current;
-    setOptimising(true);
+    setOptimising(furtherOptimise ? 'further' : true);
     setPackError(null);
     setSuccessMessage('');
     try {
-      const updatedSolution = await solveOrder(id);
+      const updatedSolution = furtherOptimise
+        ? await solveOrder(id, { furtherOptimise: true })
+        : await solveOrder(id);
       if (generation !== loadGeneration.current) return;
       setSummary(null);
       setSolution(updatedSolution);
@@ -133,9 +136,11 @@ export default function OrderSummaryPage() {
       if (generation !== loadGeneration.current) return;
       setSummary(updatedSummary);
       setSuccessMessage(
-        reoptimising
-          ? 'Re-optimisation completed using the current Box Inventory.'
-          : 'Optimisation completed.'
+        furtherOptimise
+          ? furtherOptimiseMessage(updatedSolution)
+          : reoptimising
+            ? 'Re-optimisation completed using the current Box Inventory.'
+            : 'Optimisation completed.'
       );
     } catch (error) {
       if (generation === loadGeneration.current) setPackError(error);
@@ -247,7 +252,7 @@ export default function OrderSummaryPage() {
         held={held}
         status={order.Status}
         rejectedCount={rejectedCount}
-        pending={actionPending || optimising || managementPending}
+        pending={Boolean(actionPending || optimising || managementPending)}
         optimising={optimising}
         finalising={actionPending && order.Status === 'OPTIMISED'}
         error={packError}
@@ -255,6 +260,7 @@ export default function OrderSummaryPage() {
         onSubmit={submit}
         onOptimise={optimise}
         onReoptimise={() => setShowReoptimiseConfirm(true)}
+        onFurtherOptimise={() => optimise({ furtherOptimise: true })}
         onFinalise={() => setShowFinaliseConfirm(true)}
         canOptimise={canRunSolver(identity.role)}
         successMessage={successMessage}
@@ -263,7 +269,7 @@ export default function OrderSummaryPage() {
           <OrderManagementActions
             key={order.OrderId}
             order={order}
-            disabled={actionPending || optimising}
+            disabled={Boolean(actionPending || optimising)}
             onPendingChange={setManagementPending}
             onChanged={async () => { await load(); await refreshOrders(); }}
             onDeleted={async () => { await refreshOrders(); navigate(ordersUrl); }}
@@ -320,6 +326,15 @@ export default function OrderSummaryPage() {
   );
 }
 
+// The solver marks a Further Optimise improvement with solver.tier 2.
+export function furtherOptimiseMessage(solution) {
+  if (solution?.solver?.tier === 2) {
+    const sku = solution.cartons?.[0]?.sku;
+    return `Further Optimise found a smaller box: the whole order now fits in one ${sku ?? 'box'}.`;
+  }
+  return 'Further Optimise could not find a smaller box, so the standard result was kept.';
+}
+
 function Stat({ label, value, warning = false }) {
   return (
     <div>
@@ -342,6 +357,7 @@ function LifecycleActions({
   onSubmit,
   onOptimise,
   onReoptimise,
+  onFurtherOptimise,
   onFinalise,
   canOptimise,
   successMessage,
@@ -365,11 +381,11 @@ function LifecycleActions({
       : 'This order can still be edited before it is submitted for optimisation.';
     primaryAction = canOptimise ? (
       <Button onClick={onOptimise} disabled={pending}>
-        {pending ? 'Running...' : 'Run Optimisation'}
+        {pending ? 'Running…' : 'Run optimisation'}
       </Button>
     ) : (
       <Button onClick={onSubmit} disabled={pending}>
-        {pending ? 'Submitting...' : 'Submit for Optimisation'}
+        {pending ? 'Submitting…' : 'Submit for optimisation'}
       </Button>
     );
   } else if (status === 'AWAITING_OPTIMISATION') {
@@ -379,7 +395,7 @@ function LifecycleActions({
     if (canOptimise) {
       primaryAction = (
         <Button onClick={onOptimise} disabled={pending}>
-          {pending ? 'Running...' : 'Run Optimisation'}
+          {pending ? 'Running…' : 'Run optimisation'}
         </Button>
       );
     }
@@ -391,8 +407,20 @@ function LifecycleActions({
       primaryAction = (
         <>
           <Button onClick={onReoptimise} disabled={pending}>
-            {optimising ? 'Re-optimising...' : 'Re-optimise'}
+            {optimising === true ? 'Re-optimising…' : 'Re-optimise'}
           </Button>
+          <TooltipButton
+            variant="secondary"
+            onClick={onFurtherOptimise}
+            disabled={pending || hasRejects}
+            description={
+              hasRejects
+                ? 'Resolve rejected items first.'
+                : 'Spends longer looking for a more efficient solution.'
+            }
+          >
+            {optimising === 'further' ? 'Searching…' : 'Further Optimise'}
+          </TooltipButton>
           <Button
             variant="danger"
             onClick={onFinalise}
@@ -405,7 +433,7 @@ function LifecycleActions({
                   : undefined
             }
           >
-            {finalising ? 'Finalising...' : 'Finalise Order'}
+            {finalising ? 'Finalising…' : 'Finalise order'}
           </Button>
         </>
       );
@@ -439,6 +467,11 @@ function LifecycleActions({
           {managementActions}
         </div>
       )}
+      {optimising === 'further' && (
+        <p className="mt-4 rounded-sm border border-ink-100 bg-ink-50 p-3 text-sm text-ink-500">
+          Looking for a smaller box. This can take up to 30 seconds.
+        </p>
+      )}
       {error && (
         <p className="mt-4 rounded-sm border border-red-200 bg-red-50 p-3 text-sm text-red-700">
           {error.message}
@@ -452,7 +485,7 @@ function LifecycleActions({
       <InventoryFeasibilityWarning feasibility={feasibility} />
       {inventoryIsShort && canOptimise && (
         <p className="mt-2 text-sm text-ink-400">
-          Finalise Order is unavailable until Box Inventory can cover every box
+          Finalise order is unavailable until Box Inventory can cover every box
           this optimisation requires.
         </p>
       )}
@@ -497,7 +530,7 @@ function OptimisationPanel({ orderId, summary, solution, solveCount, items, warn
     <div className="mt-6 rounded-sm border border-ink-100 bg-white p-6">
       <h3 className="font-display text-lg font-semibold text-ink-700">Optimisation result</h3>
       <p className="mt-1 text-sm text-ink-400">
-        FitSolver result and FitVisualizer layout for the current order items.
+        Packing result and Visualiser layout for the current order items.
       </p>
       <div className="cut-line my-5" />
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
@@ -519,10 +552,10 @@ function OptimisationPanel({ orderId, summary, solution, solveCount, items, warn
         <div className="flex items-center gap-3">
           <Button onClick={openVisualizer} disabled={handoffLoading || !solution}>
             {handoffLoading
-              ? 'Opening Visualizer…'
+              ? 'Opening Visualiser…'
               : visualiser
-                ? 'Refresh Visualizer access'
-                : 'Open Visualizer'}
+                ? 'Refresh Visualiser access'
+                : 'Open Visualiser'}
           </Button>
           {visualiser && (
             <a
@@ -541,7 +574,7 @@ function OptimisationPanel({ orderId, summary, solution, solveCount, items, warn
         <iframe
           key={`${orderId}-${solveCount}`}
           src={visualiser}
-          title={`FitVisualizer, order ${orderId}`}
+          title={`Visualiser, order ${orderId}`}
           className="mt-3 h-[560px] w-full rounded-sm border border-ink-100 bg-white"
         />
       ) : handoffError ? (
@@ -550,7 +583,7 @@ function OptimisationPanel({ orderId, summary, solution, solveCount, items, warn
         </div>
       ) : (
         <div className="mt-3 flex h-32 items-center justify-center rounded-sm border border-ink-100 bg-ink-50 text-sm text-ink-400">
-          Open the Visualizer to generate short-lived access.
+          Open the Visualiser to generate short-lived access.
         </div>
       )}
     </div>
@@ -592,7 +625,7 @@ function FinaliseModal({ onCancel, onConfirm }) {
     >
       <div className="w-full max-w-lg rounded-sm bg-white p-5 shadow-xl">
         <h2 id="finalise-title" className="font-display text-xl font-semibold text-ink-700">
-          Finalise Order?
+          Finalise order?
         </h2>
         <p className="mt-3 text-sm text-ink-500">
           This will approve the current packing solution, deduct the required boxes
@@ -603,7 +636,7 @@ function FinaliseModal({ onCancel, onConfirm }) {
         </p>
         <div className="mt-5 flex justify-end gap-2">
           <Button variant="secondary" onClick={onCancel}>Cancel</Button>
-          <Button variant="danger" onClick={onConfirm}>Finalise Order</Button>
+          <Button variant="danger" onClick={onConfirm}>Finalise order</Button>
         </div>
       </div>
     </div>

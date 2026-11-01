@@ -258,7 +258,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "fastapi" },
-    { name = "fitsolver" },
+    { name = "fitsolver", extra = ["optimise"] },
     { name = "psycopg", extra = ["binary"] },
     { name = "pydantic" },
     { name = "pyjwt", extra = ["crypto"] },
@@ -278,7 +278,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", specifier = ">=0.115" },
-    { name = "fitsolver", editable = "packages/solver" },
+    { name = "fitsolver", extras = ["optimise"], editable = "packages/solver" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.3.5" },
     { name = "pydantic", specifier = ">=2.9" },
     { name = "pyjwt", extras = ["crypto"], specifier = ">=2.14.0" },

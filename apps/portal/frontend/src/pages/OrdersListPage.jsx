@@ -7,7 +7,7 @@ import OrderStatusBadge from '../components/orders/OrderStatusBadge.jsx';
 import OrderHandlingBadge from '../components/orders/OrderHandlingBadge.jsx';
 import { listOrders } from '../api/client.js';
 import { canManageOrders } from '../lib/roles.js';
-import OrderManagementActions from '../components/orders/OrderManagementActions.jsx';
+import OrderManagementActions, { managementActionsFor } from '../components/orders/OrderManagementActions.jsx';
 
 export default function OrdersListPage({ view = 'active' }) {
   const { identity, orders, ordersError, loadingOrders, refreshOrders, handlingSettings } = useApp();
@@ -39,6 +39,7 @@ export default function OrdersListPage({ view = 'active' }) {
     if (view !== 'active') await loadView();
   };
   const displayedOrders = view === 'active' ? orders : viewOrders;
+  const infoShown = new Set();
   const error = view === 'active' ? ordersError : viewError;
   const managers = canManageOrders(identity?.role) && view !== 'archived';
   const loading = view === 'active' ? loadingOrders : loadingView;
@@ -77,7 +78,7 @@ export default function OrdersListPage({ view = 'active' }) {
       </nav>
       {loading ? (
         <div className="rounded-sm border border-dashed border-ink-200 bg-white p-10 text-center text-sm text-ink-400" role="status">
-          Loading orders...
+          Loading orders…
         </div>
       ) : error ? (
         <div className="rounded-sm border border-red-200 bg-red-50 p-10 text-center" role="alert">
@@ -125,6 +126,9 @@ export default function OrdersListPage({ view = 'active' }) {
               <tbody>
                 {displayedOrders.map((order) => {
                   const totals = orderTotals(order.Items);
+                  // Each action's info icon appears on its first row only.
+                  const infoFor = managementActionsFor(order).filter((action) => !infoShown.has(action));
+                  infoFor.forEach((action) => infoShown.add(action));
                   return (
                     <tr
                       key={order.OrderId}
@@ -171,6 +175,7 @@ export default function OrdersListPage({ view = 'active' }) {
                         <td className="min-w-[13rem] px-4 py-3 text-left">
                           <OrderManagementActions
                             order={order}
+                            infoFor={infoFor}
                             onChanged={async (action) => {
                               await refresh();
                               if (action === 'resume') navigate(`/orders/${order.OrderId}`);

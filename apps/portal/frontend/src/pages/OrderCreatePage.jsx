@@ -18,7 +18,7 @@ export default function OrderCreatePage() {
       loadingHandlingSettings={loadingHandlingSettings} refreshHandlingSettings={refreshHandlingSettings}
       onSave={create}
       saveLabel="Create order"
-      savingLabel="Creating..."
+      savingLabel="Creating…"
     />
   );
 }

@@ -47,7 +47,9 @@ def _require_order(order_id: str) -> StoredOrder:
 def solve_order(
     order_id: str,
     _user: Annotated[PortalUser, Depends(require_solver_user)],
+    optimise: bool = False,
 ) -> dict:
+    """optimise=true is Further Optimise: up to 30 s looking for one smaller box."""
     stored = _require_order(order_id)
     if stored.held_at is not None:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=HELD_ORDER_IS_READ_ONLY)
@@ -73,7 +75,9 @@ def solve_order(
     request = to_solver_request(stored, boxes)
 
     try:
-        document = solve_request(request)
+        document = (
+            solve_request(request, optimise=True) if optimise else solve_request(request)
+        )
     except io.RequestError as exc:
         logger.exception("solver rejected the request for %s", order_id)
         raise HTTPException(
@@ -116,13 +120,13 @@ def _require_solution(order_id: str) -> dict:
 
 @router.get(
     "/{order_id}/solution",
-    summary="The solution document, ready for the visualiser",
+    summary="The solution document, ready for the Visualiser",
 )
 def get_solution(
     order_id: str,
     _user: Annotated[PortalUser, Depends(get_current_user)],
 ) -> dict:
-    """Return the unmodified document expected by FitVisualizer."""
+    """Return the unmodified document expected by the Visualiser."""
     return _require_solution(order_id)
 
 
@@ -179,7 +183,7 @@ def get_solution_summary(
 @router.post(
     "/{order_id}/visualizer-handoff",
     response_model=VisualizerHandoff,
-    summary="Create a short-lived FitVisualizer solution URL",
+    summary="Create a short-lived Visualiser solution URL",
 )
 def create_visualizer_handoff(
     order_id: str,
@@ -197,7 +201,7 @@ def create_visualizer_handoff(
 
 @router.get(
     "/{order_id}/solution/visualizer",
-    summary="Read a solution using a scoped FitVisualizer handoff",
+    summary="Read a solution using a scoped Visualiser handoff",
 )
 def get_visualizer_solution(order_id: str, token: str = "") -> dict:
     try:
@@ -211,6 +215,6 @@ def get_visualizer_solution(order_id: str, token: str = "") -> dict:
     if expected_digest != solution_digest(document):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired visualizer handoff",
+            detail="Invalid or expired Visualiser handoff",
         )
     return document

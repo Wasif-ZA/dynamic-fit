@@ -167,7 +167,7 @@ describe('backlog and archive views', () => {
     const navigation = archivePage.root.findByProps({ 'aria-label': 'Order views' });
     expect(navigation.findAllByType('a').map(text)).toEqual(['Active orders', 'On hold', 'Archive']);
     expect(navigation.findAllByType('a').find((node) => node.props['aria-current'] === 'page').props.href).toBe('/orders/backlog');
-    expect(text(archivePage.root)).toContain('Loading orders...');
+    expect(text(archivePage.root)).toContain('Loading orders…');
     await act(async () => { finishLoading([held]); });
     expect(archivePage.root.findAllByType('th').map(text)).toContain('Progress saved');
     expect(archivePage.root.findAllByType('th').map(text)).toContain('On hold since');
@@ -245,4 +245,52 @@ describe('backlog and archive views', () => {
       expect(navigate).not.toHaveBeenCalled();
     }
   );
+});
+
+describe('action info icons', () => {
+  const order = (id, Status, extra = {}) => ({
+    OrderId: id, Reference: `Test ${id}`, Status, RejectedCount: 0, Items: [],
+    CreatedAt: '2026-10-20T00:00:00Z', ...extra,
+  });
+  const infoLabels = (page) => page.root.findAllByType('button')
+    .map((button) => button.props['aria-label'])
+    .filter((label) => label?.startsWith('About '));
+
+  beforeEach(() => {
+    vi.resetAllMocks();
+    useNavigate.mockReturnValue(vi.fn());
+  });
+
+  it('shows each action info icon once, on its first row', async () => {
+    useApp.mockReturnValue({
+      identity: { role: 'ADMINISTRATOR' }, loadingOrders: false, ordersError: null, refreshOrders: vi.fn(),
+      orders: [order('ORD-1', 'DRAFT'), order('ORD-2', 'FINAL'), order('ORD-3', 'OPTIMISED'), order('ORD-4', 'FINAL')],
+    });
+    await act(async () => { archivePage = create(<OrdersListPage />); });
+
+    expect(infoLabels(archivePage)).toEqual(['About Hold', 'About Delete', 'About Archive']);
+    const rows = archivePage.root.findAllByType('tr').slice(1);
+    const rowLabels = rows.map((row) => row.findAllByType('button')
+      .map((button) => button.props['aria-label']).filter((label) => label?.startsWith('About ')));
+    expect(rowLabels).toEqual([['About Hold', 'About Delete'], ['About Archive'], [], []]);
+  });
+
+  it('keeps the icon on a single row', async () => {
+    useApp.mockReturnValue({
+      identity: { role: 'ADMINISTRATOR' }, loadingOrders: false, ordersError: null, refreshOrders: vi.fn(),
+      orders: [order('ORD-1', 'DRAFT')],
+    });
+    await act(async () => { archivePage = create(<OrdersListPage />); });
+
+    expect(infoLabels(archivePage)).toEqual(['About Hold', 'About Delete']);
+  });
+
+  it('shows Resume info once in the backlog', async () => {
+    useApp.mockReturnValue({ identity: { role: 'ADMINISTRATOR' }, orders: [], refreshOrders: vi.fn() });
+    const heldAt = { HeldAt: '2026-10-20T00:00:00Z' };
+    listOrders.mockResolvedValue([order('ORD-1', 'DRAFT', heldAt), order('ORD-2', 'OPTIMISED', heldAt)]);
+    await act(async () => { archivePage = create(<OrdersListPage view="backlog" />); });
+
+    expect(infoLabels(archivePage)).toEqual(['About Resume', 'About Delete']);
+  });
 });

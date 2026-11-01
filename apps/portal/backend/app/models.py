@@ -88,7 +88,7 @@ class BoxType(PortalModel):
 
     MaximumBoxes is the quantity of this box type available to use. None means
     no limit; finalising an order subtracts the boxes used from a set quantity.
-    MaxWeight is the total packed weight, including the empty BoxWeight.
+    MaxWeight is the weight of items the box can hold, not counting the empty BoxWeight.
     """
 
     reference: str = Field(alias="Reference", min_length=1)

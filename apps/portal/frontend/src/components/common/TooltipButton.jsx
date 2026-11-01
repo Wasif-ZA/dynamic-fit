@@ -2,7 +2,8 @@ import React, { useId, useState } from 'react';
 import Button from './Button.jsx';
 import InfoTooltip from './InfoTooltip.jsx';
 
-export default function TooltipButton({ description, children, className = '', onClick, ...props }) {
+// showInfo=false hides the info icon; screen readers still get the description.
+export default function TooltipButton({ description, children, className = '', onClick, showInfo = true, ...props }) {
   const descriptionId = useId();
   const [closeSignal, setCloseSignal] = useState(0);
   const infoColour = props.variant === 'primary'
@@ -23,12 +24,14 @@ export default function TooltipButton({ description, children, className = '', o
       >
         {children}
       </Button>
-      <InfoTooltip
-        description={description} descriptionId={descriptionId} closeSignal={closeSignal}
-        label={typeof children === 'string' ? `About ${children}` : 'About this action'}
-        iconSize={props.size === 'compact' ? 10 : 12}
-        className={`absolute ${props.size === 'compact' ? 'right-0 top-0 h-3.5 w-3.5' : 'right-0.5 top-0.5 h-4 w-4'} ${infoColour}`}
-      />
+      {showInfo ? (
+        <InfoTooltip
+          description={description} descriptionId={descriptionId} closeSignal={closeSignal}
+          label={typeof children === 'string' ? `About ${children}` : 'About this action'}
+          iconSize={props.size === 'compact' ? 10 : 12}
+          className={`absolute ${props.size === 'compact' ? 'right-0 top-0 h-3.5 w-3.5' : 'right-0.5 top-0.5 h-4 w-4'} ${infoColour}`}
+        />
+      ) : <span id={descriptionId} className="sr-only">{description}</span>}
     </span>
   );
 }
