@@ -132,3 +132,33 @@ describe('dynamic weight capacity in forms and imports', () => {
     expect(onImport).not.toHaveBeenCalled();
   });
 });
+
+describe('item positive value validation', () => {
+  it.each(['Width', 'Length', 'Depth', 'Weight'])(
+    'rejects zero %s and prevents adding the item',
+    (field) => {
+      const onAdd = vi.fn();
+
+      act(() => {
+        page = create(
+          <ItemEntryForm
+            initialItem={{ ...ITEM, [field]: 0 }}
+            onAdd={onAdd}
+          />
+        );
+      });
+
+      act(() => {
+        page.root.findByType('form').props.onSubmit({
+          preventDefault: vi.fn(),
+        });
+      });
+
+      expect(onAdd).not.toHaveBeenCalled();
+      expect(text(page.root)).toContain(
+        `"${field}" must be greater than 0.`
+      );
+    }
+  );
+});
+

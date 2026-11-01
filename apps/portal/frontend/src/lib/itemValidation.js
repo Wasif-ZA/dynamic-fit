@@ -76,7 +76,9 @@ export function validateItemFields(raw, { label, maxItemWeightKg = null } = {}) 
     errors.push(`${prefix}"BoxGroup" must be a string if provided.`);
   }
 
-  if (raw.Quantity !== undefined && raw.Quantity !== null && raw.Quantity !== '') {
+  if (raw.Quantity === null) {
+    errors.push(`${prefix}"Quantity" must be a whole number of 1 or more if provided.`);
+  } else if (raw.Quantity !== undefined && raw.Quantity !== '') {
     const qty = Number(raw.Quantity);
     if (!Number.isInteger(qty) || qty < 1) {
       errors.push(`${prefix}"Quantity" must be a whole number of 1 or more if provided.`);
