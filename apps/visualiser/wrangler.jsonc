@@ -1,0 +1,8 @@
+// Cloudflare Workers static assets. Build first (npx vite build), then: npx wrangler deploy
+{
+  "name": "fitvisualiser",
+  "compatibility_date": "2026-10-12",
+  "assets": {
+    "directory": "./dist"
+  }
+}

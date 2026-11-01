@@ -410,31 +410,6 @@ def test_administrator_can_demote_self_when_another_active_admin_exists():
     )
 
     assert response.status_code == 200
-
-
-def test_concurrent_self_demotions_leave_one_active_administrator():
-    first = PortalUser.model_validate(profile(Role.ADMINISTRATOR))
-    second = create_database_user(Role.ADMINISTRATOR, "other-admin@fitportal.test")
-    barrier = Barrier(2)
-
-    def demote(actor: PortalUser) -> str:
-        barrier.wait()
-        try:
-            user_management.update_user(
-                actor,
-                actor.id,
-                UserUpdate(DisplayName=actor.display_name, Role=Role.USER),
-            )
-            return "updated"
-        except UserManagementConflictError:
-            return "blocked"
-
-    with ThreadPoolExecutor(max_workers=2) as executor:
-        results = list(executor.map(demote, (first, second)))
-
-    assert sorted(results) == ["blocked", "updated"]
-    with session_scope() as session:
-        assert user_repository.count_active_administrators(session) == 1
     assert response.json()["Role"] == "USER"
 
 

@@ -5,7 +5,8 @@ from __future__ import annotations
 from collections.abc import Iterable
 from datetime import datetime, timezone
 
-from sqlalchemy import select
+from sqlalchemy import Numeric, column, func, select, text, update
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Session
 
 from app.db.models import (
@@ -13,9 +14,10 @@ from app.db.models import (
     ORDER_REFERENCE_SEQUENCE,
     OrderItemRecord,
     OrderRecord,
+    SolutionRecord,
 )
 from app.errors import OrderNotFoundError
-from app.models import Item, Order, OrderStatus, StoredOrder
+from app.models import Item, Order, OrderStatus, OrderView, StoredOrder
 from app.order_references import format_order_reference
 
 
@@ -38,11 +40,18 @@ def _to_item(record: OrderItemRecord) -> Item:
     )
 
 
-def _to_stored_order(record: OrderRecord) -> StoredOrder:
+def _to_stored_order(
+    record: OrderRecord, rejected_count: int = 0, max_packed_weight_kg: float | None = None
+) -> StoredOrder:
     return StoredOrder(
         OrderId=record.order_id,
         Reference=record.reference,
         Status=record.status,
+        RejectedCount=rejected_count,
+        MaxPackedWeightKg=max_packed_weight_kg,
+        ArchivedAt=record.archived_at,
+        HeldAt=record.held_at,
+        FinalisedAt=record.finalised_at,
         CreatedAt=record.created_at.astimezone(timezone.utc),
         Items=[_to_item(item) for item in record.items],
     )
@@ -103,17 +112,75 @@ def lock_record(session: Session, order_id: str) -> OrderRecord:
 
 
 def find_order(session: Session, order_id: str) -> StoredOrder | None:
-    record = find_record(session, order_id)
-    return _to_stored_order(record) if record else None
+    row = session.execute(
+        _orders_with_solution_summary().where(OrderRecord.order_id == order_id)
+    ).first()
+    return _to_stored_order(*row) if row else None
 
 
-def list_orders(session: Session) -> list[StoredOrder]:
-    records = session.scalars(
-        select(OrderRecord).order_by(
+def _orders_with_solution_summary():
+    """Project list indicators without loading full solution documents."""
+    rejected_count = func.coalesce(
+        func.jsonb_array_length(SolutionRecord.solution_json["rejects"]), 0
+    )
+    cartons = func.jsonb_array_elements(
+        SolutionRecord.solution_json["cartons"]
+    ).table_valued(column("value", JSONB)).alias("carton")
+    contents_mass = cartons.c.value["contents_mass"].astext.cast(Numeric)
+    tare_mass = cartons.c.value["tare_mass"].astext.cast(Numeric)
+    max_packed_weight_kg = (
+        select(func.max((contents_mass + func.coalesce(tare_mass, 0)) / 1000))
+        .select_from(cartons)
+        .correlate(SolutionRecord)
+        .scalar_subquery()
+    )
+    return select(OrderRecord, rejected_count, max_packed_weight_kg).outerjoin(
+        SolutionRecord, SolutionRecord.order_id == OrderRecord.order_id
+    )
+
+
+def list_orders(session: Session, *, view: OrderView = "active") -> list[StoredOrder]:
+    filters = {
+        "active": OrderRecord.archived_at.is_(None) & OrderRecord.held_at.is_(None),
+        "backlog": OrderRecord.held_at.is_not(None),
+        "archived": OrderRecord.archived_at.is_not(None),
+    }
+    rows = session.execute(
+        _orders_with_solution_summary().where(
+            filters[view]
+        ).order_by(
             OrderRecord.created_at.desc(), OrderRecord.order_number.desc()
         )
     ).all()
-    return [_to_stored_order(record) for record in records]
+    return [_to_stored_order(*row) for row in rows]
+
+
+def set_archived(session: Session, record: OrderRecord) -> None:
+    record.archived_at = record.archived_at or datetime.now(timezone.utc)
+    session.flush()
+
+
+def set_held(session: Session, record: OrderRecord, held: bool) -> None:
+    record.held_at = (record.held_at or datetime.now(timezone.utc)) if held else None
+    session.flush()
+
+
+def archive_due_orders(session: Session, now: datetime) -> int:
+    """One calendar month from finalisation, including month-end rollover."""
+    result = session.execute(
+        update(OrderRecord).where(
+            OrderRecord.status == "FINAL",
+            OrderRecord.archived_at.is_(None),
+            OrderRecord.finalised_at + text("INTERVAL '1 month'") <= now,
+        ).values(archived_at=now).execution_options(synchronize_session=False)
+    )
+    return result.rowcount
+
+
+def delete_order(session: Session, record: OrderRecord) -> None:
+    """Foreign keys cascade to this order's items and saved solution only."""
+    session.delete(record)
+    session.flush()
 
 
 def replace_items(session: Session, record: OrderRecord, items: Iterable[Item]) -> None:
@@ -126,11 +193,12 @@ def replace_items(session: Session, record: OrderRecord, items: Iterable[Item]) 
 
 def set_status(session: Session, record: OrderRecord, status: OrderStatus) -> None:
     record.status = status
+    record.finalised_at = (record.finalised_at or datetime.now(timezone.utc)) if status == "FINAL" else None
 
 
 def write_order(session: Session, stored: StoredOrder) -> StoredOrder:
     record = lock_record(session, stored.order_id)
-    record.status = stored.status
+    set_status(session, record, stored.status)
     replace_items(session, record, stored.items)
     session.flush()
     return _to_stored_order(record)

@@ -16,7 +16,7 @@ export default function InventoryFeasibilityWarning({ feasibility }) {
         id="inventory-feasibility-title"
         className="font-display font-semibold text-red-700"
       >
-        Insufficient box inventory
+        Insufficient Box Inventory
       </h4>
       <p className="mt-1 text-sm text-red-700">
         This optimisation cannot currently be fulfilled from the available Box

@@ -1,0 +1,10 @@
+// Cloudflare Workers static assets. Build first (npm run build), then: npx wrangler deploy
+{
+  "name": "dynamicfit",
+  "compatibility_date": "2026-10-12",
+  "assets": {
+    "directory": "./dist",
+    // React Router handles paths in the browser, so unknown paths serve index.html.
+    "not_found_handling": "single-page-application"
+  }
+}
