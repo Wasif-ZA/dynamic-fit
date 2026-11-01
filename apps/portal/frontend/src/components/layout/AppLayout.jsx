@@ -12,6 +12,7 @@ const TITLES = {
   '/orders/backlog': ['Orders', 'Manage active work and orders on hold'],
   '/orders/archived': ['Orders', 'Finalised orders retained for reference'],
   '/orders/new': ['New order', 'Add items and confirm details for packing'],
+  '/packing-return': ['Packing result', 'Recording the pick packer\'s result'],
   '/boxes': ['Box Inventory', 'Reusable box types and available quantities'],
   '/users': ['User management', 'Portal roles and account access'],
 };

@@ -21,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 OrderStatus = Literal["DRAFT", "AWAITING_OPTIMISATION", "OPTIMISED", "FINAL"]
 OrderView = Literal["active", "backlog", "archived"]
+PackingStatus = Literal["PACKED", "INCOMPLETE"]
 
 # Keep aligned with ITEM_TEXT_LIMITS in frontend/src/lib/itemValidation.js.
 MAX_ITEM_CODE_LENGTH = 32
@@ -183,9 +184,18 @@ class StoredOrder(Order):
     archived_at: datetime | None = Field(default=None, alias="ArchivedAt")
     held_at: datetime | None = Field(default=None, alias="HeldAt")
     finalised_at: datetime | None = Field(default=None, alias="FinalisedAt")
+    # Recorded by the pick packer from the Visualiser after finalisation.
+    packing_status: PackingStatus | None = Field(default=None, alias="PackingStatus")
+    packing_updated_at: datetime | None = Field(default=None, alias="PackingUpdatedAt")
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc), alias="CreatedAt"
     )
+
+
+class PackingResult(PortalModel):
+    """The Visualiser's Done (true) or Cancel (false) for a finalised order."""
+
+    complete: bool = Field(alias="Complete")
 
 
 class PortalUser(PortalModel):

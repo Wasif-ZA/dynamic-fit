@@ -14,7 +14,7 @@ from app.errors import (
     SolutionHasRejectsError,
     SolutionNotFoundError,
 )
-from app.models import Order, OrderView, PortalUser, StoredOrder
+from app.models import Order, OrderView, PackingResult, PortalUser, StoredOrder
 from app.item_weights import maximum_item_weight_kg
 
 router = APIRouter(prefix="/orders", tags=["orders"])
@@ -154,6 +154,23 @@ def archive_order(
 ) -> StoredOrder:
     try:
         return store.archive_order(order_id)
+    except OrderNotFoundError as exc:
+        raise _not_found() from exc
+    except OrderStatusConflictError as exc:
+        raise _conflict(exc.detail) from exc
+
+
+@router.post(
+    "/{order_id}/packing", response_model=StoredOrder, response_model_exclude_none=True,
+    summary="Record the pick packer's Done or Cancel from the Visualiser",
+)
+def record_packing(
+    order_id: str,
+    result: PackingResult,
+    _user: Annotated[PortalUser, Depends(get_current_user)],
+) -> StoredOrder:
+    try:
+        return store.record_packing(order_id, result.complete)
     except OrderNotFoundError as exc:
         raise _not_found() from exc
     except OrderStatusConflictError as exc:

@@ -92,6 +92,8 @@ class OrderRecord(Base):
     archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     held_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     finalised_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    packing_status: Mapped[str | None] = mapped_column(Text, nullable=True)
+    packing_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         nullable=False, server_default=func.now()
     )
@@ -117,6 +119,15 @@ class OrderRecord(Base):
         Index("orders_newest_first_idx", created_at.desc(), order_number.desc()),
         CheckConstraint("archived_at is null or status = 'FINAL'", name="orders_only_finalised_are_archived"),
         CheckConstraint("held_at is null or status <> 'FINAL'", name="orders_only_unfinished_are_held"),
+        CheckConstraint(
+            "packing_status is null or packing_status in ('PACKED', 'INCOMPLETE')",
+            name="orders_packing_status_is_valid",
+        ),
+        CheckConstraint("packing_status is null or status = 'FINAL'", name="orders_only_finalised_are_packed"),
+        CheckConstraint(
+            "(packing_status is null) = (packing_updated_at is null)",
+            name="orders_packing_status_has_time",
+        ),
         Index("orders_pending_archive_idx", finalised_at,
               postgresql_where=(status == "FINAL") & archived_at.is_(None)),
     )

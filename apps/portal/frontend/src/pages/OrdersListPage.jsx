@@ -4,6 +4,7 @@ import { useApp } from '../context/AppContext.jsx';
 import Button from '../components/common/Button.jsx';
 import { formatCreated, orderTotals } from '../lib/orders.js';
 import OrderStatusBadge from '../components/orders/OrderStatusBadge.jsx';
+import PackingStatusBadge from '../components/orders/PackingStatusBadge.jsx';
 import OrderHandlingBadge from '../components/orders/OrderHandlingBadge.jsx';
 import { listOrders } from '../api/client.js';
 import { canManageOrders } from '../lib/roles.js';
@@ -169,7 +170,10 @@ export default function OrdersListPage({ view = 'active' }) {
                         {formatCreated(view === 'backlog' ? order.HeldAt : view === 'archived' ? order.ArchivedAt : order.CreatedAt)}
                       </td>
                       <td className="px-4 py-3 text-center">
-                        <OrderStatusBadge orderId={order.OrderId} status={order.Status} rejectedCount={order.RejectedCount} />
+                        <span className="inline-flex flex-wrap items-center justify-center gap-1.5">
+                          <OrderStatusBadge orderId={order.OrderId} status={order.Status} rejectedCount={order.RejectedCount} />
+                          <PackingStatusBadge status={order.PackingStatus} updatedAt={order.PackingUpdatedAt} />
+                        </span>
                       </td>
                       {managers && (
                         <td className="min-w-[13rem] px-4 py-3 text-left">

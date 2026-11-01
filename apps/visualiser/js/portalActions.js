@@ -1,22 +1,30 @@
-import { resolveAllowedUrl } from './solution.js';
+import { PORTAL_ORIGIN, resolveAllowedUrl } from './solution.js';
 
-/* Req06: Return to Portal. Resolves the destination the Cancel/Done buttons
- * send the user back to:
- *   1. ?portal=<url> query param (same-origin or loopback only, like ?solution=)
+/* Req06: Return to Portal. Done and Cancel only appear when the page is opened with
+ * ?portal=<url>, which the Portal adds for finalised orders. The destination is:
+ *   1. ?portal=<url> (same origin, loopback, or the hosted Portal website)
  *   2. data-portal-url on the canvas element
  *   3. '/portal' fallback
  */
-function portalDestination( canvas ) {
-  const requested = new URLSearchParams( window.location.search ).get( 'portal' );
-  const fallback = canvas.dataset.portalUrl || '/portal';
-  return resolveAllowedUrl( requested, fallback );
+function requestedPortal() {
+  return new URLSearchParams( window.location.search ).get( 'portal' );
 }
 
+function portalDestination( canvas ) {
+  const fallback = canvas.dataset.portalUrl || '/portal';
+  return resolveAllowedUrl( requestedPortal(), fallback, [ PORTAL_ORIGIN ] );
+}
+
+/* Inside the Portal the Visualiser is an embedded frame, so return the whole tab. */
 function navigateToPortal( canvas, orderId, complete ) {
   const target = new URL( portalDestination( canvas ), window.location.href );
   target.searchParams.set( 'OrderID', orderId ?? '' );
   target.searchParams.set( 'complete', String( complete ) );
-  window.location.href = target.href;
+  try {
+    window.top.location.href = target.href;
+  } catch {
+    window.location.href = target.href;
+  }
 }
 
 const CONFIRM_COPY = {
@@ -43,6 +51,15 @@ export function initPortalActions( { canvas, getOrderId } ) {
 
   if ( !cancelButton || !doneButton || !overlay || !titleEl || !messageEl || !backButton || !proceedButton ) {
     return;
+  }
+
+  // Without ?portal= there is nowhere to return to, so hide Done and Cancel.
+  if ( !requestedPortal() ) {
+    const group = document.getElementById( 'portal-actions' );
+    if ( group ) group.hidden = true;
+    cancelButton.hidden = true;
+    doneButton.hidden = true;
+    return { setEnabled() {} };
   }
 
   let lastFocusedElement = null;

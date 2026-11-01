@@ -22,6 +22,8 @@ const $ = ( id ) => document.getElementById( id );
 const dialog = () => $( 'confirm-dialog' );
 
 beforeEach( async () => {
+  // The Portal opens the Visualiser with ?portal= for finalised orders.
+  window.history.replaceState( {}, '', '/?portal=/portal' );
   document.body.innerHTML = PAGE;
   vi.resetModules();
   const { initPortalActions } = await import( '../../js/portalActions.js' );
@@ -84,5 +86,30 @@ describe( 'Done / Cancel confirmation (Req08)', () => {
     vi.resetModules();
     const { initPortalActions } = await import( '../../js/portalActions.js' );
     expect( initPortalActions( { canvas: $( 'visualiser-canvas' ), getOrderId: () => null } ) ).toBeUndefined();
+  } );
+} );
+
+describe( 'Done / Cancel only when the Portal asks for them', () => {
+  async function init() {
+    document.body.innerHTML = PAGE;
+    vi.resetModules();
+    const { initPortalActions } = await import( '../../js/portalActions.js' );
+    return initPortalActions( { canvas: $( 'visualiser-canvas' ), getOrderId: () => 'FIX-03' } );
+  }
+
+  it( 'hides Done and Cancel without ?portal=', async () => {
+    window.history.replaceState( {}, '', '/?solution=/fixtures/03_multi_carton.json' );
+    const hiddenActions = await init();
+    expect( $( 'portal-actions' ).hidden ).toBe( true );
+    expect( $( 'done-button' ).hidden ).toBe( true );
+    expect( $( 'cancel-button' ).hidden ).toBe( true );
+    expect( () => hiddenActions.setEnabled( true ) ).not.toThrow();
+  } );
+
+  it( 'shows Done and Cancel with ?portal=', async () => {
+    window.history.replaceState( {}, '', '/?solution=/fixtures/03_multi_carton.json&portal=/portal' );
+    await init();
+    expect( $( 'portal-actions' ).hidden ).toBe( false );
+    expect( $( 'done-button' ).hidden ).toBe( false );
   } );
 } );

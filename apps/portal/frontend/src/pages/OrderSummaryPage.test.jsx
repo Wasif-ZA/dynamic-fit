@@ -469,6 +469,67 @@ describe('optimisation execution time', () => {
   });
 });
 
+describe('pick packer result', () => {
+  beforeEach(() => {
+    api.getSolution.mockResolvedValue(solution(0));
+    api.getSolutionSummary.mockResolvedValue(summary(0));
+  });
+  const pageText = () => text(page.root);
+
+  it('asks the packer to use the Visualiser before a result is recorded', async () => {
+    api.getOrder.mockResolvedValue(order('FINAL', 0));
+    await mount();
+    expect(pageText()).toContain('Open the Visualiser to pack this order');
+    expect(page.root.findAllByType('span').some((span) => ['Packed', 'Packing incomplete'].includes(text(span)))).toBe(false);
+  });
+
+  it('shows Packed once the packer selects Done', async () => {
+    api.getOrder.mockResolvedValue({ ...order('FINAL', 0), PackingStatus: 'PACKED', PackingUpdatedAt: '2026-11-01T09:00:00Z' });
+    await mount();
+    expect(page.root.findAllByType('span').some((span) => text(span) === 'Packed')).toBe(true);
+    expect(pageText()).toContain('The pick packer marked this order as packed');
+  });
+
+  it('shows Packing incomplete after Cancel', async () => {
+    api.getOrder.mockResolvedValue({ ...order('FINAL', 0), PackingStatus: 'INCOMPLETE', PackingUpdatedAt: '2026-11-01T09:00:00Z' });
+    await mount();
+    expect(page.root.findAllByType('span').some((span) => text(span) === 'Packing incomplete')).toBe(true);
+  });
+});
+
+describe('Visualiser for the pick packer', () => {
+  beforeEach(() => {
+    api.getSolution.mockResolvedValue(solution(0));
+    api.getSolutionSummary.mockResolvedValue(summary(0));
+    api.getVisualizerHandoff.mockResolvedValue({ SolutionUrl: 'http://api/solution', ExpiresIn: 300 });
+    api.visualiserUrl.mockReturnValue('http://visualiser/?solution=x');
+  });
+  const openVisualiser = async () => { await act(async () => { await buttons('Open Visualiser')[0].props.onClick(); }); };
+
+  it('asks for Done and Cancel only on a finalised order', async () => {
+    api.getOrder.mockResolvedValue(order('FINAL', 0));
+    await mount();
+    await openVisualiser();
+    expect(api.visualiserUrl).toHaveBeenCalledWith('http://api/solution', { returnUrl: expect.stringMatching(/\/packing-return$/) });
+  });
+
+  it('does not ask for Done and Cancel before finalising', async () => {
+    api.getOrder.mockResolvedValue(order('OPTIMISED', 0));
+    await mount();
+    await openVisualiser();
+    expect(api.visualiserUrl).toHaveBeenCalledWith('http://api/solution', { returnUrl: null });
+  });
+
+  it('keeps the Visualiser open when the window regains focus', async () => {
+    api.getOrder.mockResolvedValue(order('FINAL', 0));
+    await mount();
+    await openVisualiser();
+    expect(page.root.findAllByType('iframe')).toHaveLength(1);
+    await focus();
+    expect(page.root.findAllByType('iframe')).toHaveLength(1);
+  });
+});
+
 describe('backlog and archived order details', () => {
   it.each(['DRAFT', 'AWAITING_OPTIMISATION', 'OPTIMISED'])('keeps an on-hold %s order paused while preserving its progress', async (status) => {
     api.getOrder.mockResolvedValue({ ...order(status, status === 'OPTIMISED' ? 3 : 0), HeldAt: '2026-10-20T00:00:00Z' });
