@@ -95,6 +95,7 @@ dynamic-fit/
 | Document | Contents |
 |---|---|
 | [Getting Started](docs/DEVELOPMENT.md) | Running, testing and changing the full project locally |
+| [Software Design Description](docs/sdd/) | The design, one file per division, plus team roles |
 | [FitPortal](https://github.com/AaronMinhas/comp4050-portal) | Portal features, roles, architecture and API |
 | [FitSolver](https://github.com/Wasif-ZA/DynamicSolver) | Packing approach, requirements and benchmarks |
 | [FitVisualiser](https://github.com/sweetpea004/COMP4050-2026-Dynamic-Visualiser) | Controls, solution format and testing |
