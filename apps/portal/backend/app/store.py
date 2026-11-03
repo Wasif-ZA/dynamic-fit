@@ -69,6 +69,23 @@ def resume_order(order_id: str) -> StoredOrder:
         return order_repository.find_order(session, order_id)
 
 
+ONLY_FINALISED_ORDERS_CAN_BE_PACKED = (
+    "Only finalised orders can be marked as packed. Finalise the order first."
+)
+
+
+def record_packing(order_id: str, complete: bool) -> StoredOrder:
+    """Done (complete) marks the order PACKED, Cancel marks it INCOMPLETE."""
+    with session_scope() as session:
+        record = order_repository.lock_record(session, order_id)
+        if record.archived_at is not None:
+            raise OrderStatusConflictError(ARCHIVED_ORDER_IS_READ_ONLY)
+        if record.status != "FINAL":
+            raise OrderStatusConflictError(ONLY_FINALISED_ORDERS_CAN_BE_PACKED)
+        order_repository.set_packing(session, record, complete)
+        return order_repository.find_order(session, order_id)
+
+
 def archive_due_orders(*, now: datetime | None = None) -> int:
     with session_scope() as session:
         return order_repository.archive_due_orders(session, now or datetime.now(timezone.utc))
@@ -174,6 +191,7 @@ def reset() -> None:
 
 __all__ = [
     "archive_order",
+    "record_packing",
     "hold_order",
     "resume_order",
     "archive_due_orders",

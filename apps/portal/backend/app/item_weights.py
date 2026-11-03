@@ -7,11 +7,13 @@ from app.models import BoxType, Item
 
 
 def contents_capacity_grams(box: BoxType) -> int | None:
-    """None is unlimited. Round payload down to the Solver's whole grams."""
+    """MaxWeight is the weight of items a box holds; BoxWeight is not taken off.
+
+    None is unlimited. Round down to the Solver's whole grams.
+    """
     if box.max_weight is None:
         return None
-    payload = Decimal(str(box.max_weight)) - Decimal(str(box.box_weight or 0))
-    return max(0, int((payload * 1000).to_integral_value(rounding=ROUND_FLOOR)))
+    return int((Decimal(str(box.max_weight)) * 1000).to_integral_value(rounding=ROUND_FLOOR))
 
 
 def maximum_item_weight_kg(boxes: list[BoxType]) -> float | None:
@@ -31,5 +33,5 @@ def validate_item_weights(items: list[Item], boxes: list[BoxType]) -> None:
             raise ItemWeightLimitError(
                 f"Item {index + 1} ({item.item_code}): weight of {item.weight:g} kg "
                 f"exceeds the current {limit:g} kg per-item capacity of available "
-                "active boxes (after box weight)."
+                "active boxes."
             )

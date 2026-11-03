@@ -86,6 +86,6 @@ describe('informational handling warnings', () => {
     act(() => { page = create(<PackedHandlingWarnings summary={{ Boxes: Array.from({ length: 8 }, (_, index) => ({ CartonId: `c${index}`, BoxType: 'BOX', PackedWeightKg: 20 })) }} thresholdKg={20} />); });
     expect(text(page.root)).toContain('8 heavy boxes');
     expect(page.root.findAllByType('li')).toHaveLength(5);
-    expect(text(page.root)).toContain('3 more in Packing Details');
+    expect(text(page.root)).toContain('3 more in Packing details');
   });
 });

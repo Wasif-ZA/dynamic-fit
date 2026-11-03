@@ -21,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 OrderStatus = Literal["DRAFT", "AWAITING_OPTIMISATION", "OPTIMISED", "FINAL"]
 OrderView = Literal["active", "backlog", "archived"]
+PackingStatus = Literal["PACKED", "INCOMPLETE"]
 
 # Keep aligned with ITEM_TEXT_LIMITS in frontend/src/lib/itemValidation.js.
 MAX_ITEM_CODE_LENGTH = 32
@@ -88,7 +89,7 @@ class BoxType(PortalModel):
 
     MaximumBoxes is the quantity of this box type available to use. None means
     no limit; finalising an order subtracts the boxes used from a set quantity.
-    MaxWeight is the total packed weight, including the empty BoxWeight.
+    MaxWeight is the weight of items the box can hold, not counting the empty BoxWeight.
     """
 
     reference: str = Field(alias="Reference", min_length=1)
@@ -183,9 +184,18 @@ class StoredOrder(Order):
     archived_at: datetime | None = Field(default=None, alias="ArchivedAt")
     held_at: datetime | None = Field(default=None, alias="HeldAt")
     finalised_at: datetime | None = Field(default=None, alias="FinalisedAt")
+    # Recorded by the pick packer from the Visualiser after finalisation.
+    packing_status: PackingStatus | None = Field(default=None, alias="PackingStatus")
+    packing_updated_at: datetime | None = Field(default=None, alias="PackingUpdatedAt")
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc), alias="CreatedAt"
     )
+
+
+class PackingResult(PortalModel):
+    """The Visualiser's Done (true) or Cancel (false) for a finalised order."""
+
+    complete: bool = Field(alias="Complete")
 
 
 class PortalUser(PortalModel):

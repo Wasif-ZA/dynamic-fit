@@ -11,11 +11,16 @@ Sprint 2 additions wrap this function without changing it:
 from __future__ import annotations
 
 from . import io
-from .pack import pack
+from .greedy2.pack import pack
 
 
-def solve(payload: dict) -> dict:
+def solve(payload: dict, optimise: bool = False) -> dict:
+    """optimise=True is the "Further Optimise" button: slower, opt-in."""
     items, cartons, input_rejects, budget_ms, order_id = io.parse_request(payload)
     seed = io.request_seed(payload)
-    solution = pack(items, cartons, time_budget_ms=budget_ms, seed=seed)
+    if optimise:
+        from .greedy2.optimise import further_optimise
+        solution = further_optimise(items, cartons, time_budget_ms=budget_ms, seed=seed)
+    else:
+        solution = pack(items, cartons, time_budget_ms=budget_ms, seed=seed)
     return io.emit_document(solution, order_id, input_rejects)

@@ -135,7 +135,7 @@ describe('order rejection display and recovery', () => {
     expectStatus('Optimised');
     expect(text(page.root.findByProps({ 'aria-label': 'Heavy order' }))).toContain('Weight threshold reached.');
     expect(text(page.root.findByProps({ 'aria-label': 'Packed box handling warnings' }))).toContain('20 kg');
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(false);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(false);
     useApp.mockReturnValue({ identity: { role: 'SUPERVISOR' }, refreshOrders, handlingSettings: { WarningThresholdKg: 25 } });
     act(() => page.update(<OrderSummaryPage />));
     expect(page.root.findAllByProps({ 'aria-label': 'Packed box handling warnings' })).toHaveLength(0);
@@ -157,7 +157,7 @@ describe('order rejection display and recovery', () => {
     await mount();
 
     expectStatus('Rejected');
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(true);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(true);
     expect(text(page.root)).toContain(`${count} ${count === 1 ? 'item was' : 'items were'} not packed`);
     expect(text(page.root)).toContain('Items not packed');
   });
@@ -169,7 +169,7 @@ describe('order rejection display and recovery', () => {
     await mount();
 
     expectStatus('Optimised');
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(false);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(false);
     expect(text(page.root)).not.toContain('Items not packed');
   });
 
@@ -179,7 +179,7 @@ describe('order rejection display and recovery', () => {
     await mount();
 
     expectStatus('Rejected');
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(true);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(true);
     expect(text(page.root)).toContain('Some optimisation details could not be loaded');
   });
 
@@ -189,10 +189,10 @@ describe('order rejection display and recovery', () => {
     api.getSolutionSummary.mockRejectedValue(new Error('Summary unavailable'));
     await mount();
 
-    await act(async () => { await buttons('Run Optimisation')[0].props.onClick(); });
+    await act(async () => { await buttons('Run optimisation')[0].props.onClick(); });
 
     expectStatus('Rejected');
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(true);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(true);
     expect(text(page.root)).toContain('Items not packed');
     expect(text(page.root)).toContain('Summary unavailable');
     expect(refreshOrders).toHaveBeenCalled();
@@ -206,7 +206,7 @@ describe('order rejection display and recovery', () => {
     await reoptimise();
 
     expectStatus('Optimised');
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(false);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(false);
     expect(text(page.root)).not.toContain('Items not packed');
     expect(text(page.root)).toContain('Re-optimisation completed');
   });
@@ -222,7 +222,7 @@ describe('order rejection display and recovery', () => {
     await reoptimise();
 
     expectStatus('Rejected');
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(true);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(true);
     expect(text(page.root)).not.toContain('Re-optimisation completed');
   });
 
@@ -292,7 +292,7 @@ describe('order rejection display and recovery', () => {
     expect(text(page.root)).toContain('Test ORD-002');
     expect(text(page.root)).not.toContain('Items not packed');
     expect(text(page.root)).not.toContain('Optimisation result');
-    expect(buttons('Run Optimisation')[0].props.disabled).toBe(false);
+    expect(buttons('Run optimisation')[0].props.disabled).toBe(false);
   });
 });
 
@@ -305,9 +305,9 @@ describe('direct draft optimisation', () => {
     await mount();
 
     expectStatus('Draft');
-    expect(buttons('Submit for Optimisation')).toHaveLength(0);
-    expect(buttons('Finalise Order')).toHaveLength(0);
-    await act(async () => { await buttons('Run Optimisation')[0].props.onClick(); });
+    expect(buttons('Submit for optimisation')).toHaveLength(0);
+    expect(buttons('Finalise order')).toHaveLength(0);
+    await act(async () => { await buttons('Run optimisation')[0].props.onClick(); });
 
     expect(api.solveOrder).toHaveBeenCalledTimes(1);
     expect(api.solveOrder).toHaveBeenCalledWith('ORD-001');
@@ -315,23 +315,23 @@ describe('direct draft optimisation', () => {
     expect(api.finaliseOrder).not.toHaveBeenCalled();
     expectStatus('Optimised');
     expect(buttons('Re-optimise')).toHaveLength(1);
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(false);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(false);
   });
 
-  it('keeps the Submit for Optimisation workflow for a regular User', async () => {
+  it('keeps the Submit for optimisation workflow for a regular User', async () => {
     useApp.mockReturnValue({ identity: { role: 'USER' }, refreshOrders });
     api.getOrder.mockResolvedValue(order('DRAFT', 0));
     api.submitOrder.mockResolvedValue(order('AWAITING_OPTIMISATION', 0));
     await mount();
 
-    expect(buttons('Run Optimisation')).toHaveLength(0);
-    await act(async () => { await buttons('Submit for Optimisation')[0].props.onClick(); });
+    expect(buttons('Run optimisation')).toHaveLength(0);
+    await act(async () => { await buttons('Submit for optimisation')[0].props.onClick(); });
 
     expect(api.submitOrder).toHaveBeenCalledTimes(1);
     expect(api.submitOrder).toHaveBeenCalledWith('ORD-001');
     expect(api.solveOrder).not.toHaveBeenCalled();
     expectStatus('Awaiting Optimisation');
-    expect(buttons('Run Optimisation')).toHaveLength(0);
+    expect(buttons('Run optimisation')).toHaveLength(0);
     expect(text(page.root)).toContain('waiting for a Supervisor');
   });
 
@@ -341,12 +341,12 @@ describe('direct draft optimisation', () => {
     api.solveOrder.mockRejectedValue(new Error('Solver unavailable'));
     await mount();
 
-    await act(async () => { await buttons('Run Optimisation')[0].props.onClick(); });
+    await act(async () => { await buttons('Run optimisation')[0].props.onClick(); });
 
     expectStatus('Draft');
     expect(text(page.root)).toContain('Solver unavailable');
-    expect(buttons('Run Optimisation')[0].props.disabled).toBe(false);
-    expect(buttons('Finalise Order')).toHaveLength(0);
+    expect(buttons('Run optimisation')[0].props.disabled).toBe(false);
+    expect(buttons('Finalise order')).toHaveLength(0);
     expect(api.submitOrder).not.toHaveBeenCalled();
     expect(api.finaliseOrder).not.toHaveBeenCalled();
   });
@@ -358,9 +358,9 @@ describe('direct draft optimisation', () => {
     api.getSolutionSummary.mockResolvedValue(summary(0));
     await mount();
 
-    await act(async () => { buttons('Run Optimisation')[0].props.onClick(); });
+    await act(async () => { buttons('Run optimisation')[0].props.onClick(); });
 
-    expect(buttons('Running...')[0].props.disabled).toBe(true);
+    expect(buttons('Running…')[0].props.disabled).toBe(true);
     expect(buttons('Edit order')[0].props.disabled).toBe(true);
     expectStatus('Draft');
     await act(async () => { finishSolve(solution(0)); });
@@ -373,10 +373,10 @@ describe('direct draft optimisation', () => {
     api.getSolutionSummary.mockResolvedValue(summary(2));
     await mount();
 
-    await act(async () => { await buttons('Run Optimisation')[0].props.onClick(); });
+    await act(async () => { await buttons('Run optimisation')[0].props.onClick(); });
 
     expectStatus('Rejected');
-    expect(buttons('Finalise Order')[0].props.disabled).toBe(true);
+    expect(buttons('Finalise order')[0].props.disabled).toBe(true);
     expect(text(page.root)).toContain('2 items were not packed');
   });
 });
@@ -469,13 +469,74 @@ describe('optimisation execution time', () => {
   });
 });
 
+describe('pick packer result', () => {
+  beforeEach(() => {
+    api.getSolution.mockResolvedValue(solution(0));
+    api.getSolutionSummary.mockResolvedValue(summary(0));
+  });
+  const pageText = () => text(page.root);
+
+  it('asks the packer to use the Visualiser before a result is recorded', async () => {
+    api.getOrder.mockResolvedValue(order('FINAL', 0));
+    await mount();
+    expect(pageText()).toContain('Open the Visualiser to pack this order');
+    expect(page.root.findAllByType('span').some((span) => ['Packed', 'Packing incomplete'].includes(text(span)))).toBe(false);
+  });
+
+  it('shows Packed once the packer selects Done', async () => {
+    api.getOrder.mockResolvedValue({ ...order('FINAL', 0), PackingStatus: 'PACKED', PackingUpdatedAt: '2026-11-01T09:00:00Z' });
+    await mount();
+    expect(page.root.findAllByType('span').some((span) => text(span) === 'Packed')).toBe(true);
+    expect(pageText()).toContain('The pick packer marked this order as packed');
+  });
+
+  it('shows Packing incomplete after Cancel', async () => {
+    api.getOrder.mockResolvedValue({ ...order('FINAL', 0), PackingStatus: 'INCOMPLETE', PackingUpdatedAt: '2026-11-01T09:00:00Z' });
+    await mount();
+    expect(page.root.findAllByType('span').some((span) => text(span) === 'Packing incomplete')).toBe(true);
+  });
+});
+
+describe('Visualiser for the pick packer', () => {
+  beforeEach(() => {
+    api.getSolution.mockResolvedValue(solution(0));
+    api.getSolutionSummary.mockResolvedValue(summary(0));
+    api.getVisualizerHandoff.mockResolvedValue({ SolutionUrl: 'http://api/solution', ExpiresIn: 300 });
+    api.visualiserUrl.mockReturnValue('http://visualiser/?solution=x');
+  });
+  const openVisualiser = async () => { await act(async () => { await buttons('Open Visualiser')[0].props.onClick(); }); };
+
+  it('asks for Done and Cancel only on a finalised order', async () => {
+    api.getOrder.mockResolvedValue(order('FINAL', 0));
+    await mount();
+    await openVisualiser();
+    expect(api.visualiserUrl).toHaveBeenCalledWith('http://api/solution', { returnUrl: expect.stringMatching(/\/packing-return$/) });
+  });
+
+  it('does not ask for Done and Cancel before finalising', async () => {
+    api.getOrder.mockResolvedValue(order('OPTIMISED', 0));
+    await mount();
+    await openVisualiser();
+    expect(api.visualiserUrl).toHaveBeenCalledWith('http://api/solution', { returnUrl: null });
+  });
+
+  it('keeps the Visualiser open when the window regains focus', async () => {
+    api.getOrder.mockResolvedValue(order('FINAL', 0));
+    await mount();
+    await openVisualiser();
+    expect(page.root.findAllByType('iframe')).toHaveLength(1);
+    await focus();
+    expect(page.root.findAllByType('iframe')).toHaveLength(1);
+  });
+});
+
 describe('backlog and archived order details', () => {
   it.each(['DRAFT', 'AWAITING_OPTIMISATION', 'OPTIMISED'])('keeps an on-hold %s order paused while preserving its progress', async (status) => {
     api.getOrder.mockResolvedValue({ ...order(status, status === 'OPTIMISED' ? 3 : 0), HeldAt: '2026-10-20T00:00:00Z' });
     await mount();
 
     expect(text(page.root)).toContain('Order on hold');
-    for (const label of ['Edit order', 'Run Optimisation', 'Submit for Optimisation', 'Re-optimise', 'Finalise Order']) {
+    for (const label of ['Edit order', 'Run optimisation', 'Submit for optimisation', 'Re-optimise', 'Finalise order']) {
       expect(buttons(label)).toHaveLength(0);
     }
     expect(buttons('Resume')).toHaveLength(1);
@@ -494,13 +555,13 @@ describe('backlog and archived order details', () => {
     await act(async () => { await buttons('Hold')[0].props.onClick(); });
 
     expect(text(page.root)).toContain('Order on hold');
-    expect(buttons('Run Optimisation')).toHaveLength(0);
+    expect(buttons('Run optimisation')).toHaveLength(0);
     api.resumeOrder.mockResolvedValue(order('DRAFT', 0));
     api.getOrder.mockResolvedValue(order('DRAFT', 0));
 
     await act(async () => { await buttons('Resume')[0].props.onClick(); });
 
-    expect(buttons('Run Optimisation')[0].props.disabled).toBe(false);
+    expect(buttons('Run optimisation')[0].props.disabled).toBe(false);
     expect(refreshOrders).toHaveBeenCalled();
   });
 
@@ -519,5 +580,84 @@ describe('backlog and archived order details', () => {
     expect(buttons('Resume')).toHaveLength(0);
     expect(buttons('Delete')).toHaveLength(0);
     expect(buttons('Archive')).toHaveLength(0);
+  });
+});
+
+describe('Further Optimise', () => {
+  beforeEach(() => {
+    useApp.mockReturnValue({ identity: { role: 'SUPERVISOR' }, refreshOrders });
+    api.getOrder.mockResolvedValue(order('OPTIMISED', 0));
+    api.getSolution.mockResolvedValue(solution(0));
+    api.getSolutionSummary.mockResolvedValue(summary(0));
+  });
+
+  function messages() {
+    return page.root.findAllByType('p').map(text);
+  }
+
+  it('asks the solver to search and reports a smaller box', async () => {
+    const smaller = solution(0);
+    smaller.solver = { elapsed_ms: 12000, tier: 2 };
+    smaller.cartons[0].sku = 'BOX-M';
+    api.solveOrder.mockResolvedValue(smaller);
+    await mount();
+
+    await act(async () => { await buttons('Further Optimise')[0].props.onClick(); });
+
+    expect(api.solveOrder).toHaveBeenCalledWith('ORD-001', { furtherOptimise: true });
+    expect(messages()).toContain(
+      'Further Optimise found a smaller box: the whole order now fits in one BOX-M.'
+    );
+  });
+
+  it('says when no smaller box was found', async () => {
+    api.solveOrder.mockResolvedValue({ ...solution(0), solver: { elapsed_ms: 30000, tier: 1 } });
+    await mount();
+
+    await act(async () => { await buttons('Further Optimise')[0].props.onClick(); });
+
+    expect(messages()).toContain(
+      'Further Optimise could not find a smaller box, so the standard result was kept.'
+    );
+  });
+
+  it('shows a 30 second notice while searching', async () => {
+    let finish;
+    api.solveOrder.mockReturnValue(new Promise((resolve) => { finish = resolve; }));
+    await mount();
+
+    act(() => { buttons('Further Optimise')[0].props.onClick(); });
+
+    expect(buttons('Searching…')).toHaveLength(1);
+    expect(buttons('Re-optimise')[0].props.disabled).toBe(true);
+    expect(messages()).toContain('Looking for a smaller box. This can take up to 30 seconds.');
+    await act(async () => { finish(solution(0)); });
+  });
+
+  it('is unavailable while items are rejected', async () => {
+    api.getOrder.mockResolvedValue(order('OPTIMISED', 3));
+    api.getSolution.mockResolvedValue(solution(3));
+    api.getSolutionSummary.mockResolvedValue(summary(3));
+    await mount();
+
+    expect(buttons('Further Optimise')[0].props.disabled).toBe(true);
+  });
+
+  it('explains itself in an info hover', async () => {
+    await mount();
+
+    const info = page.root.findAllByProps({ 'aria-label': 'About Further Optimise' });
+    expect(info.length).toBeGreaterThan(0);
+    const button = buttons('Further Optimise')[0];
+    const description = page.root.findAllByProps({ id: button.props['aria-describedby'] })
+      .find((node) => typeof node.type === 'string');
+    expect(text(description)).toBe('Spends longer looking for a more efficient solution.');
+  });
+
+  it('is not offered to users who cannot run the solver', async () => {
+    useApp.mockReturnValue({ identity: { role: 'USER' }, refreshOrders });
+    await mount();
+
+    expect(buttons('Further Optimise')).toHaveLength(0);
   });
 });

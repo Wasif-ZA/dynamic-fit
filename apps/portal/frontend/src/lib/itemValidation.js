@@ -76,7 +76,9 @@ export function validateItemFields(raw, { label, maxItemWeightKg = null } = {}) 
     errors.push(`${prefix}"BoxGroup" must be a string if provided.`);
   }
 
-  if (raw.Quantity !== undefined && raw.Quantity !== null && raw.Quantity !== '') {
+  if (raw.Quantity === null) {
+    errors.push(`${prefix}"Quantity" must be a whole number of 1 or more if provided.`);
+  } else if (raw.Quantity !== undefined && raw.Quantity !== '') {
     const qty = Number(raw.Quantity);
     if (!Number.isInteger(qty) || qty < 1) {
       errors.push(`${prefix}"Quantity" must be a whole number of 1 or more if provided.`);
@@ -93,7 +95,7 @@ export function weightExceedsLimit(weight, maxItemWeightKg = null) {
 }
 
 export function itemWeightError(weight, maxItemWeightKg) {
-  return `Weight of ${weight} kg exceeds the current ${maxItemWeightKg} kg per-item capacity of available active boxes (after box weight).`;
+  return `Weight of ${weight} kg exceeds the current ${maxItemWeightKg} kg per-item capacity of available active boxes.`;
 }
 
 /** Coerce a validated raw item into the normalised shape used in item state. */

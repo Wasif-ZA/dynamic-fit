@@ -98,7 +98,7 @@ export default function BoxInventoryPage() {
   };
 
   if (loading) {
-    return <PanelMessage>Loading box inventory...</PanelMessage>;
+    return <PanelMessage>Loading Box Inventory…</PanelMessage>;
   }
 
   return (
@@ -150,7 +150,7 @@ export default function BoxInventoryPage() {
               <tr>
                 <th className="px-4 py-3 font-mono">Reference</th>
                 <th className="px-4 py-3">Dimensions</th>
-                <th className="px-4 py-3">Max packed weight</th>
+                <th className="px-4 py-3">Max weight</th>
                 <th className="px-4 py-3">Box weight</th>
                 <th className="px-4 py-3">Available</th>
                 <th className="px-4 py-3">Status</th>
@@ -190,7 +190,7 @@ export default function BoxInventoryPage() {
                           onClick={() => toggleActive(box)}
                         >
                           {savingReference === box.Reference
-                            ? 'Saving...'
+                            ? 'Saving…'
                             : box.Active
                               ? 'Deactivate'
                               : 'Activate'}
@@ -291,7 +291,7 @@ function BoxFormModal({ initialBox, isEditing, onCancel, onSave, onDelete }) {
           <NumberField label="Width (mm) *" field="Width" min="0.01" form={form} update={update} />
           <NumberField label="Length (mm) *" field="Length" min="0.01" form={form} update={update} />
           <NumberField label="Depth (mm) *" field="Depth" min="0.01" form={form} update={update} />
-          <NumberField label="Max packed weight (kg)" field="MaxWeight" min="0.01" form={form} update={update} optional hint="Includes the empty box. Leave blank for no weight limit." />
+          <NumberField label="Max weight (kg)" field="MaxWeight" min="0.01" form={form} update={update} optional hint="Weight of items the box can hold, not counting the empty box. Leave blank for no weight limit." />
           <NumberField label="Box weight (kg)" field="BoxWeight" min="0.01" form={form} update={update} optional />
           <label className="flex items-center gap-3 self-end py-2 text-sm font-medium text-ink-600">
             <input type="checkbox" checked={form.Active} onChange={update('Active')} />
@@ -307,13 +307,13 @@ function BoxFormModal({ initialBox, isEditing, onCancel, onSave, onDelete }) {
           <div>
             {isEditing && onDelete && (
               <Button variant="danger" onClick={remove} disabled={busy}>
-                {deleting ? 'Deleting...' : 'Delete box type'}
+                {deleting ? 'Deleting…' : 'Delete box type'}
               </Button>
             )}
           </div>
           <div className="flex gap-2">
             <Button variant="secondary" onClick={onCancel} disabled={busy}>Cancel</Button>
-            <Button type="submit" disabled={busy}>{saving ? 'Saving...' : 'Save box type'}</Button>
+            <Button type="submit" disabled={busy}>{saving ? 'Saving…' : 'Save box type'}</Button>
           </div>
         </div>
       </form>

@@ -12,15 +12,35 @@
   <body>
     <h1>Dynamic Visualiser</h1>
 
+    <!-- Req06: Return to Portal actions. data-portal-url on the canvas below is the fallback
+         destination when no ?portal=<url> query param is supplied (see js/portalActions.js). -->
+    <div id="portal-actions" aria-label="Order actions">
+      <button id="cancel-button" type="button" class="portal-action-btn portal-action-cancel">Cancel</button>
+      <button id="done-button" type="button" class="portal-action-btn portal-action-done">Done</button>
+    </div>
+
+    <!-- Confirmation dialog shown before returning to the portal -->
+    <div id="confirm-dialog" class="confirm-overlay" hidden>
+      <div class="confirm-box" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+        <h2 id="confirm-title" class="confirm-title"></h2>
+        <p id="confirm-message" class="confirm-message"></p>
+        <div class="confirm-actions">
+          <button id="confirm-back" type="button" class="confirm-btn confirm-btn-secondary">Go Back</button>
+          <button id="confirm-proceed" type="button" class="confirm-btn confirm-btn-primary"></button>
+        </div>
+      </div>
+    </div>
+
     <!-- Carton info -->
     <aside id="carton-info" aria-label="Carton Information"></aside>
 
     <!-- Visualiser canvas -->
     <canvas
       id="visualiser-canvas"
-      data-json="/fixtures/00_failure.json"
+      data-json="/fixtures/09_large_order.json"
+      data-portal-url="/portal"
     ></canvas>
-    
+
     <script type="module" src="/visualiser.js"></script>
   </body>
 </html>

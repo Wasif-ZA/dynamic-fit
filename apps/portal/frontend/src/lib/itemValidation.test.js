@@ -130,3 +130,16 @@ describe('client item schema', () => {
     expect(normaliseItem(ITEM)).not.toHaveProperty('Hazardous');
   });
 });
+
+describe('JSON import null validation', () => {
+  it('rejects imported items with a null quantity', () => {
+    const imported = parseItemsJson(
+      JSON.stringify([{ ...ITEM, Quantity: null }])
+    );
+
+    expect(imported.items).toBeNull();
+    expect(imported.errors).toContain(
+      'Item 1 (ITM-001): "Quantity" must be a whole number of 1 or more if provided.'
+    );
+  });
+});

@@ -1,224 +1,101 @@
 # Dynamic Fit
 
-Warehouse carton packing. Give it an order and the box types a warehouse stocks, and
-it works out **which boxes to use** and **where each item goes inside them**, then
-draws the result.
+Dynamic Fit is a system for creating packing orders, optimising how items are packed into boxes, and visualising the result. It brings together FitPortal, FitSolver and FitVisualiser, each built by its own COMP4050 subteam.
 
-Three subsystems, one repository:
+> **Live Application:** [Dynamic Fit](https://dynamicfit.aaron-d02.workers.dev/)
+>
+> **Local Development:** [Getting Started](docs/DEVELOPMENT.md)
 
-| Subsystem | Lives in | What it does |
+## Product Overview
+
+| Name | Role |
+|---|---|
+| **Dynamic Fit** | The integrated project: Portal, Solver and Visualiser in one application *(this repository)* |
+| **FitPortal** | The customer-facing Portal: orders, Box Inventory, users and the API |
+| **FitSolver** | The packing engine that chooses the boxes and places every item |
+| **FitVisualiser** | The 3D view of each packed box |
+
+Staff create orders in FitPortal. FitSolver works out which boxes to use and where each item goes, and FitVisualiser shows the result in 3D. Finalising an order subtracts the boxes it used from Box Inventory, for box types with a set quantity.
+
+## Subteams
+
+Each subteam develops its part in its own repository, which is then brought into this one. **Detailed documentation for each part lives in that subteam's repository.**
+
+| Subteam | Purpose | Repository |
 |---|---|---|
-| **FitPortal** | `apps/portal/` | Takes the order, shows the result |
-| **FitSolver** | `packages/solver/` | Does the packing |
-| **FitVisualizer** | `apps/visualiser/` | Draws it in 3D |
+| **FitPortal** | Order management, Box Inventory, user access and the API that connects everything | [AaronMinhas/comp4050-portal](https://github.com/AaronMinhas/comp4050-portal) |
+| **FitSolver** | Packing optimisation: choosing boxes and placing items | [Wasif-ZA/DynamicSolver](https://github.com/Wasif-ZA/DynamicSolver) |
+| **FitVisualiser** | Interactive 3D visualisation of packing results | [sweetpea004/COMP4050-2026-Dynamic-Visualiser](https://github.com/sweetpea004/COMP4050-2026-Dynamic-Visualiser) |
 
-    FitPortal  ->  FitSolver  ->  FitPortal  ->  FitVisualizer
+### FitPortal
 
-## Start here
+| Contributor | Role | GitHub |
+|---|---|---|
+| Aaron | Scrum Master, Developer | [@AaronMinhas](https://github.com/AaronMinhas) |
+| Ahmad | Product Owner, Tester | [@Ahmad-Arja](https://github.com/Ahmad-Arja) |
+| Amer | Developer, Tester | [@AmerAlam7](https://github.com/AmerAlam7) |
+| Mohammad | Developer, Tester | [@Mohammad123nazimuddin](https://github.com/Mohammad123nazimuddin) |
 
-| Doc | What it covers |
+### FitSolver
+
+| Contributor | Role | GitHub |
+|---|---|---|
+| Wasif | Project Manager, Scrum Master, Reviewer | [@Wasif-ZA](https://github.com/Wasif-ZA) |
+| Jesse | Developer (Algorithm Lead) | [@jesseosu](https://github.com/jesseosu) |
+| Khuslee | Developer, Project Board | [@khuslee0409](https://github.com/khuslee0409) |
+| Jacob | Developer, Tester | [@JacobLiu124](https://github.com/JacobLiu124) |
+
+### FitVisualiser
+
+| Contributor | Role | GitHub |
+|---|---|---|
+| Persephone | Product Owner, Developer | [@sweetpea004](https://github.com/sweetpea004) |
+| Mohamad | Minute Taker, Developer, Tester | [@Halloum578](https://github.com/Halloum578) |
+| Aryan | Scrum Master, Developer | [@aryan-kumar-295](https://github.com/aryan-kumar-295) |
+| Sarah | Developer, Tester | [@sar-han](https://github.com/sar-han) |
+
+## How to Use
+
+1. Sign in to FitPortal.
+2. Add the warehouse's box types on the Box Inventory page.
+3. Create an order and add items by form or JSON import.
+4. Run optimisation. FitSolver packs the order into the available boxes.
+5. Review the packing result and open the 3D view in FitVisualiser.
+6. Finalise the order.
+7. The pick packer packs it using FitVisualiser and selects **Done**. FitPortal then shows the order as **Packed**.
+
+## Screenshots
+
+![FitPortal orders overview](docs/images/fitportal-overview.png)
+
+*FitPortal's Orders page, listing active orders with their status and quick actions.*
+
+![An optimised order in FitPortal](docs/images/fitportal-optimisation.png)
+
+*An optimised order in FitPortal: 115 items packed into 5 boxes, with nothing rejected.*
+
+![A packed box in FitVisualiser](docs/images/fitvisualiser-packed-order.png)
+
+*FitVisualiser showing a packed Standard Carton, with each type of item in its own colour.*
+
+## Repository Structure
+
+```text
+dynamic-fit/
+├── apps/portal/        FitPortal
+├── apps/visualiser/    FitVisualiser
+├── packages/solver/    FitSolver
+├── contract/           The shared format the three parts use to exchange orders and results
+├── docs/               Developer guide, client requirements and decision log
+└── tests/integration/  Tests that check the three parts work together
+```
+
+## Documentation
+
+| Document | Contents |
 |---|---|
-| [`contract/`](contract/) | **The interface.** `request.schema.json` and `solution.schema.json` are what the subsystems actually exchange |
-| [`docs/client-requirements.md`](docs/client-requirements.md) | What the client asked for |
-| [`docs/BENCHMARK.md`](docs/BENCHMARK.md) | How well it packs, measured against a baseline |
-| [`docs/sdd/`](docs/sdd/) | The Software Design Description, one file per division, plus team roles |
-| [`docs/decisions/`](docs/decisions/) | The decision log. Read before re-opening a settled question |
-| [`docs/contract.md`](docs/contract.md) | The reasoning behind the interface. **Superseded**: its field names were never implemented ([ADR-0006](docs/decisions/0006-the-implemented-schema-is-canonical.md)) |
-| [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) | Branching, PRs, and how we log work for the unit |
-
-## How to run it
-
-You need:
-
-- **Python 3.11+**
-- **Node 20+** and npm
-- **Docker Desktop** (or another Docker runtime), running
-- The [Supabase CLI](https://supabase.com/docs/guides/local-development)
-
-Run every command from this folder (the repo root) unless a step says otherwise. You do
-**not** need [uv](https://docs.astral.sh/uv/).
-
-The website talks only to the Portal API. The API stores orders, box inventory and
-users in a local Supabase (PostgreSQL) database, signs users in with Supabase Auth, and
-packs orders by calling the solver as a Python library in the same process. The 3D view
-is a separate app that loads the packed result. You need the database and all three
-apps running.
-
-### First time
-
-**1. Install the Python environment** (solver, Portal backend and test tools):
-
-```bash
-python3 -m venv .venv
-.venv/bin/python -m pip install -e packages/solver -r apps/portal/backend/requirements.txt pytest jsonschema hypothesis
-```
-
-On Windows, use `.venv\Scripts\python` in place of `.venv/bin/python`.
-
-If you use uv, `uv sync --group dev` builds the same environment, and `uv run` works in
-place of `.venv/bin/python`.
-
-**2. Start the local database and auth.** The Supabase project lives in
-`apps/portal/supabase`. This applies every migration:
-
-```bash
-supabase start --workdir apps/portal
-supabase status --workdir apps/portal -o env
-```
-
-`--workdir` is relative to the folder you are in, so run these from the repo root. To
-wipe the database and reapply the migrations later, use
-`supabase db reset --workdir apps/portal`.
-
-**3. Configure the backend.** Copy the template:
-
-```bash
-cp apps/portal/backend/.env.example apps/portal/backend/.env
-```
-
-Fill it in from `supabase status` output:
-
-| Variable | Value |
-|---|---|
-| `DATABASE_URL` | `DB_URL` |
-| `SUPABASE_URL` | `API_URL` |
-| `SUPABASE_SECRET_KEY` | `SECRET_KEY` (the one starting `sb_secret_`, not the legacy `SERVICE_ROLE_KEY`) |
-| `SUPABASE_JWKS_URL` | Leave as `http://127.0.0.1:54321/auth/v1/.well-known/jwks.json` |
-| `VISUALIZER_TOKEN_SECRET` | Any random value of at least 32 characters |
-| `PORTAL_PUBLIC_API_URL` | Leave as `http://127.0.0.1:8000` |
-
-**4. Configure the website.** Copy the template:
-
-```bash
-cp apps/portal/frontend/.env.example apps/portal/frontend/.env
-```
-
-Set `VITE_SUPABASE_PUBLISHABLE_KEY` to `PUBLISHABLE_KEY` from `supabase status`. Leave the
-other values as they are. The browser only ever gets this public key.
-
-**5. Create the first accounts.** There is no sign-up page so this creates an
-Administrator and a Supervisor, and is safe to run again:
-
-```bash
-export BOOTSTRAP_ADMIN_EMAIL=admin@local.test
-export BOOTSTRAP_ADMIN_PASSWORD='localtest'
-export BOOTSTRAP_SUPERVISOR_EMAIL=supervisor@local.test
-export BOOTSTRAP_SUPERVISOR_PASSWORD='localtest'
-.venv/bin/python apps/portal/backend/scripts/bootstrap_users.py
-```
-
-These credentials are for local use only. Further accounts are created from the Users
-page in the Portal.
-
-### Three terminals
-
-**1. Portal API** — http://127.0.0.1:8000 (docs at http://127.0.0.1:8000/docs)
-
-```bash
-.venv/bin/python -m uvicorn app.main:app --reload --app-dir apps/portal/backend
-```
-
-The API refuses to start if the database or auth settings are missing or unreachable.
-
-**2. Portal website** — http://127.0.0.1:5174
-
-```bash
-cd apps/portal/frontend
-npm install
-npm run dev
-```
-
-**3. 3D visualiser** — http://localhost:5173
-
-```bash
-cd apps/visualiser
-npm install
-npx vite
-```
-
-Open the visualiser as **`localhost`**, not `127.0.0.1`. On macOS those are
-different sockets; mix them and the 3D panel is blank.
-
-### Use it
-
-1. Open http://127.0.0.1:5174 and sign in with an account from step 5.
-2. A new database has no boxes. On **Box Inventory**, import a `boxes.json` or add box
-   types by hand.
-3. Create an order with at least one item, then click **Submit for Optimisation**.
-4. As a Supervisor or Administrator, click **Run Optimisation**. The packing result and
-   the 3D view appear on the order page.
-5. **Re-optimise** packs the same order again with the current inventory.
-   **Finalise Order** locks the order and subtracts the boxes used from any box type
-   with a set quantity. An order with unpacked items cannot be finalised.
-
-On its own, the visualiser draws a sample fixture. Packed orders reach it through a
-short-lived link the Portal creates, so the Portal's normal solution URLs cannot be
-opened directly in the visualiser.
-
-### Tests
-
-From the repo root:
-
-```bash
-.venv/bin/python -m pytest packages/solver/tests tests/integration
-```
-
-The Portal backend suite needs the local Supabase stack from step 2 running. It builds
-and migrates its own `fitportal_test` database and refuses to run against a non-local
-host:
-
-```bash
-.venv/bin/python -m pytest apps/portal/backend/tests
-```
-
-`.venv/bin/python -m pytest` with no path runs all three suites. Website unit tests:
-
-```bash
-cd apps/portal/frontend
-npm test
-```
-
-To wipe local data and reapply the migrations, run
-`supabase db reset --workdir apps/portal`, then repeat step 5.
-
-## Layout
-
-```
-apps/portal/          FitPortal: FastAPI backend, React front end
-apps/visualiser/      FitVisualizer: Three.js renderer
-packages/solver/      FitSolver: the packing engine, its tests, its benchmarks
-contract/             The JSON Schemas and eleven fixtures
-docs/                 Requirements, architecture, benchmark, decision log
-tests/integration/    The only tests that span more than one subsystem
-scripts/              Repository assembly
-```
-
-## The interface
-
-Everything crossing a subsystem boundary is
-[`contract/solution.schema.json`](contract/solution.schema.json). Integer millimetres,
-integer grams, z-up, origin at the minimum corner, and a solution document a renderer
-can draw with no further network calls.
-
-Changing it changes someone else's sprint:
-
-1. **Additive changes are cheap.** A new optional field breaks nobody. Just do it.
-2. **Breaking changes need a heads-up.** Renaming or removing a field, or changing a
-   meaning, goes to the Portal and visualiser owners before it merges. `CODEOWNERS`
-   makes that a review requirement.
-3. **Update the fixtures in the same commit.** A fixture that contradicts the schema is
-   worse than no fixture, because someone is building against it right now.
-
-## Tests
-
-| Suite | Covers |
-|---|---|
-| `packages/solver/tests/` | The engine. Schema conformance, Hypothesis property tests over random orders, the Portal adapter, scaling |
-| `apps/portal/backend/tests/` | Orders, box inventory, users, auth, finalisation and the solve routes, against a real PostgreSQL database. Needs local Supabase |
-| `apps/portal/frontend/` | `npm test`: item and box validation, box import rules, box group labels |
-| `tests/integration/` | The Portal app starts alongside the solver, and every committed fixture satisfies every field `visualiser.js` actually reads. The Portal-to-visualiser checks that needed a database have been removed for now |
-| `apps/visualiser/` | `npx vite build` |
-
-`tests/integration/renderer_contract.mjs` extracts the field list from the renderer's
-own source rather than hard-coding it, so a rename on either side fails the build
-instead of showing `undefined` in the legend.
+| [Getting Started](docs/DEVELOPMENT.md) | Running, testing and changing the full project locally |
+| [Software Design Description](docs/sdd/) | The design, one file per division, plus team roles |
+| [FitPortal](https://github.com/AaronMinhas/comp4050-portal) | Portal features, roles, architecture and API |
+| [FitSolver](https://github.com/Wasif-ZA/DynamicSolver) | Packing approach, requirements and benchmarks |
+| [FitVisualiser](https://github.com/sweetpea004/COMP4050-2026-Dynamic-Visualiser) | Controls, solution format and testing |

@@ -4,6 +4,7 @@ const panel = document.getElementById( 'carton-info' );
 
 let onViewCarton = () => {};
 let onShowAll = () => {};
+let onToggleOrientation = () => {};
 let savedListScrollTop = 0;
 const savedOpenCartonIndexes = new Set();
 
@@ -33,7 +34,17 @@ function restoreListScroll() {
 export function initCartonInfo( handlers ) {
   onViewCarton = handlers.onViewCarton;
   onShowAll = handlers.onShowAll;
+  onToggleOrientation = handlers.onToggleOrientation;
   bindCartonInfoEvents();
+}
+
+function orientationToggleHtml( orientationVisible ) {
+  return `
+    <label class="orientation-toggle">
+      <input type="checkbox" id="orientation-visibility-toggle" ${ orientationVisible ? 'checked' : '' }>
+      Show item orientation arrows
+    </label>
+  `;
 }
 
 function placementStartIndex( cartons, cartonIndex ) {
@@ -169,7 +180,7 @@ function cartonEntryHtml( carton, cartonIndex, startIndex, { showIsolateButton, 
   `;
 }
 
-export function updateCartonInfoUI( cartons, rejects, focusedCartonIndex = null ) {
+export function updateCartonInfoUI( cartons, rejects, focusedCartonIndex = null, orientationVisible = false ) {
   if ( !panel ) {
     return;
   }
@@ -189,7 +200,7 @@ export function updateCartonInfoUI( cartons, rejects, focusedCartonIndex = null 
     ? [ focusedCartonIndex ]
     : cartons.map( ( _, index ) => index );
 
-  let content = '';
+  let content = orientationToggleHtml( orientationVisible );
   if ( isolated ) {
     content += `
       <div class="carton-focus-bar">
@@ -284,9 +295,17 @@ function bindCartonInfoEvents() {
 
   panel.addEventListener( 'change', ( event ) => {
     const toggle = event.target;
-    if ( !( toggle instanceof HTMLInputElement ) || !toggle.classList.contains( 'placement-highlight-toggle' ) ) {
+    if ( !( toggle instanceof HTMLInputElement ) ) {
       return;
     }
-    setPlacementHighlighted( Number( toggle.dataset.placementIndex ), toggle.checked );
+
+    if ( toggle.id === 'orientation-visibility-toggle' ) {
+      onToggleOrientation( toggle.checked );
+      return;
+    }
+
+    if ( toggle.classList.contains( 'placement-highlight-toggle' ) ) {
+      setPlacementHighlighted( Number( toggle.dataset.placementIndex ), toggle.checked );
+    }
   } );
 }

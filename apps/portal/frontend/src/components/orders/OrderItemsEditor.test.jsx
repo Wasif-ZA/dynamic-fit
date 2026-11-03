@@ -73,6 +73,30 @@ describe('current inventory limits while editing orders', () => {
     expect(onSave).toHaveBeenCalledWith([ITEM]);
   });
 
+  it('reviews a picked JSON file once the weight check that picking started has finished', async () => {
+    await mount();
+    await act(async () => { button('Import JSON').props.onClick(); });
+
+    // Closing the file picker refocuses the window, which starts a new check.
+    let finish;
+    getItemWeightLimit.mockReturnValue(new Promise((resolve) => { finish = resolve; }));
+    await act(async () => { [...focusListeners].forEach((listener) => listener()); });
+    const json = JSON.stringify([{ ItemCode: 'ROD', ItemReference: 'Rod', Width: 590, Length: 80, Depth: 80, Weight: 0.9, Quantity: 6 }]);
+    const input = page.root.findByProps({ type: 'file' });
+    await act(async () => {
+      await input.props.onChange({ target: { files: [{ name: 'items.json', text: async () => json }] } });
+    });
+
+    expect(page.root.findAllByProps({ role: 'dialog' })).toHaveLength(0);
+    expect(text(page.root.findByProps({ role: 'status' }))).toContain('Checking current boxes');
+
+    await act(async () => { finish({ MaxItemWeightKg: 38, HasAvailableBoxes: true }); });
+
+    expect(page.root.findAllByProps({ role: 'status' })).toHaveLength(0);
+    expect(text(page.root)).toContain('Review imported items');
+    expect(text(page.root)).toContain('ROD');
+  });
+
   it('waits for the first capacity check before accepting or saving items', async () => {
     let finish;
     getItemWeightLimit.mockReturnValue(new Promise((resolve) => { finish = resolve; }));

@@ -77,7 +77,7 @@ export default function OrderEditPage() {
       onSave={save}
       onCancel={() => navigate(`/orders/${id}`)}
       saveLabel="Save order changes"
-      savingLabel="Saving..."
+      savingLabel="Saving…"
       notice={
         order.Status === 'OPTIMISED'
           ? `Editing this order will invalidate the current optimisation. ${nextStep}`

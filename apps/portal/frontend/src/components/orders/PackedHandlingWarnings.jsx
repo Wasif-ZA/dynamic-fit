@@ -21,7 +21,7 @@ export default function PackedHandlingWarnings({ solution, summary, thresholdKg 
           </li>
         ))}
       </ul>
-      {warnings.length > 5 && <p className="mt-2 text-xs">{warnings.length - 5} more in Packing Details below.</p>}
+      {warnings.length > 5 && <p className="mt-2 text-xs">{warnings.length - 5} more in Packing details below.</p>}
     </section>
   );
 }

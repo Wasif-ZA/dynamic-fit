@@ -10,7 +10,7 @@ export default function PackingDetails({ solution, items, warningThresholdKg = n
   return (
     <details className="mt-5 rounded-sm border border-ink-100 bg-ink-50/40">
       <summary className="cursor-pointer px-4 py-3 font-display font-semibold text-ink-700 hover:text-brand-600">
-        Packing Details
+        Packing details
         <span className="ml-2 font-sans text-xs font-normal text-ink-400">
           {cartons.length} {cartons.length === 1 ? 'box' : 'boxes'}
         </span>
