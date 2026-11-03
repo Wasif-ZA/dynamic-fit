@@ -194,6 +194,20 @@ test.describe( 'LEGO packing steps (Req10)', () => {
     await expect( steps( page ) ).toBeHidden();
   } );
 
+  test( 'are shown for a solution with one carton', async ( { page } ) => {
+    const placements = fixture( '01_single_item.json' ).cartons[ 0 ].placements;
+    await open( page, '01_single_item.json' );
+    await expect( aside( page ).getByRole( 'button', { name: /^Focus on box/ } ) ).toHaveCount( 0 );
+    await expect( steps( page ) ).toBeVisible();
+    await expect( steps( page ).getByRole( 'button', { name: 'Exit' } ) ).toHaveCount( 0 );
+    await expect( progressLabel( page ) ).toHaveText( 'Completed' );
+    await expect( stepName( page ) ).toHaveText( 'All items' );
+
+    await steps( page ).getByRole( 'button', { name: /Next/ } ).click();
+    await expect( progressLabel( page ) ).toHaveText( `Step 1 of ${ placements.length }` );
+    await expect( stepName( page ) ).toHaveText( placements[ 0 ].item_ref );
+  } );
+
   test( 'start on the completed view with a full progress bar', async ( { page } ) => {
     await focusCarton( page, '03_multi_carton.json', 'c1' );
     await expect( progressLabel( page ) ).toHaveText( 'Completed' );

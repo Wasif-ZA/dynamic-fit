@@ -76,7 +76,7 @@ In the side panel:
 
 - **Contents** expands a carton to list its items. **Collapse** hides them again.
 - **Focus** (shown when there are two or more cartons) shows only that carton. **Back** returns to all cartons.
-- While a carton is focused, the **packing steps** bar appears. **Next** and **Previous** step through the items in packing order, showing the current item solid and the rest see-through, with a progress bar. **Exit** returns to all cartons.
+- The **packing steps** bar appears when a carton is focused, and also when the solution has only one carton. **Next** and **Previous** step through the items in packing order, showing the current item solid and the rest see-through, with a progress bar. **Exit** returns to all cartons when there is more than one.
 - Ticking the **checkbox** next to an item outlines that item in the 3D scene.
 - **Show item orientation arrows** shows a red arrow on every item, pointing in the direction of its `orientation`.
 
@@ -225,7 +225,7 @@ How a solution gets on screen:
 3. `cartons.js` builds a Three.js group per carton, laid out in a row along X, with one coloured mesh per item. `coords.js` converts the Solver's coordinates.
 4. `scene.js` sizes the floor platform and points the camera at the visible cartons.
 5. `cartonInfo.js` renders the legend. Clicking **Focus** or **Back** calls back into `visualiser.js`, which hides or shows carton groups and reframes the camera.
-6. While a carton is focused, `visualiser.js` shows the packing steps bar. **Next** / **Previous** call `setCartonInstructionStep()`, which keeps the current item solid and makes the rest see-through.
+6. `visualiser.js` shows the packing steps bar while a carton is focused, and also when the solution has only one carton. **Next** / **Previous** call `setCartonInstructionStep()`, which keeps the current item solid and makes the rest see-through.
 7. **Done** / **Cancel** (`portalActions.js`) ask for confirmation, then go to the Portal address with `OrderID` and `complete` added.
 
 ## Testing

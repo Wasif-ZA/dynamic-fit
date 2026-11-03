@@ -65,20 +65,37 @@ const progress = packingControls.querySelector('#packing-progress');
 const progressLabel = packingControls.querySelector('#packing-progress-label');
 const stepName = packingControls.querySelector('#packing-step-name');
 
+// Focus is hidden when the solution has one box, so that box is the packing target.
+function packingCartonIndex() {
+  if (focusedCartonIndex !== null) {
+    return focusedCartonIndex;
+  }
+
+  if (loadedCartons.length === 1) {
+    return 0;
+  }
+
+  return null;
+}
+
 function updatePackingStep() {
-  const focused = focusedCartonIndex !== null;
+  const cartonIndex = packingCartonIndex();
+  const active = cartonIndex !== null;
 
-  packingControls.hidden = !focused;
+  packingControls.hidden = !active;
 
-  if (!focused) return;
+  // Exit returns to every box. With one box there is no other view, so the steps stay up.
+  packingControls.querySelector('[data-step-action="exit"]').hidden = loadedCartons.length < 2;
 
-  const carton = loadedCartons[focusedCartonIndex];
+  if (!active) return;
+
+  const carton = loadedCartons[cartonIndex];
   const total = carton.placements?.length ?? 0;
 
   packingStep = Math.min(packingStep, total);
 
   setCartonInstructionStep(
-    cartonGroups[focusedCartonIndex],
+    cartonGroups[cartonIndex],
     packingStep
   );
 
@@ -110,18 +127,21 @@ function updatePackingStep() {
 // Handle Previous, Next and Exit buttons
 packingControls.addEventListener('click', (event) => {
   const button = event.target.closest('[data-step-action]');
+  const cartonIndex = packingCartonIndex();
 
-  if (!button || focusedCartonIndex === null) return;
+  if (!button || cartonIndex === null) return;
 
   const action = button.dataset.stepAction;
 
   if (action === 'exit') {
-    showAllCartons();
+    if (loadedCartons.length > 1) {
+      showAllCartons();
+    }
     return;
   }
 
   const total =
-    loadedCartons[focusedCartonIndex].placements?.length ?? 0;
+    loadedCartons[cartonIndex].placements?.length ?? 0;
 
   if (total === 0) return;
 
