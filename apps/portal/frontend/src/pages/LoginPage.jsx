@@ -5,6 +5,12 @@ import Field, { inputClass } from '../components/common/Field.jsx';
 import Button from '../components/common/Button.jsx';
 import AuthShell from '../components/layout/AuthShell.jsx';
 
+// Return to the page that needed sign-in, including its query string.
+function returnPath(location) {
+  const from = location.state?.from;
+  return from?.pathname ? `${from.pathname}${from.search ?? ''}` : '/orders';
+}
+
 export default function LoginPage() {
   const { identity, authInitializing, authError, login } = useApp();
   const navigate = useNavigate();
@@ -16,7 +22,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!authInitializing && identity) {
-      navigate(location.state?.from?.pathname || '/orders', { replace: true });
+      navigate(returnPath(location), { replace: true });
     }
   }, [authInitializing, identity, location.state, navigate]);
 
@@ -30,7 +36,7 @@ export default function LoginPage() {
     setError('');
     try {
       await login(email, password);
-      navigate(location.state?.from?.pathname || '/orders', { replace: true });
+      navigate(returnPath(location), { replace: true });
     } catch (loginError) {
       setError(loginError.message || 'Sign in failed.');
     } finally {

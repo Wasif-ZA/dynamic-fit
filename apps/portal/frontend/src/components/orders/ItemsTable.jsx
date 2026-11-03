@@ -1,10 +1,12 @@
 import React from 'react';
+import HandlingWarning from './HandlingWarning.jsx';
 
 export default function ItemsTable({
   items,
   onRemove,
   onEdit,
   onQuantityChange,
+  warningThresholdKg = null,
   emptyMessage = 'No items added yet. Use the form to add items to this order.',
 }) {
   if (items.length === 0) {
@@ -37,7 +39,10 @@ export default function ItemsTable({
               <td className="px-3 py-2 font-mono text-ink-500">
                 {item.Width}×{item.Length}×{item.Depth}
               </td>
-              <td className="px-3 py-2 font-mono text-ink-500">{item.Weight} kg</td>
+              <td className="px-3 py-2 text-ink-500">
+                <p className="font-mono">{item.Weight} kg</p>
+                <HandlingWarning weightKg={item.Weight} thresholdKg={warningThresholdKg} className="mt-1" />
+              </td>
               <td className="px-3 py-2 text-ink-500">
                 {onQuantityChange ? (
                   <input

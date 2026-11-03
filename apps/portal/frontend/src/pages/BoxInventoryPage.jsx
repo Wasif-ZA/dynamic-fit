@@ -1,8 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { createBox, deleteBox, importBoxes, listBoxes, updateBox } from '../api/client.js';
 import Button from '../components/common/Button.jsx';
 import Field, { inputClass } from '../components/common/Field.jsx';
 import BoxJsonImport from '../components/boxes/BoxJsonImport.jsx';
+import ManualHandlingSettings from '../components/boxes/ManualHandlingSettings.jsx';
 import { useApp } from '../context/AppContext.jsx';
 import { formatMaximumBoxes, normaliseMaximumBoxes } from '../lib/boxValidation.js';
 import { canManageBoxInventory } from '../lib/roles.js';
@@ -20,6 +22,8 @@ const EMPTY_BOX = {
 
 export default function BoxInventoryPage() {
   const { identity } = useApp();
+  const { hash } = useLocation();
+  const handlingSettingsRef = useRef(null);
   const canManage = canManageBoxInventory(identity.role);
   const [boxes, setBoxes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,6 +48,12 @@ export default function BoxInventoryPage() {
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    if (!loading && hash === '#handling-warnings') {
+      handlingSettingsRef.current?.scrollIntoView({ block: 'start' });
+    }
+  }, [hash, loading]);
 
   const save = async (payload) => {
     setSuccess('');
@@ -88,7 +98,7 @@ export default function BoxInventoryPage() {
   };
 
   if (loading) {
-    return <PanelMessage>Loading box inventory...</PanelMessage>;
+    return <PanelMessage>Loading Box Inventory…</PanelMessage>;
   }
 
   return (
@@ -110,6 +120,10 @@ export default function BoxInventoryPage() {
             <Button onClick={() => setEditing(EMPTY_BOX)}>+ Add Box Type</Button>
           </div>
         )}
+      </div>
+
+      <div ref={handlingSettingsRef} className="mb-4">
+        <ManualHandlingSettings />
       </div>
 
       {success && (
@@ -176,7 +190,7 @@ export default function BoxInventoryPage() {
                           onClick={() => toggleActive(box)}
                         >
                           {savingReference === box.Reference
-                            ? 'Saving...'
+                            ? 'Saving…'
                             : box.Active
                               ? 'Deactivate'
                               : 'Activate'}
@@ -277,7 +291,7 @@ function BoxFormModal({ initialBox, isEditing, onCancel, onSave, onDelete }) {
           <NumberField label="Width (mm) *" field="Width" min="0.01" form={form} update={update} />
           <NumberField label="Length (mm) *" field="Length" min="0.01" form={form} update={update} />
           <NumberField label="Depth (mm) *" field="Depth" min="0.01" form={form} update={update} />
-          <NumberField label="Max weight (kg)" field="MaxWeight" min="0.01" form={form} update={update} optional />
+          <NumberField label="Max weight (kg)" field="MaxWeight" min="0.01" form={form} update={update} optional hint="Weight of items the box can hold, not counting the empty box. Leave blank for no weight limit." />
           <NumberField label="Box weight (kg)" field="BoxWeight" min="0.01" form={form} update={update} optional />
           <label className="flex items-center gap-3 self-end py-2 text-sm font-medium text-ink-600">
             <input type="checkbox" checked={form.Active} onChange={update('Active')} />
@@ -293,13 +307,13 @@ function BoxFormModal({ initialBox, isEditing, onCancel, onSave, onDelete }) {
           <div>
             {isEditing && onDelete && (
               <Button variant="danger" onClick={remove} disabled={busy}>
-                {deleting ? 'Deleting...' : 'Delete box type'}
+                {deleting ? 'Deleting…' : 'Delete box type'}
               </Button>
             )}
           </div>
           <div className="flex gap-2">
             <Button variant="secondary" onClick={onCancel} disabled={busy}>Cancel</Button>
-            <Button type="submit" disabled={busy}>{saving ? 'Saving...' : 'Save box type'}</Button>
+            <Button type="submit" disabled={busy}>{saving ? 'Saving…' : 'Save box type'}</Button>
           </div>
         </div>
       </form>

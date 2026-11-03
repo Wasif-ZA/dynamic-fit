@@ -2,8 +2,15 @@
 
 from __future__ import annotations
 
+ARCHIVED_ORDER_IS_READ_ONLY = "Archived finalised orders are read-only."
+HELD_ORDER_IS_READ_ONLY = "Orders on hold are read-only. Resume this order before making changes."
+
 
 class PortalDomainError(Exception):
+    pass
+
+
+class ItemWeightLimitError(PortalDomainError):
     pass
 
 

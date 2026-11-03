@@ -4,7 +4,7 @@ import ItemEntryForm from './ItemEntryForm.jsx';
 import ItemsTable from './ItemsTable.jsx';
 import { validateItemFields } from '../../lib/itemValidation.js';
 
-export default function ImportedItemsReviewModal({ items: initialItems, onCancel, onConfirm }) {
+export default function ImportedItemsReviewModal({ items: initialItems, onCancel, onConfirm, maxItemWeightKg = null, checkingWeightLimit = false, warningThresholdKg = null }) {
   const [items, setItems] = useState(initialItems);
   const [editingIndex, setEditingIndex] = useState(null);
   const [adding, setAdding] = useState(false);
@@ -14,9 +14,9 @@ export default function ImportedItemsReviewModal({ items: initialItems, onCancel
   const validationErrors = useMemo(
     () =>
       items.flatMap((item, index) =>
-        validateItemFields(item, { label: `Item ${index + 1}` })
+        validateItemFields(item, { label: `Item ${index + 1}`, maxItemWeightKg })
       ),
-    [items]
+    [items, maxItemWeightKg]
   );
   const totalUnits = items.reduce((sum, item) => sum + (Number(item.Quantity) || 0), 0);
 
@@ -51,6 +51,7 @@ export default function ImportedItemsReviewModal({ items: initialItems, onCancel
   };
 
   const confirm = () => {
+    if (checkingWeightLimit) return;
     if (confirmingRef.current) return;
     if (items.length === 0) {
       setError('Add at least one valid item before confirming the import.');
@@ -96,6 +97,7 @@ export default function ImportedItemsReviewModal({ items: initialItems, onCancel
         <div className="cut-line my-4" />
 
         <ItemsTable
+          warningThresholdKg={warningThresholdKg}
           items={items}
           onRemove={removeItem}
           onEdit={(index) => {
@@ -110,6 +112,9 @@ export default function ImportedItemsReviewModal({ items: initialItems, onCancel
           <div className="mt-4 rounded-sm border border-brand-200 bg-brand-50/40 p-4">
             <h3 className="mb-3 font-display font-semibold text-ink-700">Edit imported item</h3>
             <ItemEntryForm
+              warningThresholdKg={warningThresholdKg}
+              maxItemWeightKg={maxItemWeightKg}
+              checkingWeightLimit={checkingWeightLimit}
               key={`edit-${editingIndex}`}
               initialItem={items[editingIndex]}
               onAdd={saveEdit}
@@ -123,6 +128,9 @@ export default function ImportedItemsReviewModal({ items: initialItems, onCancel
           <div className="mt-4 rounded-sm border border-brand-200 bg-brand-50/40 p-4">
             <h3 className="mb-3 font-display font-semibold text-ink-700">Add imported item</h3>
             <ItemEntryForm
+              warningThresholdKg={warningThresholdKg}
+              maxItemWeightKg={maxItemWeightKg}
+              checkingWeightLimit={checkingWeightLimit}
               onAdd={addItem}
               onCancel={() => setAdding(false)}
               submitLabel="Add to preview"
@@ -152,7 +160,7 @@ export default function ImportedItemsReviewModal({ items: initialItems, onCancel
           <Button
             type="button"
             onClick={confirm}
-            disabled={items.length === 0 || validationErrors.length > 0 || actionInProgress}
+            disabled={checkingWeightLimit || items.length === 0 || validationErrors.length > 0 || actionInProgress}
           >
             Add {totalUnits} {totalUnits === 1 ? 'unit' : 'units'} to order
           </Button>

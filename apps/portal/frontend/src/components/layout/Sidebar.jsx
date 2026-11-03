@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useApp } from '../../context/AppContext.jsx';
 import { canManageUsers } from '../../lib/roles.js';
 
@@ -12,25 +12,30 @@ const LINKS = [
 
 export default function Sidebar() {
   const { identity } = useApp();
+  const { pathname } = useLocation();
   const links = LINKS.filter(
     (link) => !link.managersOnly || canManageUsers(identity?.role)
   );
   return (
     <aside className="hidden w-56 shrink-0 flex-col bg-ink-700 text-ink-50 md:flex">
-      <div className="border-b border-ink-600 px-5 py-5">
+      <Link
+        to="/orders"
+        aria-label="FitPortal: go to Orders"
+        className="block border-b border-ink-600 px-5 py-5 hover:bg-ink-600/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-400"
+      >
         <p className="font-display text-2xl font-semibold leading-none tracking-wide">
           FitPortal
         </p>
         <p className="mt-1 text-[11px] uppercase tracking-[0.2em] text-ink-300">
           Dynamic Fit
         </p>
-      </div>
+      </Link>
       <nav className="flex-1 px-2 py-4">
         {links.map((link) => (
           <NavLink
             key={link.to}
             to={link.to}
-            end={link.to === '/orders'}
+            end={link.to === '/orders' && pathname.replace(/\/+$/, '') === '/orders/new'}
             className={({ isActive }) =>
               `mb-1 flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium transition-colors ${
                 isActive
@@ -46,7 +51,7 @@ export default function Sidebar() {
       </nav>
       <div className="cut-line mx-4 mb-4" />
       <p className="px-5 pb-5 text-[11px] leading-relaxed text-ink-400">
-        FitPortal MVP
+        COMP4050 Final Project
       </p>
     </aside>
   );
