@@ -65,8 +65,11 @@ full sprint for integration, which is the part that actually goes wrong.**
       conflict separation, conservation, determinism — 150 random cases green
 - [x] Bench harness with committed `history.jsonl` — first number recorded
 - [ ] Load BR1–BR15 / Loh & Nee datasets into `bench/datasets/`
-- [ ] Integration: Portal calls `/v1/solve` and stores a result ≥ once;
+- [x] Integration: Portal calls `/v1/solve` and stores a result ≥ once;
       Visualizer renders that stored document ≥ once  ← **sprint exit criterion**
+      (Evidence: [PR #6](https://github.com/Wasif-ZA/dynamic-fit/pull/6), commit `cb39a20`,
+      merged 2026-08-26; the Portal stores the solution via `store.save_solution_for_optimised_order`
+      and the visualiser loads it through `?solution=`.)
 
 Known, accepted baseline weaknesses (visible in fixtures, fixed in Phase 2):
 carton selection is greedy per-item (fixture 03 opens 14 small cartons where
