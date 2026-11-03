@@ -27,7 +27,8 @@ canvas {
   position: absolute;
   top: 3rem;
   left: 1rem;
-  z-index: 100;
+  z-index: calc(infinity);
+  box-sizing: border-box;
   min-width: 14rem;
   max-width: 18rem;
   max-height: calc(100vh - 4rem);
@@ -38,6 +39,23 @@ canvas {
   overflow-y: auto;
   overscroll-behavior: contain;
   font-size: 1rem;
+}
+
+.orientation-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #d0d7de;
+  color: #1f2328;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.orientation-toggle input {
+  accent-color: #1f2328;
+  cursor: pointer;
 }
 
 .carton-info-entry {
@@ -180,7 +198,9 @@ canvas {
   cursor: pointer;
 }
 
-.placement-info-item:has(.placement-highlight-toggle:checked) .placement-swatch {
+.placement-info-item:has(
+  .placement-highlight-toggle:checked
+) .placement-swatch {
   box-shadow: 0 0 0 2px #1f2328;
 }
 
@@ -227,18 +247,177 @@ canvas {
   white-space: nowrap;
 }
 
+/* Req06: Return to Portal actions — top right on desktop */
+#portal-actions {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  z-index: 110;
+  display: flex;
+  gap: 0.6rem;
+}
+
+#portal-actions[hidden] {
+  display: none;
+}
+
+.portal-action-btn {
+  min-height: 2.5rem;
+  padding: 0.5rem 1.1rem;
+  border: 1px solid transparent;
+  border-radius: 0.4rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.portal-action-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.portal-action-cancel {
+  border-color: #b8c2cc;
+  background: rgba(255, 255, 255, 0.94);
+  color: #1f2328;
+}
+
+.portal-action-cancel:hover:not(:disabled) {
+  background: #f4f7fa;
+}
+
+.portal-action-done {
+  background: #2c7a4b;
+  color: #ffffff;
+}
+
+.portal-action-done:hover:not(:disabled) {
+  background: #256640;
+}
+
+/* Confirmation dialog */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(31, 35, 40, 0.45);
+}
+
+.confirm-overlay[hidden] {
+  display: none;
+}
+
+.confirm-box {
+  width: 100%;
+  max-width: 24rem;
+  padding: 1.5rem;
+  border-radius: 0.6rem;
+  background: #ffffff;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+.confirm-title {
+  margin: 0 0 0.6rem;
+  font-size: 1.15rem;
+}
+
+.confirm-message {
+  margin: 0 0 1.25rem;
+  color: #57606a;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.confirm-btn {
+  min-height: 2.4rem;
+  padding: 0.5rem 1.1rem;
+  border: 1px solid transparent;
+  border-radius: 0.4rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.confirm-btn-secondary {
+  border-color: #b8c2cc;
+  background: #ffffff;
+  color: #1f2328;
+}
+
+.confirm-btn-secondary:hover {
+  background: #f4f7fa;
+}
+
+.confirm-btn-primary {
+  background: #1f2328;
+  color: #ffffff;
+}
+
+.confirm-btn-primary:hover {
+  background: #33393f;
+}
+
 /* Mobile View */
+/* Mobile Layout */
 @media (max-width: 768px) {
   html {
     font-size: 18px;
   }
 
+  /* Req06: full-width bar at the very top, buttons side-by-side; the title
+     drops below it so the two don't overlap. */
+  #portal-actions {
+    top: 0.6rem;
+    right: 0.75rem;
+    left: 0.75rem;
+    justify-content: center;
+  }
+
+  .portal-action-btn {
+    flex: 1;
+    min-height: 2.75rem;
+  }
+  
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
   h1 {
-    margin: 0.5rem 0.75rem;
+    margin: 4rem 0.75rem 0.5rem;
     font-size: 1rem;
   }
 
+  :root {
+    --mobile-panel-height: min(30dvh, 18rem);
+  }
+
+  /* Reserve space for the information panel */
+  #visualiser-canvas {
+    width: 100%;
+    height: calc(
+      100dvh - var(--mobile-panel-height) - 2.25rem
+    );
+    display: block;
+  }
+
+  /* Keep the panel below the 3D viewing area */
   #carton-info {
+    position: fixed;
     top: auto;
     right: 0.75rem;
     bottom: 0.75rem;
@@ -246,9 +425,11 @@ canvas {
     min-width: 0;
     max-width: none;
     width: auto;
-    max-height: min(42vh, 22rem);
+    height: var(--mobile-panel-height);
+    max-height: var(--mobile-panel-height);
     padding: 1rem;
     font-size: 1rem;
+    overflow-y: auto;
   }
 
   .carton-action-btn {
@@ -281,11 +462,8 @@ canvas {
   }
 }
 
+/* Smaller Mobile Screens */
 @media (max-width: 480px) {
-  #carton-info {
-    max-height: min(48vh, 24rem);
-  }
-
   .carton-info-summary {
     flex-direction: column;
     align-items: stretch;
@@ -297,5 +475,120 @@ canvas {
 
   .dimension-label {
     font-size: 1.05rem;
+  }
+}
+
+
+/* LEGO-style packing instructions */
+#packing-steps {
+  position: fixed;
+  top: 3rem;
+  right: 1rem;
+  bottom: 1rem;
+  left: 20rem;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+#packing-steps[hidden] {
+  display: none;
+}
+
+.packing-progress-row,
+.packing-step-nav {
+  box-sizing: border-box;
+  width: min(100%, 35rem);
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  pointer-events: auto;
+}
+
+.packing-progress-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+#packing-progress {
+  width: 100%;
+  height: 0.7rem;
+  accent-color: #238558;
+}
+
+.packing-step-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.packing-step-nav button {
+  padding: 0.5rem 0.7rem;
+  border: 1px solid #b8c2cc;
+  border-radius: 0.35rem;
+  background: #f4f7fa;
+  color: #1f2328;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.packing-step-nav button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+#packing-step-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Mobile layout */
+@media (max-width: 768px) {
+  #packing-steps {
+    top: 4rem; /* below the Done / Cancel buttons */
+    right: 0.75rem;
+    bottom: calc(min(48dvh, 24rem) + 1.75rem);
+    left: 0.75rem;
+  }
+
+  .packing-step-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.35rem;
+  }
+
+  .packing-step-nav button {
+    min-height: 2.25rem;
+    font-size: 0.8rem;
+  }
+
+  #packing-step-name {
+    flex: 1;
+    font-size: 0.8rem;
+  }
+}
+
+/* Keep LEGO controls above the carton on mobile */
+@media (max-width: 768px) {
+  #packing-steps {
+    bottom: auto;
+  }
+
+  .packing-step-nav {
+    margin-top: 0.5rem;
   }
 }

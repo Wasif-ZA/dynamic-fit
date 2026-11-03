@@ -70,7 +70,7 @@ export default function BoxJsonImport({ inventory, onCancel, onConfirm }) {
   }
 
   return (
-    <Modal title="Import Box Inventory" onCancel={onCancel}>
+    <Modal title="Import box inventory" onCancel={onCancel}>
       <p className="text-sm text-ink-400">
         Parse and review every resulting value before inventory changes.
       </p>
@@ -97,7 +97,7 @@ export default function BoxJsonImport({ inventory, onCancel, onConfirm }) {
         <span className="h-px flex-1 bg-ink-100" />
       </div>
 
-      <Field label="Paste Box JSON">
+      <Field label="Paste box JSON">
         <textarea
           className="h-56 w-full rounded-sm border border-ink-100 bg-white px-3 py-2 font-mono text-xs text-ink-700 placeholder:text-ink-200 focus:border-brand-400"
           placeholder={PLACEHOLDER}
@@ -167,7 +167,7 @@ function BoxImportReview({ initialRecords, inventory, onCancel, onConfirm }) {
   };
 
   return (
-    <Modal title="Review Box Import" onCancel={onCancel} wide>
+    <Modal title="Review box import" onCancel={onCancel} wide>
       <p className="text-sm text-ink-400">
         {records.length} {records.length === 1 ? 'record' : 'records'} · {newCount} new · {existingCount} existing
       </p>
@@ -229,7 +229,7 @@ function BoxImportReview({ initialRecords, inventory, onCancel, onConfirm }) {
           onClick={confirm}
           disabled={records.length === 0 || validationErrors.length > 0 || confirming}
         >
-          {confirming ? 'Importing...' : `Confirm Import (${records.length})`}
+          {confirming ? 'Importing…' : `Confirm import (${records.length})`}
         </Button>
       </div>
     </Modal>

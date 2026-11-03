@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pytest
+from fitsolver.engine import solve
 
 from app.models import BoxType, Item, StoredOrder
 from app.solver_adapter import box_to_contract, item_to_contract, to_solver_request
@@ -156,3 +157,24 @@ def test_zero_maximum_boxes_is_sent_as_zero():
 
     assert mapped["maximum_boxes"] == 0
     assert mapped["maximum_boxes"] is not None
+
+
+def test_box_sizes_round_down_so_items_never_exceed_the_real_box():
+    box = BoxType(Reference="ODD", Width=400.6, Length=300.99, Depth=200.5)
+    assert box_to_contract(box)["inner_dims"] == [400, 300, 200]
+
+
+def test_an_item_one_mm_too_big_for_a_fractional_box_is_rejected():
+    box = BoxType(Reference="ODD", Width=400.6, Length=300, Depth=200)
+    item = an_item(Width=401, Length=300, Depth=200)
+    order = StoredOrder(OrderId="ORD-001", Reference="MQ-001", Items=[item])
+    document = solve(to_solver_request(order, [box]))
+    assert document["cartons"] == []
+    assert [reject["item_ref"] for reject in document["rejects"]] == [item.item_code]
+
+
+def test_boxes_smaller_than_one_mm_are_left_out_of_the_request():
+    tiny = BoxType(Reference="TINY", Width=0.5, Length=300, Depth=200)
+    normal = BoxType(Reference="NORMAL", Width=400, Length=300, Depth=200)
+    order = StoredOrder(OrderId="ORD-001", Reference="MQ-001", Items=[an_item()])
+    assert [carton["sku"] for carton in to_solver_request(order, [tiny, normal])["cartons"]] == ["NORMAL"]

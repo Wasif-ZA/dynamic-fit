@@ -340,10 +340,15 @@ class TestFeasibilityDoesNotAlterExistingContracts:
 
         response = client.post(f"/orders/{order_id}/solve", headers=SUPERVISOR_HEADERS)
 
+        # The solver enforces MaximumBoxes (DynamicSolver ADR-0008): it never
+        # uses more boxes than are in stock, and rejects the overflow instead.
         assert response.status_code == 200
-        assert len(response.json()["cartons"]) > 1
+        document = response.json()
+        assert len(document["cartons"]) == 1
+        assert document["rejects"]
+        assert {r["reason_code"] for r in document["rejects"]} == {"UNPLACEABLE"}
         assert client.get(f"/orders/{order_id}").json()["Status"] == "OPTIMISED"
-        assert feasibility(order_id)["Sufficient"] is False
+        assert feasibility(order_id)["Sufficient"] is True
 
     def test_all_roles_can_read_feasibility(self):
         add_inventory({**MED, "MaximumBoxes": 1})
