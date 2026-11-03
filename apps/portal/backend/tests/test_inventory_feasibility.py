@@ -329,7 +329,7 @@ class TestFeasibilityDoesNotAlterExistingContracts:
             "Rejected",
         }
 
-    def test_insufficient_inventory_never_blocks_optimisation(self):
+    def test_insufficient_inventory_packs_to_the_limit_and_rejects_the_rest(self):
         boxes.add_box_type(
             DEFAULT_BOX_TYPES[0].model_copy(update={"maximum_boxes": 1})
         )
