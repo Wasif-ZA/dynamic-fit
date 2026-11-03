@@ -30,19 +30,29 @@ export class ApiError extends Error {
 function describe(status) {
   if (status === 401) return 'Your session is invalid or has expired. Sign in again.';
   if (status === 403) return 'Your role does not have permission to perform this action.';
-  if (status === 404) return 'That order no longer exists on the server.';
+  if (status === 404) return 'This record no longer exists on the server. Refresh and try again.';
   if (status === 409) return 'This action conflicts with existing data or its current state.';
-  if (status === 422) return 'The server rejected this order. Check the item details.';
-  if (status >= 500) return 'The packing service failed. Try again in a moment.';
+  if (status === 422) return 'The server rejected these details. Check the form and try again.';
+  if (status >= 500) return 'The server ran into a problem. Try again in a moment.';
   return `The server returned an unexpected error (${status}).`;
 }
 
+// FastAPI sends a string detail for its own errors, and a list of field
+// problems when a request fails validation.
 function usefulJsonDetail(body) {
   try {
-    const parsed = JSON.parse(body);
-    return typeof parsed?.detail === 'string' && parsed.detail.trim()
-      ? parsed.detail.trim()
-      : '';
+    const { detail } = JSON.parse(body) ?? {};
+    if (typeof detail === 'string') return detail.trim();
+    if (Array.isArray(detail)) {
+      const problems = detail
+        .filter((problem) => typeof problem?.msg === 'string')
+        .map((problem) => {
+          const field = Array.isArray(problem.loc) ? problem.loc.at(-1) : null;
+          return typeof field === 'string' ? `${field}: ${problem.msg}` : problem.msg;
+        });
+      return [...new Set(problems)].join(' ');
+    }
+    return '';
   } catch {
     return '';
   }
@@ -87,8 +97,36 @@ const asJson = (body, method = 'POST') => ({
   body: JSON.stringify(body),
 });
 
-export function listOrders() {
-  return request('/orders');
+export function listOrders({ view = 'active' } = {}) {
+  return request(view === 'active' ? '/orders' : `/orders?view=${encodeURIComponent(view)}`);
+}
+
+export function getItemWeightLimit() {
+  return request('/orders/item-weight-limit');
+}
+
+export function getManualHandlingSettings() {
+  return request('/settings/manual-handling');
+}
+
+export function updateManualHandlingSettings(WarningThresholdKg) {
+  return request('/settings/manual-handling', asJson({ WarningThresholdKg }, 'PUT'));
+}
+
+export function archiveOrder(orderId) {
+  return request(`/orders/${encodeURIComponent(orderId)}/archive`, { method: 'POST' });
+}
+
+export function holdOrder(orderId) {
+  return request(`/orders/${encodeURIComponent(orderId)}/hold`, { method: 'POST' });
+}
+
+export function resumeOrder(orderId) {
+  return request(`/orders/${encodeURIComponent(orderId)}/resume`, { method: 'POST' });
+}
+
+export function deleteOrder(orderId) {
+  return request(`/orders/${encodeURIComponent(orderId)}`, { method: 'DELETE' });
 }
 
 export function createOrder({ items }) {
@@ -107,8 +145,10 @@ export function submitOrder(orderId) {
   return request(`/orders/${encodeURIComponent(orderId)}/submit`, { method: 'POST' });
 }
 
-export function solveOrder(orderId) {
-  return request(`/orders/${encodeURIComponent(orderId)}/solve`, { method: 'POST' });
+// furtherOptimise asks the solver to spend up to 30 s looking for one smaller box.
+export function solveOrder(orderId, { furtherOptimise = false } = {}) {
+  const query = furtherOptimise ? '?optimise=true' : '';
+  return request(`/orders/${encodeURIComponent(orderId)}/solve${query}`, { method: 'POST' });
 }
 
 export function finaliseOrder(orderId) {
@@ -129,8 +169,14 @@ export function getVisualizerHandoff(orderId) {
   });
 }
 
-export function visualiserUrl(solutionUrl) {
-  return `${VISUALISER_BASE}/?solution=${encodeURIComponent(solutionUrl)}`;
+// returnUrl is where the Visualiser's Done and Cancel buttons send the pick packer.
+export function visualiserUrl(solutionUrl, { returnUrl } = {}) {
+  const portal = returnUrl ? `&portal=${encodeURIComponent(returnUrl)}` : '';
+  return `${VISUALISER_BASE}/?solution=${encodeURIComponent(solutionUrl)}${portal}`;
+}
+
+export function recordPacking(orderId, complete) {
+  return request(`/orders/${encodeURIComponent(orderId)}/packing`, asJson({ Complete: complete }));
 }
 
 export function listBoxes() {

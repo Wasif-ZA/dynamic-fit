@@ -10,13 +10,21 @@ import React, {
 import {
   createOrder,
   getCurrentProfile,
+  getManualHandlingSettings,
   listOrders,
   setAccessToken,
   setAuthStatusHandler,
+  updateManualHandlingSettings,
 } from '../api/client.js';
 import { requireSupabase, supabase } from '../auth/supabase.js';
 
 const AppContext = createContext(null);
+
+// Only the server saying "no" ends a session. A backend that is asleep or
+// unreachable (Render's free plan sleeps) should not sign anyone out.
+function sessionRejected(error) {
+  return error?.status === 401 || error?.status === 403;
+}
 
 function toIdentity(profile) {
   return {
@@ -33,13 +41,22 @@ export function AppProvider({ children }) {
   const [identity, setIdentity] = useState(null);
   const [authInitializing, setAuthInitializing] = useState(true);
   const [authError, setAuthError] = useState(null);
+  const [connectionError, setConnectionError] = useState(null);
   const [orders, setOrders] = useState([]);
   const [ordersError, setOrdersError] = useState(null);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const authGeneration = useRef(0);
+  const [handlingSettings, setHandlingSettings] = useState(null);
+  const [handlingSettingsError, setHandlingSettingsError] = useState(null);
+  const [loadingHandlingSettings, setLoadingHandlingSettings] = useState(false);
+  const handlingGeneration = useRef(0);
 
   const clearAuthState = useCallback((error = null) => {
     authGeneration.current += 1;
+    handlingGeneration.current += 1;
+    setHandlingSettings(null);
+    setHandlingSettingsError(null);
+    setLoadingHandlingSettings(false);
     setAccessToken(null);
     setIdentity(null);
     setOrders([]);
@@ -80,9 +97,14 @@ export function AppProvider({ children }) {
         if (error) throw error;
         await applySession(data.session);
         setAuthError(null);
+        setConnectionError(null);
       } catch (initializationError) {
-        await supabase.auth.signOut({ scope: 'local' }).catch(() => {});
-        if (active) clearAuthState(initializationError);
+        if (error || sessionRejected(initializationError)) {
+          await supabase.auth.signOut({ scope: 'local' }).catch(() => {});
+          if (active) clearAuthState(initializationError);
+        } else if (active) {
+          setConnectionError(initializationError);
+        }
       } finally {
         if (active) setAuthInitializing(false);
       }
@@ -95,8 +117,11 @@ export function AppProvider({ children }) {
         try {
           await applySession(session);
           setAuthError(null);
+          setConnectionError(null);
         } catch (sessionError) {
-          if (active) clearAuthState(sessionError);
+          if (!active) return;
+          if (sessionRejected(sessionError)) clearAuthState(sessionError);
+          else setConnectionError(sessionError);
         }
       }, 0);
     });
@@ -120,6 +145,7 @@ export function AppProvider({ children }) {
           const { data } = await supabase.auth.getSession();
           await applySession(data.session);
         } catch (error) {
+          if (!sessionRejected(error)) return;
           clearAuthState(error);
           await supabase?.auth.signOut({ scope: 'local' }).catch(() => {});
         }
@@ -143,7 +169,28 @@ export function AppProvider({ children }) {
     }
   };
 
+  // Try loading the signed-in profile again after the backend was unreachable.
+  const retryConnection = useCallback(async () => {
+    if (!supabase) return;
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      await applySession(data.session);
+      setAuthError(null);
+      setConnectionError(null);
+    } catch (retryError) {
+      if (sessionRejected(retryError)) {
+        setConnectionError(null);
+        await supabase.auth.signOut({ scope: 'local' }).catch(() => {});
+        clearAuthState(retryError);
+      } else {
+        setConnectionError(retryError);
+      }
+    }
+  }, [applySession, clearAuthState]);
+
   const logout = async () => {
+    setConnectionError(null);
     clearAuthState();
     if (supabase) await supabase.auth.signOut();
   };
@@ -165,6 +212,47 @@ export function AppProvider({ children }) {
     if (!authInitializing && identity) refreshOrders();
   }, [authInitializing, identity, refreshOrders]);
 
+  const refreshHandlingSettings = useCallback(async () => {
+    if (!identity) return;
+    const generation = ++handlingGeneration.current;
+    setLoadingHandlingSettings(true);
+    try {
+      const settings = await getManualHandlingSettings();
+      if (generation === handlingGeneration.current) {
+        setHandlingSettings(settings);
+        setHandlingSettingsError(null);
+      }
+    } catch (error) {
+      if (generation === handlingGeneration.current) setHandlingSettingsError(error);
+    } finally {
+      if (generation === handlingGeneration.current) setLoadingHandlingSettings(false);
+    }
+  }, [identity]);
+
+  const saveHandlingSettings = useCallback(async (threshold) => {
+    const generation = ++handlingGeneration.current;
+    try {
+      const settings = await updateManualHandlingSettings(threshold);
+      if (generation === handlingGeneration.current) {
+        setHandlingSettings(settings);
+        setHandlingSettingsError(null);
+      }
+      return settings;
+    } finally {
+      if (generation === handlingGeneration.current) setLoadingHandlingSettings(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (authInitializing || !identity) return undefined;
+    refreshHandlingSettings();
+    window.addEventListener('focus', refreshHandlingSettings);
+    return () => {
+      handlingGeneration.current += 1;
+      window.removeEventListener('focus', refreshHandlingSettings);
+    };
+  }, [authInitializing, identity, refreshHandlingSettings]);
+
   const addOrder = async ({ items }) => {
     const created = await createOrder({ items });
     setOrders((previous) => [created, ...previous]);
@@ -176,6 +264,8 @@ export function AppProvider({ children }) {
       identity,
       authInitializing,
       authError,
+      connectionError,
+      retryConnection,
       login,
       logout,
       orders,
@@ -183,8 +273,14 @@ export function AppProvider({ children }) {
       loadingOrders,
       refreshOrders,
       addOrder,
+      handlingSettings,
+      handlingSettingsError,
+      loadingHandlingSettings,
+      refreshHandlingSettings,
+      saveHandlingSettings,
     }),
-    [identity, authInitializing, authError, orders, ordersError, loadingOrders, refreshOrders]
+    [identity, authInitializing, authError, connectionError, retryConnection, orders, ordersError, loadingOrders, refreshOrders,
+      handlingSettings, handlingSettingsError, loadingHandlingSettings, refreshHandlingSettings, saveHandlingSettings]
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

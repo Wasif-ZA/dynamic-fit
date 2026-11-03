@@ -52,7 +52,7 @@ jobs:
           node-version: '22'
 
       - name: Install Python dependencies
-        run: uv sync --group dev
+        run: uv sync --group dev --all-packages --all-extras
 
       - name: Solver
         run: uv run pytest packages/solver/tests -v

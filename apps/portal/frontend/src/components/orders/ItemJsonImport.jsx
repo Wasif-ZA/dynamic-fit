@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Button from '../common/Button.jsx';
 import { parseItemsJson } from '../../lib/itemValidation.js';
 import ImportedItemsReviewModal from './ImportedItemsReviewModal.jsx';
@@ -16,17 +16,26 @@ const PLACEHOLDER = `[
   }
 ]`;
 
-export default function ItemJsonImport({ onImport }) {
+export default function ItemJsonImport({ onImport, maxItemWeightKg = null, checkingWeightLimit = false, warningThresholdKg = null }) {
   const [text, setText] = useState('');
   const [errors, setErrors] = useState([]);
   const [success, setSuccess] = useState('');
   const [fileName, setFileName] = useState('');
   const [previewItems, setPreviewItems] = useState(null);
+  // JSON that arrived while the box weight limit was being checked. Picking a
+  // file returns focus to the window, which starts a fresh check, so the file
+  // usually lands mid-check. Hold it and review it once the check finishes.
+  const [pendingText, setPendingText] = useState(null);
   const fileInputRef = useRef(null);
 
   const runImport = (jsonText) => {
     setSuccess('');
-    const { items, errors: parseErrors } = parseItemsJson(jsonText);
+    if (checkingWeightLimit) {
+      setErrors([]);
+      setPendingText(jsonText);
+      return;
+    }
+    const { items, errors: parseErrors } = parseItemsJson(jsonText, { maxItemWeightKg });
     if (parseErrors.length > 0) {
       setErrors(parseErrors);
       return;
@@ -34,6 +43,12 @@ export default function ItemJsonImport({ onImport }) {
     setErrors([]);
     setPreviewItems(items);
   };
+
+  useEffect(() => {
+    if (checkingWeightLimit || pendingText === null) return;
+    setPendingText(null);
+    runImport(pendingText);
+  }, [checkingWeightLimit, pendingText]);
 
   const handlePasteImport = () => {
     runImport(text);
@@ -111,10 +126,16 @@ export default function ItemJsonImport({ onImport }) {
       </div>
 
       <div className="text-center">
-        <Button type="button" onClick={handlePasteImport} disabled={!text.trim()}>
+        <Button type="button" onClick={handlePasteImport} disabled={checkingWeightLimit || !text.trim()}>
           Review pasted JSON
         </Button>
       </div>
+
+      {pendingText !== null && (
+        <p role="status" className="rounded-sm border border-ink-100 bg-ink-50 p-3 text-sm text-ink-500">
+          Checking current boxes… your file will open for review in a moment.
+        </p>
+      )}
 
       {errors.length > 0 && (
         <div className="rounded-sm border border-red-200 bg-red-50 p-3 text-sm text-red-600">
@@ -137,6 +158,9 @@ export default function ItemJsonImport({ onImport }) {
 
       {previewItems && (
         <ImportedItemsReviewModal
+          warningThresholdKg={warningThresholdKg}
+          maxItemWeightKg={maxItemWeightKg}
+          checkingWeightLimit={checkingWeightLimit}
           items={previewItems}
           onCancel={() => setPreviewItems(null)}
           onConfirm={handleConfirm}

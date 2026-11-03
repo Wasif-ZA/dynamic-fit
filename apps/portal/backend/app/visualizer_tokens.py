@@ -1,4 +1,4 @@
-"""Short-lived tokens for FitVisualizer's URL-fetch contract."""
+"""Short-lived tokens for the Visualiser's URL-fetch contract."""
 
 from __future__ import annotations
 
@@ -49,9 +49,9 @@ def verify_token(token: str, order_id: str) -> str:
             options={"require": ["exp", "iat", "sub", "solution"]},
         )
     except (InvalidTokenError, RuntimeError, ValueError):
-        raise ValueError("Invalid or expired visualizer handoff") from None
+        raise ValueError("Invalid or expired Visualiser handoff") from None
     if claims["sub"] != order_id:
-        raise ValueError("Invalid or expired visualizer handoff")
+        raise ValueError("Invalid or expired Visualiser handoff")
     return claims["solution"]
 
 
