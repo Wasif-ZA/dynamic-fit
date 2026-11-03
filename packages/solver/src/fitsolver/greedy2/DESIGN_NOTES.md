@@ -422,7 +422,7 @@ Two lessons came out of this:
 ## 7. Reproducing
 
 These scripts are maintained separately from this repository. Where they are
-available, from `fitsolver/` with the venv active:
+available, from `packages/solver/` with the venv active:
 
 ```
 python bench/compare_algorithms.py --algorithms v1,greedy2 --with-bin4d
